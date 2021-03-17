@@ -1,6 +1,7 @@
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
 import Navigation from './common/components/Maneuverable/Navigation';
+import UserBoards from './boards/pages/UserBoards';
 import Auth from './user/pages/Auth';
 import { AuthContext } from './common/context';
 import { useAuth, IAuthHook } from './common/hooks';
@@ -15,8 +16,8 @@ const App: Functional = () => {
                 <main style={{ marginTop: '5rem' }}>
                     {token ? (
                         <Switch>
-                            <Route path="/" exact>
-                                {/* Boards */}
+                            <Route path="/boards" exact>
+                                <UserBoards />
                             </Route>
                             <Route path="/board/:boardId" exact>
                                 {/* Board */}
@@ -24,7 +25,7 @@ const App: Functional = () => {
                             <Route path="/profile" exact>
                                 {/* User Profile */}
                             </Route>
-                            <Redirect to="/" />
+                            <Redirect to="/boards" />
                         </Switch>
                     ) : (
                         <Switch>

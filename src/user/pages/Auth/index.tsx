@@ -29,7 +29,7 @@ const Auth: Functional = (props) => {
     const [isInLoginMode, setLoginMode] = useState<boolean>(true);
     const { isLoading, error, clearError, sendRequest } = useHttp<UserAuthResponse>();
 
-    const [state, inputHandler, setFormState] = useForm({
+    const [state, inputHandler] = useForm({
         inputs: {
             username: { value: '', isValid: false },
             password: { value: '', isValid: false }
@@ -56,20 +56,13 @@ const Auth: Functional = (props) => {
     };
 
     const onToggleModeHandler: OnClickFunc = () => {
-        setFormState({
-            inputs: {
-                username: { value: '', isValid: false },
-                password: { value: '', isValid: false }
-            },
-            isValid: false
-        });
         setLoginMode((prevState) => !prevState);
     };
 
     return (
         <Fragment>
             {error && <ErrorModal onClear={clearError} error={error} show={!!error} />}
-            <Card className={classes.Auth} style={{ maxWidth: '40rem', backgroundColor: '#1c1427' }}>
+            <Card className={classes.Auth} style={{ maxWidth: '40rem', backgroundColor: '#0f3460' }}>
                 {isLoading && <Spinner asOverlay />}
                 <h2 className={classes.Header}>{isInLoginMode ? 'Please Login' : 'Please Sign Up'}</h2>
                 <hr />
@@ -85,6 +78,8 @@ const Auth: Functional = (props) => {
                             getValidator(ValidationType.MinLength, RULE.USR_MIN_LEN),
                             getValidator(ValidationType.MaxLength, RULE.USR_MAX_LEN)
                         ]}
+                        value={state.inputs.username.value}
+                        valid={state.inputs.username.isValid}
                     />
                     <Input
                         id="password"
@@ -97,6 +92,8 @@ const Auth: Functional = (props) => {
                             getValidator(ValidationType.MinLength, RULE.PW_MIN_LEN),
                             getValidator(ValidationType.MaxLength, RULE.PW_MAX_LEN)
                         ]}
+                        value={state.inputs.password.value}
+                        valid={state.inputs.password.isValid}
                     />
                     <Button type="submit" disabled={!state.isValid}>
                         {isInLoginMode ? 'LOGIN' : 'SIGNUP'}
