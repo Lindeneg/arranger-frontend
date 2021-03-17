@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 
-import { getLocalV, removeLocalV, setLocalV } from '../../common/util/util';
-import { StoredData, Login } from '../../common/types';
+import { getLocalV, removeLocalV, setLocalV, StoredData, Login } from '../../common/util';
 
 export interface IAuthHook {
     token: string;

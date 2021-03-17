@@ -1,6 +1,6 @@
 import { useReducer, useCallback } from 'react';
 
-import { Action, Identifiable, SIndexable, ValidationValue, Reducer, UseReducerTuple } from '../types';
+import { Action, Identifiable, SIndexable, ValidationValue, Reducer, UseReducerTuple } from '../util';
 
 interface MetaEntry extends SIndexable<ValidationValue | boolean> {
     value: ValidationValue;
@@ -70,7 +70,7 @@ const formReducer: Reducer<State, Action<FormActions, Payload>> = (state, action
  * A simple and modestly useful hook for handling the input state of a form.
  */
 
-const useForm = (initialState: State): [State, InputHandler, SetFormState] => {
+export const useForm = (initialState: State): [State, InputHandler, SetFormState] => {
     const [state, dispatch]: UseReducerTuple<State, FormActions, Payload> = useReducer(formReducer, {
         ...initialState
     });
@@ -85,5 +85,3 @@ const useForm = (initialState: State): [State, InputHandler, SetFormState] => {
 
     return [state, inputHandler, setFormState];
 };
-
-export default useForm;
