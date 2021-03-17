@@ -1,6 +1,6 @@
 import { createContext, Context } from 'react';
 
-import { Login } from '../types';
+import { Login } from '../util';
 
 interface IAuthContext {
     isLoggedIn: boolean;
@@ -10,12 +10,10 @@ interface IAuthContext {
     logout: () => void;
 }
 
-const AuthContext: Context<IAuthContext> = createContext<IAuthContext>({
+export const AuthContext: Context<IAuthContext> = createContext<IAuthContext>({
     isLoggedIn: false,
     userId: '',
     token: '',
     login: () => null,
     logout: () => null
 });
-
-export default AuthContext;

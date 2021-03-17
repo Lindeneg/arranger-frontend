@@ -1,4 +1,4 @@
-import { NIndexable, ValidationFunc, ValidationType, ValidationValue, Validator } from '../types';
+import { NIndexable, ValidationFunc, ValidationType, ValidationValue, Validator } from './types';
 
 const validationFunc: NIndexable<ValidationFunc> = {
     [ValidationType.Require]: (value, isValid, validator) => {

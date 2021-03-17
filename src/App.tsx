@@ -1,4 +1,4 @@
-import { Functional } from './common/types';
+import { Functional } from './common/util';
 
 const App: Functional = (props) => <div></div>;
 
