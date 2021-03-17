@@ -4,6 +4,8 @@ import React from 'react';
  ****** UTILITY  ******
  **********************/
 
+type SArrUnion<T> = string[] | T[];
+
 export type OnClickFunc<T = HTMLElement> = React.MouseEventHandler<T>;
 
 export type OnChange<T = HTMLElement> = React.ChangeEventHandler<T>;
@@ -79,28 +81,47 @@ export type Portal<P = BaseProps> = Functional<P, React.ReactPortal>;
  ***  CORE STRUCTS  ***
  **********************/
 
+interface Ownership {
+    owner: string;
+    indirectOwner: string;
+}
+
 export interface IResponse {
     _id: string;
-    createdOn: number;
-    updatedOn: number;
-    token?: string;
+    name: string;
+    createdOn?: number;
+    updatedOn?: number;
     message?: string;
 }
 
-export interface PlaceResponse extends IResponse {
-    title: string;
-    description: string;
-    image: string;
-    address: string;
-    creatorId: string;
-    location: Location;
+export interface UserAuthResponse extends Partial<IResponse> {
+    token: string;
 }
 
-export interface UserResponse extends IResponse {
-    name: string;
-    image: string;
-    places: PlaceResponse[];
-    lastLogin: number;
+export interface BoardResponse<
+    CH extends SArrUnion<ChecklistResponse>,
+    CA extends SArrUnion<CardResponse<CH>>,
+    LI extends SArrUnion<ListResponse<CH, CA>>
+> extends IResponse {
+    color: string;
+    owner: string;
+    lists: LI;
+}
+
+export interface ListResponse<CH extends SArrUnion<ChecklistResponse>, CA extends SArrUnion<CardResponse<CH>>>
+    extends IResponse,
+        Ownership {
+    cards: CA;
+}
+
+export interface CardResponse<CH extends SArrUnion<ChecklistResponse>> extends IResponse, Ownership {
+    color: string;
+    checklists: CH;
+}
+
+export interface ChecklistResponse extends IResponse, Ownership {
+    description: string;
+    isCompleted: boolean;
 }
 
 export interface StoredData {
