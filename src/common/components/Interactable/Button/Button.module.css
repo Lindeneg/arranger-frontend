@@ -1,0 +1,61 @@
+.Default {
+    font: inherit;
+    padding: 0.5rem 1.5rem;
+    border: 1px solid #c76e3d;
+    border-radius: 4px;
+    background: #c76e3d;
+    color: white;
+    cursor: pointer;
+    margin-right: 1rem;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.Default:focus {
+    outline: none;
+}
+
+.Default:hover,
+.Default:active {
+    background: #40394a;
+    border-color: #40394a;
+}
+
+.Inverse {
+    background: transparent;
+    color: #c76e3d;
+}
+
+.Inverse:hover,
+.Inverse:active {
+    color: white;
+    background: #c76e3d;
+}
+
+.Danger {
+    background: #830000;
+    border-color: #830000;
+}
+
+.Danger:hover,
+.Danger:active {
+    background: #f34343;
+    border-color: #f34343;
+}
+
+.Default:disabled,
+.Default:hover:disabled,
+.Default:active:disabled {
+    background: #ccc;
+    color: #979797;
+    border-color: #ccc;
+    cursor: not-allowed;
+}
+
+.Small {
+    font-size: 0.8rem;
+}
+
+.Big {
+    font-size: 1.5rem;
+}

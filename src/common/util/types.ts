@@ -4,7 +4,11 @@ import React from 'react';
  ****** UTILITY  ******
  **********************/
 
-type OnClickFunc<T = HTMLElement> = React.MouseEventHandler<T>;
+export type OnClickFunc<T = HTMLElement> = React.MouseEventHandler<T>;
+
+export type OnChange<T = HTMLElement> = React.ChangeEventHandler<T>;
+
+export type OnBlur<T = HTMLElement> = React.FocusEventHandler<T>;
 
 export interface SIndexable<T> {
     [key: string]: T;

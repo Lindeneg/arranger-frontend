@@ -1,0 +1,52 @@
+.Control {
+    margin: 1rem 0;
+}
+
+.Control label,
+.Control input,
+.Control textarea {
+    display: block;
+}
+
+.Control label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.Control input,
+.Control textarea {
+    width: 100%;
+    font: inherit;
+    border: 1px solid #ccc;
+    background: #f8f8f8;
+    padding: 0.15rem 0.25rem;
+}
+
+.Control input:focus,
+.Control textarea:focus {
+    outline: none;
+    background: #ebebeb;
+    border-color: #510077;
+}
+
+.Invalid label,
+.Invalid p {
+    color: red;
+}
+
+.Invalid input,
+.Invalid textarea {
+    border-color: red;
+    background: #ffd1d1;
+}
+
+.Valid label,
+.Valid p {
+    color: green;
+}
+
+.Valid input,
+.Valid textarea {
+    border-color: green;
+    background: #d1ffd6;
+}
