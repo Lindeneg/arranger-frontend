@@ -6,7 +6,7 @@ import SideDrawer from './SideDrawer';
 import Header from '../Header';
 import Backdrop from '../../Interface/Backdrop';
 import { Functional } from '../../../util';
-import classes from './Nav.module.css';
+import classes from './Navigation.module.css';
 
 /**
  * Main navigational component handing both desktop and mobile.
