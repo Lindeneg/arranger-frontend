@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { Fragment, useContext } from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
 
 import Button from '../../../Interactable/Button';
@@ -21,38 +21,17 @@ const NavLinks: Functional = (props) => {
 
     return (
         <ul className={classes.Link}>
-            {/*             <li>
-                <NavLink activeClassName={classes.Active} to="/" exact>
-                    MY BOARDS
-                </NavLink>
-            </li>
             {authContext.isLoggedIn && (
-                <li>
-                    <NavLink activeClassName={classes.Active} to={`/${authContext.userId}/places`}>
-                        NEW BOARD
-                    </NavLink>
-                </li>
-            )}
-            {authContext.isLoggedIn && (
-                <li>
-                    <NavLink activeClassName={classes.Active} to="/places/new">
-                        EDIT PROFILE
-                    </NavLink>
-                </li>
-            )} */}
-            {!authContext.isLoggedIn && (
-                <li>
-                    <NavLink activeClassName={classes.Active} to="/auth">
-                        LOGIN/SIGNUP
-                    </NavLink>
-                </li>
-            )}
-            {authContext.isLoggedIn && (
-                <li>
-                    <Button inverse onClick={onLogOut}>
-                        LOGOUT
-                    </Button>
-                </li>
+                <Fragment>
+                    <li>
+                        <NavLink activeClassName={classes.Active} to="/profile">
+                            EDIT PROFILE
+                        </NavLink>
+                    </li>
+                    <li>
+                        <Button onClick={onLogOut}>LOGOUT</Button>
+                    </li>
+                </Fragment>
             )}
         </ul>
     );

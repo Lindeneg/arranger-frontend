@@ -6,6 +6,8 @@ import React from 'react';
 
 type SArrUnion<T> = string[] | T[];
 
+export type OnSubmitFunc<T = HTMLFormElement> = React.FormEventHandler<T>;
+
 export type OnClickFunc<T = HTMLElement> = React.MouseEventHandler<T>;
 
 export type OnChange<T = HTMLElement> = React.ChangeEventHandler<T>;
@@ -94,7 +96,8 @@ export interface IResponse {
     message?: string;
 }
 
-export interface UserAuthResponse extends Partial<IResponse> {
+export interface UserAuthResponse {
+    _id: string;
     token: string;
 }
 

@@ -22,9 +22,8 @@
 }
 
 .Active {
-    background: rgb(42, 206, 124);
+    background: #40394a;
     border-color: #292929 !important;
-    color: rgb(17, 18, 21) !important;
 }
 
 @media (min-width: 768px) {

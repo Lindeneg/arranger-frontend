@@ -1,6 +1,7 @@
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
 import Navigation from './common/components/Maneuverable/Navigation';
+import Auth from './user/pages/Auth';
 import { AuthContext } from './common/context';
 import { useAuth, IAuthHook } from './common/hooks';
 import { Functional } from './common/util';
@@ -11,7 +12,29 @@ const App: Functional = () => {
         <AuthContext.Provider value={{ isLoggedIn: !!token, login, logout, userId, token }}>
             <BrowserRouter>
                 <Navigation />
-                <main style={{ marginTop: '5rem' }}></main>
+                <main style={{ marginTop: '5rem' }}>
+                    {token ? (
+                        <Switch>
+                            <Route path="/" exact>
+                                {/* Boards */}
+                            </Route>
+                            <Route path="/board/:boardId" exact>
+                                {/* Board */}
+                            </Route>
+                            <Route path="/profile" exact>
+                                {/* User Profile */}
+                            </Route>
+                            <Redirect to="/" />
+                        </Switch>
+                    ) : (
+                        <Switch>
+                            <Route path="/" exact>
+                                <Auth />
+                            </Route>
+                            <Redirect to="/" />
+                        </Switch>
+                    )}
+                </main>
             </BrowserRouter>
         </AuthContext.Provider>
     );
