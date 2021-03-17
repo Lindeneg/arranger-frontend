@@ -1,0 +1,43 @@
+.Link {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.Link li {
+    margin: 1rem;
+}
+
+.Link a {
+    border: 1px solid transparent;
+    color: #292929;
+    text-decoration: none;
+    padding: 0.5rem;
+}
+
+.Active {
+    background: rgb(42, 206, 124);
+    border-color: #292929 !important;
+    color: rgb(17, 18, 21) !important;
+}
+
+@media (min-width: 768px) {
+    .Link {
+        flex-direction: row;
+    }
+
+    .Link li {
+        margin: 0 0.5rem;
+    }
+
+    .Link a {
+        color: white;
+        text-decoration: none;
+    }
+}
