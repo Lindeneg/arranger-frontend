@@ -39,10 +39,6 @@ const UserBoards: Functional = (props) => {
         })();
     }, [sendRequest, authContext.userId, authContext.token]);
 
-    const onBoardDeleteHandler = (boardId: string): void => {
-        setBoards((prev) => prev.filter((e) => e._id !== boardId));
-    };
-
     return (
         <Fragment>
             <ErrorModal onClear={clearError} error={error} show={!!error} />
@@ -51,7 +47,7 @@ const UserBoards: Functional = (props) => {
                     <Spinner asOverlay />
                 </div>
             )}
-            {!isLoading && didRequest && <BoardList boards={boards} onDelete={onBoardDeleteHandler} />}
+            {!isLoading && didRequest && <BoardList boards={boards} />}
         </Fragment>
     );
 };

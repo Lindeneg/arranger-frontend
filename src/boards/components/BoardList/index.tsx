@@ -1,4 +1,7 @@
+import { Fragment, useState } from 'react';
+
 import BoardListItem from './BoardListItem';
+import BoardModal from '../BoardModal';
 import Card from '../../../common/components/Interface/Card';
 import Button from '../../../common/components/Interactable/Button';
 import { BaseProps, BoardResponse, Functional } from '../../../common/util';
@@ -6,30 +9,41 @@ import classes from './BoardList.module.css';
 
 interface BoardListProps extends BaseProps {
     boards: BoardResponse<string[], string[], string[]>[];
-    onDelete: (boardId: string) => void;
 }
 
 /**
- * Component with list of Boards.
+ * Component with list of Boards that also allows creation of board.
  */
 
 const BoardList: Functional<BoardListProps> = (props) => {
-    if (!(props.boards.length > 0)) {
-        return (
-            <div className={[classes.List, 'center'].join(' ')}>
-                <Card>
-                    <h2>No boards found. Go ahead and create one!</h2>
-                    <Button link={{ to: '/boards/new' }}>Create Board</Button>
-                </Card>
-            </div>
-        );
-    }
+    const [showModal, setShowModal] = useState<boolean>(false);
+
+    const onOpenModal = () => {
+        setShowModal(true);
+    };
+
+    const onCloseModal = () => {
+        setShowModal(false);
+    };
+
     return (
-        <ul className={classes.List}>
-            {props.boards.map((board) => (
-                <BoardListItem {...board} key={board._id} onDelete={props.onDelete} />
-            ))}
-        </ul>
+        <Fragment>
+            <BoardModal show={showModal} onClose={onCloseModal} />
+            {props.boards.length <= 0 ? (
+                <div className={[classes.List, 'center'].join(' ')}>
+                    <Card style={{ position: 'absolute', bottom: '50%' }}>
+                        <h2>No boards found. Go ahead and create one!</h2>
+                        <Button onClick={onOpenModal}>Create Board</Button>
+                    </Card>
+                </div>
+            ) : (
+                <ul className={classes.List}>
+                    {props.boards.map((board) => (
+                        <BoardListItem {...board} key={board._id} />
+                    ))}
+                </ul>
+            )}
+        </Fragment>
     );
 };
 
