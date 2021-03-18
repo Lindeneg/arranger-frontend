@@ -14,8 +14,9 @@ export interface IAuthHook {
  */
 
 export const useAuth = (): IAuthHook => {
-    const [userId, setUserId] = useState<string>('');
-    const [token, setToken] = useState<string>('');
+    const data = getLocalV<StoredData>();
+    const [userId, setUserId] = useState<string>(data ? data._id : '');
+    const [token, setToken] = useState<string>(data ? data._token : '');
 
     const login = useCallback((userId: string, responseToken: string, tokenExpire?: number) => {
         const expires: number = tokenExpire || Date.now() + 1000 * 60 * 60;
