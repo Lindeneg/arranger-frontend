@@ -62,14 +62,14 @@ const Auth: Functional = (props) => {
     return (
         <Fragment>
             {error && <ErrorModal onClear={clearError} error={error} show={!!error} />}
-            <Card className={classes.Auth} style={{ maxWidth: '40rem', backgroundColor: '#0f3460' }}>
+            <Card className={classes.Auth} style={{ maxWidth: '40rem' }}>
                 {isLoading && <Spinner asOverlay />}
-                <h2 className={classes.Header}>{isInLoginMode ? 'Please Login' : 'Please Sign Up'}</h2>
+                <h2 className={classes.Header}>{isInLoginMode ? 'PLEASE LOGIN' : 'PLEASE SIGN UP'}</h2>
                 <hr />
                 <form className="generic__form-wrapper" style={{backgroundColor: 'inherit', color: '#ccc'}} onSubmit={onSubmitHandler}>
                     <Input
                         id="username"
-                        label="Username"
+                        label="USERNAME"
                         element="input"
                         type="text"
                         errorText={`Please enter a valid username (at least ${RULE.USR_MIN_LEN} characters but at most ${RULE.USR_MAX_LEN}).`}
@@ -83,12 +83,13 @@ const Auth: Functional = (props) => {
                     />
                     <Input
                         id="password"
-                        label="Password"
+                        label="PASSWORD"
                         element="input"
                         type="password"
                         errorText={`Please enter a valid password (at least ${RULE.PW_MIN_LEN} characters but at most ${RULE.PW_MAX_LEN}).`}
                         onInput={inputHandler}
                         validators={[
+                            // TODO require at least a number and a uppercase char
                             getValidator(ValidationType.MinLength, RULE.PW_MIN_LEN),
                             getValidator(ValidationType.MaxLength, RULE.PW_MAX_LEN)
                         ]}

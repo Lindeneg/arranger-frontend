@@ -1,4 +1,4 @@
-import { ReactNode, Fragment, useRef } from 'react';
+import { ReactNode, Fragment, useRef, CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { CSSTransition } from 'react-transition-group';
 
@@ -13,6 +13,7 @@ interface ModalProps extends BaseProps, OptCls, Visibility {
     contentCls?: string;
     footerCls?: string;
     footerNodes?: ReactNode;
+    formStyles?: CSSProperties;
     onSubmit?: OnSubmitFunc;
 }
 
@@ -44,7 +45,10 @@ const Modal: Portal<ModalProps> = (props) => {
                         <header className={[classes.Header, props.headerCls].join(' ')}>
                             <h2>{props.headerText}</h2>
                         </header>
-                        <form onSubmit={props.onSubmit ? props.onSubmit : (event) => event.preventDefault()}>
+                        <form
+                            onSubmit={props.onSubmit ? props.onSubmit : (event) => event.preventDefault()}
+                            style={props.formStyles}
+                        >
                             <div className={[classes.Content, props.contentCls].join(' ')}>{props.children}</div>
                             <footer className={[classes.Footer, props.footerCls].join(' ')}>{props.footerNodes}</footer>
                         </form>
