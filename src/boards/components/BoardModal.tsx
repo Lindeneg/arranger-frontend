@@ -54,7 +54,7 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                     Authorization: 'Bearer ' + authContext.token
                 }
             );
-            res && history.push('/');
+            res && history.push('/board/' + res._id);
         } catch (err) {
             devLog(err);
         }
@@ -70,7 +70,13 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                 onSubmit={onSubmitHandler}
                 formStyles={{ backgroundColor: '#0f3460', color: '#ccc', boxShadow: 'unset' }}
             >
-                <Card>
+                <Card
+                    style={{
+                        backgroundColor: inputState.inputs.color.value
+                            ? inputState.inputs.color.value.toString()
+                            : BoardColor.Default
+                    }}
+                >
                     {isLoading && <Spinner asOverlay />}
                     <Input
                         id="name"

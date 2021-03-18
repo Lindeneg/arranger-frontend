@@ -37,11 +37,14 @@ const BoardList: Functional<BoardListProps> = (props) => {
                     </Card>
                 </div>
             ) : (
+                <Fragment>
                 <ul className={classes.List}>
                     {props.boards.map((board) => (
                         <BoardListItem {...board} key={board._id} />
                     ))}
                 </ul>
+                <Button inverse onClick={onOpenModal} style={{width: '100%', marginRight: '0'}}>NEW BOARD</Button>
+                </Fragment>
             )}
         </Fragment>
     );
