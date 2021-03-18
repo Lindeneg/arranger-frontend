@@ -129,8 +129,8 @@ const Input: Functional<InputProps> = (props) => {
         <div
             className={[
                 classes.Control,
-                !state.isValid && state.isTouched && classes.Invalid,
-                state.isValid && state.isTouched && classes.Valid
+                !state.isValid && state.isTouched ? classes.Invalid : null,
+                state.isValid && state.isTouched ? classes.Valid : null
             ].join(' ')}
         >
             <label htmlFor={props.id}>{props.label}</label>
