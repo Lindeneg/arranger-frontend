@@ -24,6 +24,11 @@ const NavLinks: Functional = (props) => {
             {authContext.isLoggedIn && (
                 <Fragment>
                     <li>
+                        <NavLink activeClassName={classes.Active} to="/boards">
+                            MY BOARDS
+                        </NavLink>
+                    </li>
+                    <li>
                         <NavLink activeClassName={classes.Active} to="/profile">
                             EDIT PROFILE
                         </NavLink>
