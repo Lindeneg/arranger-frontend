@@ -38,6 +38,14 @@
     color: #ccc;
 }
 
+.Selector option {
+    font-family: serif;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 3;
+    padding: 10px;
+}
+
 .Invalid input,
 .Invalid textarea {
     border-color: red;

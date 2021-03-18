@@ -31,7 +31,11 @@ body {
     background: white;
 }
 
-/*https://colorhunt.co/palette/265243*/
-/*https://colorhunt.co/palette/264739*/
+hr {
+    border: 1px solid dimgray;
+    width: 100%;
+}
 
+/*https://colorhunt.co/palette/2    65243*/
+/*https://colorhunt.co/palette/264739*/
 /*https://colorhunt.co/palette/201882*/
