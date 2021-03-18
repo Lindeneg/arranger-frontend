@@ -62,11 +62,35 @@ const Auth: Functional = (props) => {
     return (
         <Fragment>
             {error && <ErrorModal onClear={clearError} error={error} show={!!error} />}
-            <Card className={classes.Auth} style={{ maxWidth: '40rem' }}>
+            <div className={classes.Intro}>
+                <h2>Arranger </h2>
+                <p> Kanban-style, list-making application for managing workflows</p>
+                <hr />
+                <p>
+                    This application was mainly inspired by a{' '}
+                    <a href="https://billboard.soutendijk.org" target="_blank" rel="noreferrer">
+                        project
+                    </a>{' '}
+                    made by a former colleague.
+                </p>
+                <p>
+                    I wanted to give my shot at creating a similar tool as well as implementing some features of{' '}
+                    <a href="https://trello.com" target="_blank" rel="noreferrer">
+                        Trello
+                    </a>
+                    .
+                </p>
+                <p>Arranger allows management of boards, categories, cards and checklists</p>
+            </div>
+            {!authContext.isLoggedIn && <Card className={classes.Auth} style={{ maxWidth: '40rem' }}>
                 {isLoading && <Spinner asOverlay />}
                 <h2 className={classes.Header}>{isInLoginMode ? 'PLEASE LOGIN' : 'PLEASE SIGN UP'}</h2>
                 <hr />
-                <form className="generic__form-wrapper" style={{backgroundColor: 'inherit', color: '#ccc'}} onSubmit={onSubmitHandler}>
+                <form
+                    className="generic__form-wrapper"
+                    style={{ backgroundColor: 'inherit', color: '#ccc' }}
+                    onSubmit={onSubmitHandler}
+                >
                     <Input
                         id="username"
                         label="USERNAME"
@@ -103,7 +127,7 @@ const Auth: Functional = (props) => {
                 <Button inverse type="button" onClick={onToggleModeHandler}>
                     {isInLoginMode ? 'SWITCH TO SIGNUP' : 'SWITCH TO LOGIN'}
                 </Button>
-            </Card>
+            </Card>}
         </Fragment>
     );
 };
