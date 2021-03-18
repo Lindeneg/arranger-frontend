@@ -34,6 +34,10 @@
     color: red;
 }
 
+.Selector {
+    color: #ccc;
+}
+
 .Invalid input,
 .Invalid textarea {
     border-color: red;

@@ -17,7 +17,9 @@ import {
     OnSubmitFunc,
     devLog,
     getURL,
-    BaseProps
+    BaseProps,
+    BoardColor,
+    colorName
 } from '../../common/util';
 
 interface BoardModalProps extends BaseProps {
@@ -32,7 +34,7 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
     const [inputState, inputHandler] = useForm({
         inputs: {
             name: { value: '', isValid: false },
-            color: { value: '', isValid: false }
+            color: { value: '', isValid: true }
         },
         isValid: false
     });
@@ -41,17 +43,18 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
         event.preventDefault();
         try {
             const res: BoardResponse<string[], string[], string[]> | void = await sendRequest(
-                getURL('places'),
+                getURL('boards'),
                 'POST',
                 JSON.stringify({
                     name: inputState.inputs.name.value,
-                    color: inputState.inputs.color.value
+                    color: inputState.inputs.color.value || BoardColor.Default
                 }),
                 {
+                    'Content-Type': 'application/json',
                     Authorization: 'Bearer ' + authContext.token
                 }
             );
-            res && history.push('/board/' + res._id);
+            res && history.push('/');
         } catch (err) {
             devLog(err);
         }
@@ -83,9 +86,18 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                         onInput={inputHandler}
                         type="text"
                         label="Board Color"
-                        element="input"
-                        errorText="Please enter a valid name (max 12 characters)"
-                        validators={[getValidator(ValidationType.Require), getValidator(ValidationType.MaxLength, 12)]}
+                        element="select"
+                        selectOptions={Object.keys(colorName).map((key) => ({
+                            bg: key,
+                            value: key,
+                            c: '#ccc'
+                        }))}
+                        selectStyle={{
+                            backgroundColor: inputState.inputs.color.value
+                                ? inputState.inputs.color.value.toString()
+                                : BoardColor.Default
+                        }}
+                        valid={true}
                     />
                     <Button type="submit" disabled={!inputState.isValid}>
                         SUBMIT

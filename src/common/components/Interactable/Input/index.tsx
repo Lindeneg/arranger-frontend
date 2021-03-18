@@ -1,13 +1,15 @@
-import { useReducer, useEffect } from 'react';
+import { useReducer, useEffect, CSSProperties } from 'react';
 
 import inputReducer from './reducer';
 import InputAction from './actions';
 import {
     BaseProps,
+    colorName,
     Functional,
     Identifiable,
     OnBlur,
     OnChange,
+    OnClickFunc,
     UseReducerTuple,
     ValidationValue,
     Validator
@@ -16,7 +18,7 @@ import classes from './Input.module.css';
 
 interface InputProps extends BaseProps, Partial<Identifiable> {
     onInput: (...args: any[]) => void;
-    element: 'input' | 'text-area';
+    element: 'input' | 'text-area' | 'select';
     type?: 'text' | 'number' | 'email' | 'password';
     value?: string | number;
     label?: string;
@@ -25,6 +27,9 @@ interface InputProps extends BaseProps, Partial<Identifiable> {
     rows?: number;
     valid?: boolean;
     validators?: Validator[];
+    selectOptions?: { bg: string; value: string; c?: string }[];
+    selectStyle?: CSSProperties;
+    onClick?: OnClickFunc;
 }
 
 export interface InputState {
@@ -46,7 +51,7 @@ const Input: Functional<InputProps> = (props) => {
         isTouched: false
     });
 
-    const onChangeHandler: OnChange<HTMLInputElement | HTMLTextAreaElement> = (event) => {
+    const onChangeHandler: OnChange<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> = (event) => {
         dispatch({
             type: InputAction.CHANGE,
             payload: {
@@ -56,7 +61,7 @@ const Input: Functional<InputProps> = (props) => {
         });
     };
 
-    const onTouchHandler: OnBlur<HTMLInputElement | HTMLTextAreaElement> = (event) => {
+    const onTouchHandler: OnBlur<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> = (event) => {
         dispatch({ type: InputAction.TOUCH, payload: {} });
     };
 
@@ -90,6 +95,29 @@ const Input: Functional<InputProps> = (props) => {
                     onBlur={onTouchHandler}
                     value={state.value?.toString()}
                 />
+            );
+            break;
+        case 'select':
+            element = (
+                <select
+                    style={props.selectStyle}
+                    onChange={onChangeHandler}
+                    id={props.id}
+                    value={state.value?.toString()}
+                    onClick={props.onClick}
+                    className={classes.Selector}
+                >
+                    {(props.selectOptions ? props.selectOptions : []).map((option, index) => (
+                        <option
+                            key={index}
+                            style={{ backgroundColor: option.bg, color: option.c }}
+                            value={option.value}
+                            className={classes.Option}
+                        >
+                            {colorName[option.value]}
+                        </option>
+                    ))}
+                </select>
             );
             break;
         default:
