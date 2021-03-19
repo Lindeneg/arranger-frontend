@@ -10,7 +10,7 @@ interface SpinnerProps extends BaseProps {
  */
 
 const Spinner: Functional<SpinnerProps> = (props) => (
-    <div className={`${props.asOverlay && classes.Overlay}`}>
+    <div className={`${props.asOverlay && classes.Overlay}`} style={props.style}>
         <div className={classes.Spinner}></div>
     </div>
 );

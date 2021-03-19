@@ -54,7 +54,11 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                 props.update ? 'PATCH' : 'POST',
                 JSON.stringify({
                     name: inputState.inputs.name.value,
-                    color: inputState.inputs.color.value || BoardColor.Default
+                    color: inputState.inputs.color.value
+                        ? inputState.inputs.color.value
+                        : props.update
+                        ? props.update.color
+                        : BoardColor.Default
                 }),
                 {
                     'Content-Type': 'application/json',
@@ -86,7 +90,7 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                             : BoardColor.Default
                     }}
                 >
-                    {isLoading && <Spinner asOverlay />}
+                    {isLoading && <Spinner style={{ backgroundColor: '#0f3460' }} asOverlay />}
                     <Input
                         id="name"
                         onInput={inputHandler}
