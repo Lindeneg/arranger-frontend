@@ -7,13 +7,12 @@ export enum HTMLHooks {
     Modal = 'modal-hook'
 }
 
-// TODO these are temp colors
 export enum BoardColor {
     Default = '#0f3460',
-    Red = 'red',
-    Purple = 'purple',
-    Green = 'green',
-    Orange = 'orange'
+    Red = '#821111',
+    Purple = '#511254',
+    Green = '#0f4d11',
+    Dark = '#2b2b2a'
 }
 
 export const RULE = {
@@ -30,5 +29,5 @@ export const colorName: SIndexable<string> = {
     [BoardColor.Red]: 'Red',
     [BoardColor.Purple]: 'Purple',
     [BoardColor.Green]: 'Green',
-    [BoardColor.Orange]: 'Orange'
+    [BoardColor.Dark]: 'Dark'
 };

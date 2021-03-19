@@ -87,7 +87,7 @@ const Board: Functional<BoardProps> = (props) => {
                         <div className={classes.BtnCon}>
                             {confirmDelete ? (
                                 <Fragment>
-                                    <Button type="button" onClick={onDeleteHandler} danger>
+                                    <Button type="button" onClick={onDeleteHandler} inverse>
                                         YES
                                     </Button>
                                     <Button type="button" onClick={onConfirmDeny}>
