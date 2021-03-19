@@ -15,12 +15,7 @@ import {
     ListResponse
 } from '../../../common/util';
 
-// TODO this is needlessly over-complicated and redundant. redo the response types asap
-export type BoardResponse = IBoardResponse<
-    string[],
-    CardResponse<string[]>[],
-    ListResponse<string[], CardResponse<string[]>[]>[]
->;
+export type BoardResponse = IBoardResponse<ListResponse<CardResponse<string[]>[]>[]>;
 
 const UserBoard: Functional = (props) => {
     const boardId = useParams<{ boardId: string }>().boardId;

@@ -37,7 +37,7 @@ interface BoardModalProps extends BaseProps {
 const BoardModal: Functional<BoardModalProps> = (props) => {
     const history = useHistory();
     const authContext = useContext(AuthContext);
-    const { isLoading, error, clearError, sendRequest } = useHttp<BoardResponse<string[], string[], string[]>>();
+    const { isLoading, error, clearError, sendRequest } = useHttp<BoardResponse<string[]>>();
     const [inputState, inputHandler] = useForm({
         inputs: {
             name: { value: props.update ? props.update.name : '', isValid: typeof props.update !== 'undefined' },
@@ -49,7 +49,7 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
     const onSubmitHandler: OnSubmitFunc = async (event) => {
         event.preventDefault();
         try {
-            const res: BoardResponse<string[], string[], string[]> | void = await sendRequest(
+            const res: BoardResponse<string[]> | void = await sendRequest(
                 getURL('boards' + (props.update ? `/${props.update.id}` : '')),
                 props.update ? 'PATCH' : 'POST',
                 JSON.stringify({
@@ -90,7 +90,7 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                             : BoardColor.Default
                     }}
                 >
-                    {isLoading && <Spinner style={{ backgroundColor: '#0f3460' }} asOverlay />}
+                    {isLoading && <Spinner style={{ backgroundColor: props.update ? props.update.color : BoardColor.Default }} asOverlay />}
                     <Input
                         id="name"
                         onInput={inputHandler}

@@ -101,19 +101,14 @@ export interface UserAuthResponse {
     token: string;
 }
 
-export interface BoardResponse<
-    CH extends SArrUnion<ChecklistResponse>,
-    CA extends SArrUnion<CardResponse<CH>>,
-    LI extends SArrUnion<ListResponse<CH, CA>>
-> extends IResponse {
+export interface BoardResponse<LI extends SArrUnion<ListResponse<SArrUnion<CardResponse<string[]>>>>>
+    extends IResponse {
     color: string;
     owner: string;
     lists: LI;
 }
 
-export interface ListResponse<CH extends SArrUnion<ChecklistResponse>, CA extends SArrUnion<CardResponse<CH>>>
-    extends IResponse,
-        Ownership {
+export interface ListResponse<CA extends SArrUnion<CardResponse<string[]>>> extends IResponse, Ownership {
     cards: CA;
 }
 

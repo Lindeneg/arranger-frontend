@@ -11,7 +11,7 @@ import { getURL, devLog, Functional, BoardResponse as IBoardResponse } from '../
  * Component with list of Boards tied to a given User.
  */
 
-type BoardResponse = IBoardResponse<string[], string[], string[]>;
+type BoardResponse = IBoardResponse<string[]>;
 
 const UserBoards: Functional = (props) => {
     const authContext = useContext(AuthContext);

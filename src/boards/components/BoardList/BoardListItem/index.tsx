@@ -4,7 +4,7 @@ import Card from '../../../../common/components/Interface/Card';
 import { BaseProps, BoardResponse, Functional, getCustomDateStringFromTimestamp } from '../../../../common/util';
 import classes from './BoardListItem.module.css';
 
-interface BoardListProps extends BaseProps, BoardResponse<string[], string[], string[]> {}
+interface BoardListProps extends BaseProps, BoardResponse<string[]> {}
 
 const BoardListItem: Functional<BoardListProps> = (props) => {
     const history = useHistory();

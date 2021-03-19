@@ -8,7 +8,7 @@ import { BaseProps, BoardResponse, Functional } from '../../../common/util';
 import classes from './BoardList.module.css';
 
 interface BoardListProps extends BaseProps {
-    boards: BoardResponse<string[], string[], string[]>[];
+    boards: BoardResponse<string[]>[];
 }
 
 /**
