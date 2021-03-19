@@ -106,7 +106,7 @@ const Board: Functional<BoardProps> = (props) => {
                             )}
                         </div>
                         <hr />
-                        <Lists />
+                        <Lists lists={props.board.lists} boardColor={props.board.color} boardId={props.board._id} />
                     </div>
                 </Card>
             )}
