@@ -1,7 +1,7 @@
-import { Fragment, useContext } from 'react';
+import { Fragment, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { useForm, useHttp } from '../../common/hooks';
+import { useForm, useHttp, Entry } from '../../common/hooks';
 import { AuthContext } from '../../common/context';
 import Card from '../../common/components/Interface/Card';
 import Modal from '../../common/components/Interface/Modal';
@@ -38,13 +38,30 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
     const history = useHistory();
     const authContext = useContext(AuthContext);
     const { isLoading, error, clearError, sendRequest } = useHttp<BoardResponse<string[]>>();
-    const [inputState, inputHandler] = useForm({
+    const [inputState, inputHandler, setInputState] = useForm({
         inputs: {
-            name: { value: props.update ? props.update.name : '', isValid: typeof props.update !== 'undefined' },
-            color: { value: props.update ? props.update.color : '', isValid: true }
+            name: { value: '', isValid: false },
+            color: { value: BoardColor.Default, isValid: true }
         },
-        isValid: typeof props.update !== 'undefined'
+        isValid: false
     });
+
+    useEffect(() => {
+        const inputs: Entry = {
+            name: { value: '', isValid: false },
+            color: { value: BoardColor.Default, isValid: true }
+        };
+        if (props.update) {
+            inputs.name.value = props.update.name;
+            inputs.name.isValid = true;
+            inputs.color.value = props.update.color;
+            inputs.color.isValid = true;
+        }
+        setInputState({
+            inputs,
+            isValid: inputs.name.isValid && inputs.color.isValid
+        });
+    }, [props.update, setInputState]);
 
     const onSubmitHandler: OnSubmitFunc = async (event) => {
         event.preventDefault();
@@ -55,10 +72,6 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                 JSON.stringify({
                     name: inputState.inputs.name.value,
                     color: inputState.inputs.color.value
-                        ? inputState.inputs.color.value
-                        : props.update
-                        ? props.update.color
-                        : BoardColor.Default
                 }),
                 {
                     'Content-Type': 'application/json',
@@ -70,7 +83,7 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
             devLog(err);
         }
     };
-
+    console.log(inputState.inputs);
     return (
         <Fragment>
             <ErrorModal show={!!error} error={error} onClear={clearError} />
@@ -81,16 +94,10 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                 onSubmit={onSubmitHandler}
                 formStyles={{ backgroundColor: '#0f3460', color: '#ccc', boxShadow: 'unset' }}
             >
-                <Card
-                    style={{
-                        backgroundColor: inputState.inputs.color.value
-                            ? inputState.inputs.color.value.toString()
-                            : props.update
-                            ? props.update.color
-                            : BoardColor.Default
-                    }}
-                >
-                    {isLoading && <Spinner style={{ backgroundColor: props.update ? props.update.color : BoardColor.Default }} asOverlay />}
+                <Card style={{ backgroundColor: inputState.inputs.color.value?.toString() }}>
+                    {isLoading && (
+                        <Spinner style={{ backgroundColor: inputState.inputs.color.value?.toString() }} asOverlay />
+                    )}
                     <Input
                         id="name"
                         onInput={inputHandler}
@@ -99,8 +106,8 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                         element="input"
                         errorText="Please enter a valid name (max 12 characters)"
                         validators={[getValidator(ValidationType.Require), getValidator(ValidationType.MaxLength, 12)]}
-                        value={props.update ? props.update.name : ''}
-                        valid={typeof props.update !== 'undefined'}
+                        value={inputState.inputs.name.value?.toString()}
+                        valid={inputState.inputs.name.isValid}
                     />
                     <Input
                         id="color"
@@ -110,11 +117,7 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                         element="select"
                         selectOptions={getColorsWithSelectedFirst(inputState, props.update)}
                         selectStyle={{
-                            backgroundColor: inputState.inputs.color.value
-                                ? inputState.inputs.color.value.toString()
-                                : props.update
-                                ? props.update.color
-                                : BoardColor.Default
+                            backgroundColor: inputState.inputs.color.value?.toString() || BoardColor.Default
                         }}
                         valid={true}
                     />
