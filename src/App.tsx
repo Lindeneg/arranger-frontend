@@ -2,6 +2,7 @@ import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
 import Navigation from './common/components/Maneuverable/Navigation';
 import UserBoards from './boards/pages/UserBoards';
+import UserBoard from './boards/pages/UserBoard';
 import Auth from './user/pages/Auth';
 import { AuthContext } from './common/context';
 import { useAuth, IAuthHook } from './common/hooks';
@@ -28,7 +29,7 @@ const App: Functional = () => {
                                 <div>PROFILE</div>
                             </Route>
                             <Route path="/board/:boardId" exact>
-                                <div>BOARD</div>
+                                <UserBoard />
                             </Route>
                             <Redirect to="/boards" />
                         </Switch>

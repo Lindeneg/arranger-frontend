@@ -1,7 +1,57 @@
-import { Functional } from '../../../common/util';
+import { useState, useEffect, useContext, Fragment } from 'react';
+import { useParams } from 'react-router-dom';
+
+import Board from '../../components/Board';
+import { useHttp } from '../../../common/hooks';
+import { AuthContext } from '../../../common/context';
+import Spinner from '../../../common/components/Interface/Spinner';
+import ErrorModal from '../../../common/components/Interface/Modal/ErrorModal';
+import {
+    getURL,
+    devLog,
+    Functional,
+    BoardResponse as IBoardResponse,
+    CardResponse,
+    ListResponse
+} from '../../../common/util';
+
+// TODO this is needlessly over-complicated and redundant. redo the response types asap
+export type BoardResponse = IBoardResponse<
+    string[],
+    CardResponse<string[]>[],
+    ListResponse<string[], CardResponse<string[]>[]>[]
+>;
 
 const UserBoard: Functional = (props) => {
-    return <div></div>;
+    const boardId = useParams<{ boardId: string }>().boardId;
+    const authContext = useContext(AuthContext);
+    const { isLoading, error, clearError, sendRequest } = useHttp<BoardResponse>();
+    const [board, setBoard] = useState<BoardResponse | null>(null);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const res: BoardResponse | void = await sendRequest(getURL(`boards/${boardId}`), 'GET', null, {
+                    Authorization: 'Bearer ' + authContext.token
+                });
+                res && setBoard(res);
+            } catch (err) {
+                devLog(err);
+            }
+        })();
+    }, [sendRequest, boardId, authContext.token]);
+
+    return (
+        <Fragment>
+            <ErrorModal onClear={clearError} error={error} show={!!error} />
+            {isLoading && (
+                <div className="center">
+                    <Spinner asOverlay />
+                </div>
+            )}
+            {!isLoading && board && <Board board={board} />}
+        </Fragment>
+    );
 };
 
 export default UserBoard;

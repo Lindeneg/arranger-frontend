@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 import { getLocalV, removeLocalV, setLocalV, StoredData, Login } from '../../common/util';
 
@@ -15,8 +15,8 @@ export interface IAuthHook {
 
 export const useAuth = (): IAuthHook => {
     const data = getLocalV<StoredData>();
-    const [userId, setUserId] = useState<string>(data ? data._id : '');
-    const [token, setToken] = useState<string>(data ? data._token : '');
+    const [userId, setUserId] = useState<string>(data && Date.now() < data._expires ? data._id : '');
+    const [token, setToken] = useState<string>(data && Date.now() < data._expires ? data._token : '');
 
     const login = useCallback((userId: string, responseToken: string, tokenExpire?: number) => {
         const expires: number = tokenExpire || Date.now() + 1000 * 60 * 60;
@@ -30,13 +30,6 @@ export const useAuth = (): IAuthHook => {
         setToken('');
         removeLocalV();
     }, []);
-
-    useEffect(() => {
-        const data = getLocalV<StoredData>();
-        if (data && data._id && data._token && data._expires && Date.now() < data._expires) {
-            login(data._id, data._token, data._expires);
-        }
-    }, [login]);
 
     return { token, userId, login, logout };
 };

@@ -30,7 +30,7 @@ export const getCustomDateStringFromTimestamp = (ts: number): string | null => {
         } else {
             suffix = 'TH';
         }
-        return MONTHS[month] + ' ' + day + suffix;
+        return (MONTHS[month] + ' ' + day + suffix).toLowerCase();
     }
     return null;
 };
