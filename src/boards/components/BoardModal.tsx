@@ -19,7 +19,8 @@ import {
     getURL,
     BaseProps,
     BoardColor,
-    getColorsWithSelectedFirst
+    getColorsWithSelectedFirst,
+    RULE
 } from '../../common/util';
 
 export interface BoardUpdateProps {
@@ -83,7 +84,6 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
             devLog(err);
         }
     };
-    console.log(inputState.inputs);
     return (
         <Fragment>
             <ErrorModal show={!!error} error={error} onClear={clearError} />
@@ -104,8 +104,11 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                         type="text"
                         label="Board Name"
                         element="input"
-                        errorText="Please enter a valid name (max 12 characters)"
-                        validators={[getValidator(ValidationType.Require), getValidator(ValidationType.MaxLength, 12)]}
+                        errorText={`Please enter a valid name (at most ${RULE.DEFAULT_MAX_LEN} characters)`}
+                        validators={[
+                            getValidator(ValidationType.Require),
+                            getValidator(ValidationType.MaxLength, RULE.DEFAULT_MAX_LEN)
+                        ]}
                         value={inputState.inputs.name.value?.toString()}
                         valid={inputState.inputs.name.isValid}
                     />
