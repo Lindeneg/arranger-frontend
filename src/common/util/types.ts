@@ -133,6 +133,10 @@ export interface StoredData {
     _expires: number;
 }
 
+export interface DeleteResponse {
+    message: string;
+}
+
 /**********************
  ****** ACTIONS  ******
  **********************/

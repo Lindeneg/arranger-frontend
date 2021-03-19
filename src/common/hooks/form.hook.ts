@@ -9,7 +9,7 @@ interface MetaEntry extends SIndexable<ValidationValue | boolean> {
 
 interface Entry extends SIndexable<MetaEntry> {}
 
-interface State extends SIndexable<Entry | boolean> {
+export interface State extends SIndexable<Entry | boolean> {
     inputs: Entry;
     isValid: boolean;
 }

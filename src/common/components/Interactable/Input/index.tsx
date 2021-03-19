@@ -27,9 +27,15 @@ interface InputProps extends BaseProps, Partial<Identifiable> {
     rows?: number;
     valid?: boolean;
     validators?: Validator[];
-    selectOptions?: { bg: string; value: string; c?: string }[];
+    selectOptions?: SelectOptions[];
     selectStyle?: CSSProperties;
     onClick?: OnClickFunc;
+}
+
+export interface SelectOptions {
+    bg: string;
+    value: string;
+    c?: string;
 }
 
 export interface InputState {

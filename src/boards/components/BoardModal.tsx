@@ -19,12 +19,19 @@ import {
     getURL,
     BaseProps,
     BoardColor,
-    colorName
+    getColorsWithSelectedFirst
 } from '../../common/util';
+
+export interface BoardUpdateProps {
+    id: string;
+    name: string;
+    color: string;
+}
 
 interface BoardModalProps extends BaseProps {
     show: boolean;
     onClose: () => void;
+    update?: BoardUpdateProps;
 }
 
 const BoardModal: Functional<BoardModalProps> = (props) => {
@@ -33,18 +40,18 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
     const { isLoading, error, clearError, sendRequest } = useHttp<BoardResponse<string[], string[], string[]>>();
     const [inputState, inputHandler] = useForm({
         inputs: {
-            name: { value: '', isValid: false },
-            color: { value: '', isValid: true }
+            name: { value: props.update ? props.update.name : '', isValid: typeof props.update !== 'undefined' },
+            color: { value: props.update ? props.update.color : '', isValid: true }
         },
-        isValid: false
+        isValid: typeof props.update !== 'undefined'
     });
 
     const onSubmitHandler: OnSubmitFunc = async (event) => {
         event.preventDefault();
         try {
             const res: BoardResponse<string[], string[], string[]> | void = await sendRequest(
-                getURL('boards'),
-                'POST',
+                getURL('boards' + (props.update ? `/${props.update.id}` : '')),
+                props.update ? 'PATCH' : 'POST',
                 JSON.stringify({
                     name: inputState.inputs.name.value,
                     color: inputState.inputs.color.value || BoardColor.Default
@@ -54,7 +61,7 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                     Authorization: 'Bearer ' + authContext.token
                 }
             );
-            res && history.push('/board/' + res._id);
+            res && history.push('/board' + (props.update ? '' : '/' + res._id));
         } catch (err) {
             devLog(err);
         }
@@ -66,7 +73,7 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
             <Modal
                 show={props.show && !error}
                 onClose={props.onClose}
-                headerText="Create Board"
+                headerText={props.update ? 'Update Board' : 'Create Board'}
                 onSubmit={onSubmitHandler}
                 formStyles={{ backgroundColor: '#0f3460', color: '#ccc', boxShadow: 'unset' }}
             >
@@ -74,6 +81,8 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                     style={{
                         backgroundColor: inputState.inputs.color.value
                             ? inputState.inputs.color.value.toString()
+                            : props.update
+                            ? props.update.color
                             : BoardColor.Default
                     }}
                 >
@@ -86,6 +95,8 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                         element="input"
                         errorText="Please enter a valid name (max 12 characters)"
                         validators={[getValidator(ValidationType.Require), getValidator(ValidationType.MaxLength, 12)]}
+                        value={props.update ? props.update.name : ''}
+                        valid={typeof props.update !== 'undefined'}
                     />
                     <Input
                         id="color"
@@ -93,14 +104,12 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                         type="text"
                         label="Board Color"
                         element="select"
-                        selectOptions={Object.keys(colorName).map((key) => ({
-                            bg: key,
-                            value: key,
-                            c: '#ccc'
-                        }))}
+                        selectOptions={getColorsWithSelectedFirst(inputState, props.update)}
                         selectStyle={{
                             backgroundColor: inputState.inputs.color.value
                                 ? inputState.inputs.color.value.toString()
+                                : props.update
+                                ? props.update.color
                                 : BoardColor.Default
                         }}
                         valid={true}

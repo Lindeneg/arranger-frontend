@@ -1,3 +1,8 @@
+import { BoardUpdateProps } from '../../boards/components/BoardModal';
+import { SelectOptions } from '../components/Interactable/Input';
+import { State as FormState } from '../hooks';
+import { colorName } from './constants';
+
 const MONTHS: string[] = [
     'JANUARY',
     'FEBRUARY',
@@ -59,3 +64,32 @@ export function getLocalV<T>(key: string = '_arngrprv', parse: boolean = true): 
     }
     return null;
 }
+
+export const getColorsWithSelectedFirst = (inputState: FormState, update?: BoardUpdateProps): SelectOptions[] => {
+    const keys: string[] = Object.keys(colorName);
+    const color: string | null = inputState.inputs.color.value
+        ? inputState.inputs.color.value.toString()
+        : update
+        ? update.color
+        : null;
+    let firstElement: SelectOptions | null = null;
+    if (color !== null) {
+        for (let i = 0; i < keys.length; i++) {
+            const key: string = keys[i].toString();
+            if (key === color) {
+                firstElement = { bg: key, value: key, c: '#ccc' };
+                break;
+            }
+        }
+    }
+    return [
+        ...(firstElement ? [firstElement] : []),
+        ...keys
+            .filter((e) => e !== firstElement?.value)
+            .map((key) => ({
+                bg: key,
+                value: key,
+                c: '#ccc'
+            }))
+    ];
+};

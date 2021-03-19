@@ -1,10 +1,16 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 
+import { useHttp } from '../../common/hooks';
+import { AuthContext } from '../../common/context';
+import BoardModal from './BoardModal';
 import Lists from '../../lists/components/Lists';
+import ErrorModal from '../../common/components/Interface/Modal/ErrorModal';
+import Spinner from '../../common/components/Interface/Spinner';
 import Card from '../../common/components/Interface/Card';
 import Button from '../../common/components/Interactable/Button';
-import { BaseProps, Functional } from '../../common/util';
 import { BoardResponse } from '../pages/UserBoard';
+import { BaseProps, devLog, Functional, DeleteResponse, getURL } from '../../common/util';
 import classes from './Board.module.css';
 
 interface BoardProps extends BaseProps {
@@ -12,11 +18,27 @@ interface BoardProps extends BaseProps {
 }
 
 const Board: Functional<BoardProps> = (props) => {
+    const history = useHistory();
+    const authContext = useContext(AuthContext);
+    const { isLoading, error, clearError, sendRequest } = useHttp<DeleteResponse>();
     const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+    const [showModal, setShowModal] = useState<boolean>(false);
 
-    const onDeleteHandler = (): void => {
+    const onDeleteHandler = async () => {
         if (confirmDelete) {
-            console.log('deleting board');
+            try {
+                const res: DeleteResponse | void = await sendRequest(
+                    getURL('boards/' + props.board._id),
+                    'DELETE',
+                    null,
+                    { Authorization: 'Bearer ' + authContext.token }
+                );
+                res && history.push('/boards');
+            } catch (err) {
+                devLog(err);
+            }
+        } else {
+            devLog('warning: trying to delete board without user confirmation');
         }
     };
 
@@ -28,42 +50,67 @@ const Board: Functional<BoardProps> = (props) => {
         setConfirmDelete(false);
     };
 
-    const onUpdateBoardModalOpen = (): void => {
-        console.log('updating board');
+    const onModelOpen = (): void => {
+        setShowModal(true);
+    };
+
+    const onModelClose = (): void => {
+        setShowModal(false);
     };
 
     return (
-        <Card
-            style={{
-                backgroundColor: props.board.color
-            }}
-            className={classes.Card}
-        >
-            <div className={classes.Board}>
-                <h2>{confirmDelete ? 'ARE YOU SURE?' : props.board.name.toUpperCase()}</h2>
-                <div className={classes.BtnCon}>
-                    {confirmDelete ? (
-                        <Fragment>
-                            <Button onClick={onDeleteHandler} danger>
-                                CONFIRM
-                            </Button>
-                            <Button onClick={onConfirmDeny}>CANCEL</Button>
-                        </Fragment>
-                    ) : (
-                        <Fragment>
-                            <Button onClick={onUpdateBoardModalOpen} inverse>
-                                UPDATE BOARD
-                            </Button>
-                            <Button onClick={onConfirmAccept} inverse>
-                                DELETE BOARD
-                            </Button>
-                        </Fragment>
-                    )}
+        <Fragment>
+            <BoardModal
+                show={showModal}
+                onClose={onModelClose}
+                update={{
+                    id: props.board._id,
+                    name: props.board.name,
+                    color: props.board.color
+                }}
+            />
+            <ErrorModal show={!!error} error={error} onClear={clearError} />
+            {isLoading && (
+                <div className="center">
+                    <Spinner asOverlay />
                 </div>
-                <hr />
-                <Lists />
-            </div>
-        </Card>
+            )}
+            {!isLoading && (
+                <Card
+                    style={{
+                        backgroundColor: props.board.color
+                    }}
+                    className={classes.Card}
+                >
+                    <div className={classes.Board}>
+                        <h2>{confirmDelete ? 'ARE YOU SURE?' : props.board.name.toUpperCase()}</h2>
+                        <div className={classes.BtnCon}>
+                            {confirmDelete ? (
+                                <Fragment>
+                                    <Button type="button" onClick={onDeleteHandler} danger>
+                                        CONFIRM
+                                    </Button>
+                                    <Button type="button" onClick={onConfirmDeny}>
+                                        CANCEL
+                                    </Button>
+                                </Fragment>
+                            ) : (
+                                <Fragment>
+                                    <Button type="button" onClick={onModelOpen} inverse>
+                                        UPDATE BOARD
+                                    </Button>
+                                    <Button type="button" onClick={onConfirmAccept} inverse>
+                                        DELETE BOARD
+                                    </Button>
+                                </Fragment>
+                            )}
+                        </div>
+                        <hr />
+                        <Lists />
+                    </div>
+                </Card>
+            )}
+        </Fragment>
     );
 };
 
