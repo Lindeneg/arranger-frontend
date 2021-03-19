@@ -88,10 +88,10 @@ const Board: Functional<BoardProps> = (props) => {
                             {confirmDelete ? (
                                 <Fragment>
                                     <Button type="button" onClick={onDeleteHandler} danger>
-                                        CONFIRM
+                                        YES
                                     </Button>
                                     <Button type="button" onClick={onConfirmDeny}>
-                                        CANCEL
+                                        NO
                                     </Button>
                                 </Fragment>
                             ) : (
