@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { useHttp } from '../../common/hooks';
 import { AuthContext } from '../../common/context';
 import ListItem from './ListItem';
-import ListInteraction from './ListInteraction';
+import ListModal from './ListModal';
 import Card from '../../common/components/Interface/Card';
 import Button from '../../common/components/Interactable/Button';
 import ErrorModal from '../../common/components/Interface/Modal/ErrorModal';
@@ -21,7 +21,7 @@ interface ListsProps extends BaseProps {
 }
 
 /**
- * Component with list of Boards that also allows creation of board.
+ * List component. Acts as a wrapper for child Cards and as a drop-target for DragType List.
  */
 
 const Lists: Functional<ListsProps> = (props) => {
@@ -90,7 +90,7 @@ const Lists: Functional<ListsProps> = (props) => {
     return (
         <Fragment>
             <ErrorModal show={!!error} error={error} onClear={clearError} />
-            <ListInteraction
+            <ListModal
                 show={creating}
                 onClick={onCancelCreateHandler}
                 owningBoardId={props.boardId}

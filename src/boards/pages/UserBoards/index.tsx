@@ -7,11 +7,11 @@ import Spinner from '../../../common/components/Interface/Spinner';
 import ErrorModal from '../../../common/components/Interface/Modal/ErrorModal';
 import { getURL, devLog, Functional, BoardResponse as IBoardResponse } from '../../../common/util';
 
-/**
- * Component with list of Boards tied to a given User.
- */
-
 type BoardResponse = IBoardResponse<string[]>;
+
+/**
+ * Display list of User Boards.
+ */
 
 const UserBoards: Functional = (props) => {
     const authContext = useContext(AuthContext);

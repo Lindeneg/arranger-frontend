@@ -36,6 +36,10 @@ interface BoardModalProps extends BaseProps {
     update?: BoardUpdateProps;
 }
 
+/**
+ * Modal which allows creation or update of a Board.
+ */
+
 const BoardModal: Functional<BoardModalProps> = (props) => {
     const history = useHistory();
     const authContext = useContext(AuthContext);

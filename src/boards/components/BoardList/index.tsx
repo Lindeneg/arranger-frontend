@@ -12,7 +12,7 @@ interface BoardListProps extends BaseProps {
 }
 
 /**
- * Component with list of Boards that also allows creation of board.
+ * List of Boards with a Board thumbnail. Allows creation of a new Board if the Board list is empty.
  */
 
 const BoardList: Functional<BoardListProps> = (props) => {
@@ -38,12 +38,14 @@ const BoardList: Functional<BoardListProps> = (props) => {
                 </div>
             ) : (
                 <Fragment>
-                <ul className={classes.List}>
-                    {props.boards.map((board) => (
-                        <BoardListItem {...board} key={board._id} />
-                    ))}
-                </ul>
-                <Button inverse onClick={onOpenModal} style={{width: '100%', marginRight: '0'}}>NEW BOARD</Button>
+                    <ul className={classes.List}>
+                        {props.boards.map((board) => (
+                            <BoardListItem {...board} key={board._id} />
+                        ))}
+                    </ul>
+                    <Button inverse onClick={onOpenModal} style={{ width: '100%', marginRight: '0' }}>
+                        NEW BOARD
+                    </Button>
                 </Fragment>
             )}
         </Fragment>

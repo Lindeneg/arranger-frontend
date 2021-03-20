@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { useHttp } from '../../common/hooks';
 import { AuthContext } from '../../common/context';
 import BoardModal from './BoardModal';
-import ListInteraction from '../../lists/components/ListInteraction';
+import ListModal from '../../lists/components/ListModal';
 import Lists from '../../lists/components/Lists';
 import ErrorModal from '../../common/components/Interface/Modal/ErrorModal';
 import Spinner from '../../common/components/Interface/Spinner';
@@ -17,6 +17,11 @@ import classes from './Board.module.css';
 interface BoardProps extends BaseProps {
     board: BoardResponse;
 }
+
+/**
+ * Board component. Includes a header with Board name and controls for creation, updating or removal of Board.
+ * Wraps all Board child elements, such as lists, cards and checklists.
+ */
 
 const Board: Functional<BoardProps> = (props) => {
     const history = useHistory();
@@ -70,7 +75,7 @@ const Board: Functional<BoardProps> = (props) => {
 
     return (
         <Fragment>
-            <ListInteraction
+            <ListModal
                 show={creatingList}
                 onClick={onCreateListCancel}
                 owningBoardId={props.board._id}

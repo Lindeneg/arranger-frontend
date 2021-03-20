@@ -23,7 +23,7 @@ import {
     Visibility
 } from '../../common/util';
 
-interface ListInteractionProps extends BaseProps, Clickable, Visibility {
+interface ListModalProps extends BaseProps, Clickable, Visibility {
     owningBoardId: string;
     boardColor: string;
     update?: {
@@ -32,7 +32,11 @@ interface ListInteractionProps extends BaseProps, Clickable, Visibility {
     };
 }
 
-const ListInteraction: Functional<ListInteractionProps> = (props) => {
+/**
+ * Modal which allows creation, update or deletion of a List.
+ */
+
+const ListModal: Functional<ListModalProps> = (props) => {
     const history = useHistory();
     const authContext = useContext(AuthContext);
     const { isLoading, error, clearError, sendRequest } = useHttp<ListResponse<string[]>>();
@@ -135,4 +139,4 @@ const ListInteraction: Functional<ListInteractionProps> = (props) => {
     );
 };
 
-export default ListInteraction;
+export default ListModal;

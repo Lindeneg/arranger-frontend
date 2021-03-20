@@ -1,7 +1,8 @@
 import { Fragment, useState } from 'react';
 
+import Cards from '../../../cards/components/Cards';
 import Card from '../../../common/components/Interface/Card';
-import ListInteraction from '../ListInteraction';
+import ListModal from '../ListModal';
 import {
     BaseProps,
     CardResponse,
@@ -20,6 +21,10 @@ interface ListItemProps extends BaseProps, OptCls, ListResponse<CardResponse<str
     onDragOver: DragEventHandler<HTMLLIElement>;
 }
 
+/**
+ * Draggable List components. Allows update/deletion of List. Wraps all child Cards.
+ */
+
 const ListItem: Functional<ListItemProps> = (props) => {
     const [updating, setUpdating] = useState<boolean>(false);
 
@@ -33,7 +38,7 @@ const ListItem: Functional<ListItemProps> = (props) => {
 
     return (
         <Fragment>
-            <ListInteraction
+            <ListModal
                 show={updating}
                 onClick={onUpdateCancelHandler}
                 owningBoardId={props.boardId}
@@ -56,6 +61,7 @@ const ListItem: Functional<ListItemProps> = (props) => {
                         <h3 onClick={onUpdateAcceptHandler}>{props.name}</h3>
                     </div>
                     <hr style={{ marginTop: '0' }} />
+                    <Cards></Cards>
                 </Card>
             </li>
         </Fragment>

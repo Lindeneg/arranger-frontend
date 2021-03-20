@@ -17,6 +17,10 @@ import {
 
 export type BoardResponse = IBoardResponse<ListResponse<CardResponse<string[]>[]>[]>;
 
+/**
+ * Display a single User Board.
+ */
+
 const UserBoard: Functional = (props) => {
     const boardId = useParams<{ boardId: string }>().boardId;
     const authContext = useContext(AuthContext);

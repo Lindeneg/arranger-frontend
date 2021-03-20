@@ -8,6 +8,10 @@ interface ErrorModalProps extends BaseProps {
     show: boolean;
 }
 
+/**
+ * Error-specific Modal. Used for HTTP exceptions.
+ */
+
 const ErrorModal: Functional<ErrorModalProps> = (props) => {
     return (
         <Modal

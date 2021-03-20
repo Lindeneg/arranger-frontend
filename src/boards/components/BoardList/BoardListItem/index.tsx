@@ -6,6 +6,10 @@ import classes from './BoardListItem.module.css';
 
 interface BoardListProps extends BaseProps, BoardResponse<string[]> {}
 
+/**
+ * Board thumbnail for overview in a Board list.
+ */
+
 const BoardListItem: Functional<BoardListProps> = (props) => {
     const history = useHistory();
     return (
