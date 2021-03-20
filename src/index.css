@@ -36,6 +36,18 @@ hr {
     width: 100%;
 }
 
+::-webkit-scrollbar {
+    width: 1rem;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 /*https://colorhunt.co/palette/2    65243*/
 /*https://colorhunt.co/palette/264739*/
 /*https://colorhunt.co/palette/201882*/
