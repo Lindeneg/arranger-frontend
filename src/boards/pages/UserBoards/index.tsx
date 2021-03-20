@@ -1,7 +1,7 @@
 import { useState, useEffect, Fragment, useContext } from 'react';
 
 import { useHttp } from '../../../common/hooks';
-import { AuthContext } from '../../../common/context';
+import { AuthContext, ThemeContext } from '../../../common/context';
 import BoardList from '../../components/BoardList';
 import Spinner from '../../../common/components/Interface/Spinner';
 import ErrorModal from '../../../common/components/Interface/Modal/ErrorModal';
@@ -15,6 +15,7 @@ type BoardResponse = IBoardResponse<string[]>;
 
 const UserBoards: Functional = (props) => {
     const authContext = useContext(AuthContext);
+    const { resetColor } = useContext(ThemeContext);
     const { isLoading, error, clearError, sendRequest } = useHttp<BoardResponse[]>();
     const [boards, setBoards] = useState<BoardResponse[]>([]);
     const [didRequest, setDidRequest] = useState<boolean>(false);
@@ -38,6 +39,10 @@ const UserBoards: Functional = (props) => {
             }
         })();
     }, [sendRequest, authContext.userId, authContext.token]);
+
+    useEffect(() => {
+        resetColor();
+    }, [resetColor]);
 
     return (
         <Fragment>

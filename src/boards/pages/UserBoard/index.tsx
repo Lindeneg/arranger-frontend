@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import Board from '../../components/Board';
 import { useHttp } from '../../../common/hooks';
-import { AuthContext } from '../../../common/context';
+import { AuthContext, ThemeContext } from '../../../common/context';
 import Spinner from '../../../common/components/Interface/Spinner';
 import ErrorModal from '../../../common/components/Interface/Modal/ErrorModal';
 import {
@@ -24,6 +24,7 @@ export type BoardResponse = IBoardResponse<ListResponse<CardResponse<string[]>[]
 const UserBoard: Functional = (props) => {
     const boardId = useParams<{ boardId: string }>().boardId;
     const authContext = useContext(AuthContext);
+    const { setColor } = useContext(ThemeContext);
     const { isLoading, error, clearError, sendRequest } = useHttp<BoardResponse>();
     const [board, setBoard] = useState<BoardResponse | null>(null);
 
@@ -39,6 +40,12 @@ const UserBoard: Functional = (props) => {
             }
         })();
     }, [sendRequest, boardId, authContext.token]);
+
+    useEffect(() => {
+        if (board) {
+            setColor(board.color);
+        }
+    }, [setColor, board]);
 
     return (
         <Fragment>
