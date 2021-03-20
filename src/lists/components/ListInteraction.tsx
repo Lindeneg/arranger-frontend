@@ -6,6 +6,7 @@ import { AuthContext } from '../../common/context';
 import Card from '../../common/components/Interface/Card';
 import Button from '../../common/components/Interactable/Button';
 import ErrorModal from '../../common/components/Interface/Modal/ErrorModal';
+import Modal from '../../common/components/Interface/Modal';
 import Spinner from '../../common/components/Interface/Spinner';
 import Input from '../../common/components/Interactable/Input';
 import {
@@ -18,10 +19,11 @@ import {
     BaseProps,
     Clickable,
     RULE,
-    ListResponse
+    ListResponse,
+    Visibility
 } from '../../common/util';
 
-interface ListInteractionProps extends BaseProps, Clickable {
+interface ListInteractionProps extends BaseProps, Clickable, Visibility {
     owningBoardId: string;
     boardColor: string;
     update?: {
@@ -63,7 +65,7 @@ const ListInteraction: Functional<ListInteractionProps> = (props) => {
                     Authorization: 'Bearer ' + authContext.token
                 }
             );
-            res && history.push('/board/' + props.owningBoardId);
+            res && history.go(0);
         } catch (err) {
             devLog(err);
         }
@@ -72,9 +74,14 @@ const ListInteraction: Functional<ListInteractionProps> = (props) => {
     return (
         <Fragment>
             <ErrorModal show={!!error} error={error} onClear={clearError} />
-            <Card style={{ backgroundColor: props.boardColor }}>
-                {isLoading && <Spinner style={{ backgroundColor: props.boardColor }} asOverlay />}
-                <form onSubmit={onSubmitHandler}>
+            <Modal
+                show={props.show}
+                onClose={props.onClick}
+                onSubmit={onSubmitHandler}
+                headerText={(props.update ? 'Update' : 'Create') + ' List'}
+            >
+                <Card style={{ ...props.style, backgroundColor: props.boardColor }}>
+                    {isLoading && <Spinner style={{ backgroundColor: props.boardColor }} asOverlay />}
                     <Input
                         id="name"
                         onInput={inputHandler}
@@ -90,13 +97,18 @@ const ListInteraction: Functional<ListInteractionProps> = (props) => {
                         valid={inputState.inputs.name.isValid}
                     />
                     <Button type="submit" disabled={!inputState.isValid}>
-                        CREATE
+                        {props.update ? 'UPDATE' : 'CREATE'}
                     </Button>
+                    {props.update && (
+                        <Button type="button" inverse style={{float: 'right'}}>
+                            DELETE
+                        </Button>
+                    )}
                     <Button type="button" inverse onClick={props.onClick}>
                         CANCEL
                     </Button>
-                </form>
-            </Card>
+                </Card>
+            </Modal>
         </Fragment>
     );
 };

@@ -1,0 +1,17 @@
+.List {
+    padding: 0;
+    overflow-x: scroll;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 80%;
+}
+
+.List li {
+    list-style: none;
+    margin-right: 1rem;
+}
+
+.List li:last-of-type {
+    margin-right: 0;
+}
