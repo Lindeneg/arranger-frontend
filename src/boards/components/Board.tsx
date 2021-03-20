@@ -82,7 +82,8 @@ const Board: Functional<BoardProps> = (props) => {
                 update={{
                     id: props.board._id,
                     name: props.board.name,
-                    color: props.board.color
+                    color: props.board.color,
+                    order: props.board.order
                 }}
             />
             <ErrorModal show={!!error} error={error} onClear={clearError} />
@@ -127,7 +128,13 @@ const Board: Functional<BoardProps> = (props) => {
                             )}
                         </div>
                         <hr />
-                        <Lists lists={props.board.lists} boardColor={props.board.color} boardId={props.board._id} />
+                        <Lists
+                            lists={props.board.lists}
+                            boardName={props.board.name}
+                            boardColor={props.board.color}
+                            boardId={props.board._id}
+                            order={props.board.order}
+                        />
                     </div>
                 </Card>
             )}

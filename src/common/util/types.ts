@@ -14,6 +14,8 @@ export type OnChange<T = HTMLElement> = React.ChangeEventHandler<T>;
 
 export type OnBlur<T = HTMLElement> = React.FocusEventHandler<T>;
 
+export type DragEventHandler<T> = React.DragEventHandler<T>;
+
 export interface SIndexable<T> {
     [key: string]: T;
 }
@@ -105,6 +107,7 @@ export interface BoardResponse<LI extends SArrUnion<ListResponse<SArrUnion<CardR
     extends IResponse {
     color: string;
     owner: string;
+    order: string[];
     lists: LI;
 }
 

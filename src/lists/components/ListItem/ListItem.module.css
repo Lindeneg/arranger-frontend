@@ -1,6 +1,6 @@
 .Item {
     padding: 10px;
-    height: 85%;
+    height: 95%;
     width: 20rem;
     background-color: transparent;
     border: 0.2rem solid #16213e;
@@ -14,7 +14,6 @@
 .Item:hover {
     border: 0.2rem solid #c76e3d;
     cursor: pointer;
-
 }
 
 .Header {

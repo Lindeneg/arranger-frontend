@@ -27,6 +27,7 @@ export interface BoardUpdateProps {
     id: string;
     name: string;
     color: string;
+    order: string[];
 }
 
 interface BoardModalProps extends BaseProps {
@@ -72,7 +73,8 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                 props.update ? 'PATCH' : 'POST',
                 JSON.stringify({
                     name: inputState.inputs.name.value,
-                    color: inputState.inputs.color.value
+                    color: inputState.inputs.color.value,
+                    order: props.update ? props.update.order : []
                 }),
                 {
                     'Content-Type': 'application/json',
@@ -122,6 +124,7 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                         selectStyle={{
                             backgroundColor: inputState.inputs.color.value?.toString() || BoardColor.Default
                         }}
+                        value={inputState.inputs.color.value?.toString()}
                         valid={true}
                     />
                     <Button type="submit" disabled={!inputState.isValid}>
