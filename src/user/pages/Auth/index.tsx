@@ -1,4 +1,4 @@
-import { useState, useContext, Fragment } from 'react';
+import { useState, useContext, useEffect, Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { useForm, useHttp } from '../../../common/hooks';
@@ -7,7 +7,7 @@ import Button from '../../../common/components/Interactable/Button';
 import Card from '../../../common/components//Interface/Card';
 import ErrorModal from '../../../common/components/Interface/Modal/ErrorModal';
 import Spinner from '../../../common/components/Interface/Spinner';
-import { AuthContext } from '../../../common/context';
+import { AuthContext, ThemeContext } from '../../../common/context';
 import {
     getURL,
     devLog,
@@ -28,6 +28,7 @@ import classes from './Auth.module.css';
 const Auth: Functional = (props) => {
     const history = useHistory();
     const authContext = useContext(AuthContext);
+    const { resetColor } = useContext(ThemeContext);
     const [isInLoginMode, setLoginMode] = useState<boolean>(true);
     const { isLoading, error, clearError, sendRequest } = useHttp<UserAuthResponse>();
 
@@ -38,6 +39,10 @@ const Auth: Functional = (props) => {
         },
         isValid: false
     });
+
+    useEffect(() => {
+        resetColor();
+    }, [resetColor]);
 
     const onSubmitHandler: OnSubmitFunc = async (event) => {
         event.preventDefault();
