@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { useHttp } from '../../common/hooks';
 import { AuthContext } from '../../common/context';
 import BoardModal from './BoardModal';
+import ListInteraction from '../../lists/components/ListInteraction';
 import Lists from '../../lists/components/Lists';
 import ErrorModal from '../../common/components/Interface/Modal/ErrorModal';
 import Spinner from '../../common/components/Interface/Spinner';
@@ -23,6 +24,7 @@ const Board: Functional<BoardProps> = (props) => {
     const { isLoading, error, clearError, sendRequest } = useHttp<DeleteResponse>();
     const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
     const [showModal, setShowModal] = useState<boolean>(false);
+    const [creatingList, setCreatingList] = useState<boolean>(false);
 
     const onDeleteHandler = async () => {
         if (confirmDelete) {
@@ -50,6 +52,14 @@ const Board: Functional<BoardProps> = (props) => {
         setConfirmDelete(false);
     };
 
+    const onCreateListAccept = (): void => {
+        setCreatingList(true);
+    };
+
+    const onCreateListCancel = (): void => {
+        setCreatingList(false);
+    };
+
     const onModelOpen = (): void => {
         setShowModal(true);
     };
@@ -60,6 +70,12 @@ const Board: Functional<BoardProps> = (props) => {
 
     return (
         <Fragment>
+            <ListInteraction
+                show={creatingList}
+                onClick={onCreateListCancel}
+                owningBoardId={props.board._id}
+                boardColor={props.board.color}
+            />
             <BoardModal
                 show={showModal}
                 onClose={onModelClose}
@@ -96,6 +112,11 @@ const Board: Functional<BoardProps> = (props) => {
                                 </Fragment>
                             ) : (
                                 <Fragment>
+                                    {props.board.lists.length > 0 && (
+                                        <Button onClick={onCreateListAccept} inverse type="button">
+                                            NEW LIST
+                                        </Button>
+                                    )}
                                     <Button type="button" onClick={onModelOpen} inverse>
                                         UPDATE BOARD
                                     </Button>
