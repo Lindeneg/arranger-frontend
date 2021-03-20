@@ -39,7 +39,7 @@ const NavLinks: Functional = (props) => {
                         </NavLink>
                     </li>
                     <li>
-                        <Button onClick={onLogOut}>LOGOUT</Button>
+                        <Button inverse onClick={onLogOut}>LOGOUT</Button>
                     </li>
                 </Fragment>
             )}

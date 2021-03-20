@@ -4,7 +4,6 @@
 }
 
 .Board {
-    width: 95%;
     height: 50rem;
     color: #ccc;
 }
@@ -23,6 +22,10 @@
 .BtnCon button {
     width: 40%;
     color: #ccc;
+}
+
+.BtnCon button:last-of-type {
+    margin-right: 0;
 }
 
 .Card hr {
