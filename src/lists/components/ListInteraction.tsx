@@ -6,8 +6,8 @@ import { AuthContext } from '../../common/context';
 import Card from '../../common/components/Interface/Card';
 import Button from '../../common/components/Interactable/Button';
 import ErrorModal from '../../common/components/Interface/Modal/ErrorModal';
-import Modal from '../../common/components/Interface/Modal';
 import Spinner from '../../common/components/Interface/Spinner';
+import Modal from '../../common/components/Interface/Modal';
 import Input from '../../common/components/Interactable/Input';
 import {
     Functional,
@@ -71,6 +71,22 @@ const ListInteraction: Functional<ListInteractionProps> = (props) => {
         }
     };
 
+    const onDeleteHandler = async () => {
+        if (props.update) {
+            try {
+                const res: ListResponse<string[]> | void = await sendRequest(
+                    getURL(`lists/${props.update.id}`),
+                    'DELETE',
+                    null,
+                    { Authorization: 'Bearer ' + authContext.token }
+                );
+                res && history.go(0);
+            } catch (err) {
+                devLog(err);
+            }
+        }
+    };
+
     return (
         <Fragment>
             <ErrorModal show={!!error} error={error} onClear={clearError} />
@@ -79,9 +95,15 @@ const ListInteraction: Functional<ListInteractionProps> = (props) => {
                 onClose={props.onClick}
                 onSubmit={onSubmitHandler}
                 headerText={(props.update ? 'Update' : 'Create') + ' List'}
+                style={{ backgroundColor: props.boardColor }}
             >
                 <Card style={{ ...props.style, backgroundColor: props.boardColor }}>
-                    {isLoading && <Spinner style={{ backgroundColor: props.boardColor }} asOverlay />}
+                    {isLoading && (
+                        <div className="center">
+                            <Spinner style={{ backgroundColor: props.boardColor }} asOverlay />
+                        </div>
+                    )}
+
                     <Input
                         id="name"
                         onInput={inputHandler}
@@ -100,7 +122,7 @@ const ListInteraction: Functional<ListInteractionProps> = (props) => {
                         {props.update ? 'UPDATE' : 'CREATE'}
                     </Button>
                     {props.update && (
-                        <Button type="button" inverse style={{float: 'right'}}>
+                        <Button onClick={onDeleteHandler} type="button" inverse style={{ float: 'right' }}>
                             DELETE
                         </Button>
                     )}
