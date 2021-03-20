@@ -115,6 +115,7 @@ const Lists: Functional<ListsProps> = (props) => {
                                     {...list}
                                     key={list._id}
                                     boardColor={props.boardColor}
+                                    boardId={props.boardId}
                                     onDragOver={onDragOver}
                                     onDragEnd={onDragEnd}
                                     style={{ opacity: dragDes === list._id ? 0.2 : 1 }}

@@ -81,7 +81,13 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                     Authorization: 'Bearer ' + authContext.token
                 }
             );
-            res && history.push('/board' + (props.update ? '' : '/' + res._id));
+            if (res) {
+                if (props.update) {
+                    history.go(0);
+                } else {
+                    history.push('/board' + (props.update ? '' : '/' + res._id));
+                }
+            }
         } catch (err) {
             devLog(err);
         }
@@ -94,7 +100,12 @@ const BoardModal: Functional<BoardModalProps> = (props) => {
                 onClose={props.onClose}
                 headerText={props.update ? 'Update Board' : 'Create Board'}
                 onSubmit={onSubmitHandler}
-                formStyles={{ backgroundColor: '#0f3460', color: '#ccc', boxShadow: 'unset' }}
+                formStyles={{
+                    backgroundColor: inputState.inputs.color.value?.toString(),
+                    color: '#ccc',
+                    boxShadow: 'unset'
+                }}
+                style={{ backgroundColor: inputState.inputs.color.value?.toString() }}
             >
                 <Card style={{ backgroundColor: inputState.inputs.color.value?.toString() }}>
                     {isLoading && (
