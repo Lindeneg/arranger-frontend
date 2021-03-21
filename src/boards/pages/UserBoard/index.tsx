@@ -50,7 +50,7 @@ const UserBoard: Functional = (props) => {
     return (
         <Fragment>
             <ErrorModal onClear={clearError} error={error} show={!!error} />
-            {isLoading && (
+            {isLoading && !board && (
                 <div className="center">
                     <Spinner asOverlay />
                 </div>
