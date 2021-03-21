@@ -1,0 +1,7 @@
+.Container {
+    margin-top: 1rem;
+}
+
+.Cards, .Container button {
+    margin-bottom: 1rem;
+}

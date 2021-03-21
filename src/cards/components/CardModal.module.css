@@ -1,0 +1,18 @@
+.Modal {
+    top: unset;
+    left: 2%;
+    width: 96%;
+    height: 80%;
+}
+
+.Content {
+    height: 100%;
+}
+
+.Footer button:last-of-type {
+    float: right;
+}
+
+.Card {
+    height: 100%;
+}
