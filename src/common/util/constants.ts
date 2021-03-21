@@ -7,11 +7,6 @@ export enum HTMLHooks {
     Modal = 'modal-hook'
 }
 
-export enum DragType {
-    List = 'List',
-    Card = 'Card'
-}
-
 export enum BoardColor {
     Default = '#0f3460',
     Red = '#821111',

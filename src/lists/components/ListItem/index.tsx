@@ -3,22 +3,12 @@ import { Fragment, useState } from 'react';
 import Cards from '../../../cards/components/Cards';
 import Card from '../../../common/components/Interface/Card';
 import ListModal from '../ListModal';
-import {
-    BaseProps,
-    CardResponse,
-    DragType,
-    Functional,
-    ListResponse,
-    OptCls,
-    DragEventHandler
-} from '../../../common/util';
+import { BaseProps, CardResponse, Functional, ListResponse, OptCls, Draggable } from '../../../common/util';
 import classes from './ListItem.module.css';
 
-interface ListItemProps extends BaseProps, OptCls, ListResponse<CardResponse<string[]>[]> {
+interface ListItemProps extends BaseProps, OptCls, Draggable<HTMLLIElement>, ListResponse<CardResponse<string[]>[]> {
     boardColor: string;
     boardId: string;
-    onDragEnd: DragEventHandler<HTMLLIElement>;
-    onDragOver: DragEventHandler<HTMLLIElement>;
 }
 
 /**
@@ -48,14 +38,7 @@ const ListItem: Functional<ListItemProps> = (props) => {
                     id: props._id
                 }}
             />
-            <li
-                draggable-type={DragType.List}
-                style={props.style}
-                id={props._id}
-                draggable
-                onDragOver={props.onDragOver}
-                onDragEnd={props.onDragEnd}
-            >
+            <li style={props.style} id={props._id} onDragOver={props.onDragOver} onDragEnd={props.onDragEnd} draggable>
                 <Card className={classes.Item}>
                     <div className={classes.Header}>
                         <h3 onClick={onUpdateAcceptHandler}>{props.name}</h3>

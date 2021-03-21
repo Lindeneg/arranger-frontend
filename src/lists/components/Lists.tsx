@@ -1,15 +1,15 @@
 import { Fragment, useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { useHttp } from '../../common/hooks';
+import { useHttp, useDragDrop } from '../../common/hooks';
 import { AuthContext } from '../../common/context';
 import ListItem from './ListItem';
 import ListModal from './ListModal';
 import Card from '../../common/components/Interface/Card';
 import Button from '../../common/components/Interactable/Button';
 import ErrorModal from '../../common/components/Interface/Modal/ErrorModal';
-import { BaseProps, DragType, Functional } from '../../common/util';
-import { BoardResponse, CardResponse, ListResponse, DragEventHandler, getURL, devLog } from '../../common/util';
+import { BaseProps, Functional } from '../../common/util';
+import { BoardResponse, CardResponse, ListResponse, getURL, devLog } from '../../common/util';
 import classes from './Lists.module.css';
 
 interface ListsProps extends BaseProps {
@@ -28,16 +28,7 @@ const Lists: Functional<ListsProps> = (props) => {
     const history = useHistory();
     const authContext = useContext(AuthContext);
     const { error, clearError, sendRequest } = useHttp<BoardResponse<string[]>>();
-    const [dragDes, setDragDes] = useState<string | null>(null);
     const [creating, setCreating] = useState<boolean>(false);
-
-    const onCreateHandler = (): void => {
-        setCreating(true);
-    };
-
-    const onCancelCreateHandler = (): void => {
-        setCreating(false);
-    };
 
     const onListOrderUpdateHandler = async (order: string[]) => {
         try {
@@ -60,31 +51,14 @@ const Lists: Functional<ListsProps> = (props) => {
         }
     };
 
-    const onListDropHandler = (src: string, des: string, dragType: string | null) => {
-        if (des !== src && dragType !== null) {
-            if (dragType === DragType.List) {
-                const result = props.order.filter((e) => e !== src);
-                const desIdx = props.order.findIndex((e) => e === des);
-                if (desIdx > -1) {
-                    result.splice(desIdx, 0, src);
-                    onListOrderUpdateHandler(result);
-                }
-            }
-        }
+    const dd = useDragDrop<HTMLLIElement>(props.order, onListOrderUpdateHandler);
+
+    const onCreateHandler = (): void => {
+        setCreating(true);
     };
 
-    const onDragEnd: DragEventHandler<HTMLLIElement> = (e) => {
-        e.stopPropagation();
-        if (dragDes !== null) {
-            onListDropHandler(e.currentTarget.id, dragDes, e.currentTarget.getAttribute('draggable-type'));
-        }
-        setDragDes(null);
-    };
-
-    const onDragOver: DragEventHandler<HTMLLIElement> = (e) => {
-        if (e.currentTarget.getAttribute('draggable-type') === DragType.List) {
-            setDragDes(e.currentTarget.id);
-        }
+    const onCancelCreateHandler = (): void => {
+        setCreating(false);
     };
 
     return (
@@ -116,9 +90,9 @@ const Lists: Functional<ListsProps> = (props) => {
                                     key={list._id}
                                     boardColor={props.boardColor}
                                     boardId={props.boardId}
-                                    onDragOver={onDragOver}
-                                    onDragEnd={onDragEnd}
-                                    style={{ opacity: dragDes === list._id ? 0.2 : 1 }}
+                                    onDragOver={dd.onDragOver}
+                                    onDragEnd={dd.onDragEnd}
+                                    style={{ opacity: dd.currentDes === list._id ? 0.2 : 1 }}
                                 />
                             );
                         } else {
