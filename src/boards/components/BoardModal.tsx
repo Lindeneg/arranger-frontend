@@ -20,7 +20,8 @@ import {
     BaseProps,
     BoardColor,
     getColorsWithSelectedFirst,
-    RULE
+    RULE,
+    Visibility
 } from '../../common/util';
 
 export interface BoardUpdateProps {
@@ -30,8 +31,7 @@ export interface BoardUpdateProps {
     order: string[];
 }
 
-interface BoardModalProps extends BaseProps {
-    show: boolean;
+interface BoardModalProps extends BaseProps, Visibility {
     onClose: () => void;
     update?: BoardUpdateProps;
 }

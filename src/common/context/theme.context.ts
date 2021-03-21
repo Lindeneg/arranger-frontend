@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-interface IThemeContext {
+export interface IThemeContext {
     color: string;
     setColor: (color: string) => void;
     resetColor: () => void;
@@ -9,5 +9,5 @@ interface IThemeContext {
 export const ThemeContext = createContext<IThemeContext>({
     color: '',
     setColor: () => null,
-    resetColor: () => null,
+    resetColor: () => null
 });

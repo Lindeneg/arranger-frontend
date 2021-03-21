@@ -95,7 +95,7 @@ const ListModal: Functional<ListModalProps> = (props) => {
         <Fragment>
             <ErrorModal show={!!error} error={error} onClear={clearError} />
             <Modal
-                show={props.show}
+                show={props.show && !error}
                 onClose={props.onClick}
                 onSubmit={onSubmitHandler}
                 headerText={(props.update ? 'Update' : 'Create') + ' List'}

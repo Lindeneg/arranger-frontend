@@ -12,7 +12,7 @@
 }
 
 .Item:hover {
-    border: 0.2rem solid #c76e3d;
+    border: 0.2rem solid rgb(99, 99, 99);
     cursor: pointer;
 }
 
@@ -22,7 +22,7 @@
     justify-content: space-between;
 }
 
-.Header h3:hover {
+.Header div:hover {
     color: #c76e3d;
     cursor: pointer;
 }

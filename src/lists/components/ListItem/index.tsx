@@ -41,10 +41,11 @@ const ListItem: Functional<ListItemProps> = (props) => {
             <li style={props.style} id={props._id} onDragOver={props.onDragOver} onDragEnd={props.onDragEnd} draggable>
                 <Card className={classes.Item}>
                     <div className={classes.Header}>
-                        <h3 onClick={onUpdateAcceptHandler}>{props.name}</h3>
+                        <h3>{props.name}</h3>
+                        <div onClick={onUpdateAcceptHandler}>&#9776;</div>
                     </div>
-                    <hr style={{ marginTop: '0' }} />
-                    <Cards></Cards>
+                    <hr style={{ marginTop: '0', border: '1px solid rgb(99, 99, 99)' }} />
+                    <Cards boardColor={props.boardColor} cards={props.cards} />
                 </Card>
             </li>
         </Fragment>

@@ -2,7 +2,7 @@ import { createContext, Context } from 'react';
 
 import { Login } from '../util';
 
-interface IAuthContext {
+export interface IAuthContext {
     isLoggedIn: boolean;
     userId: string;
     token: string;

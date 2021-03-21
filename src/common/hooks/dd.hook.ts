@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 
-import { DragEventHandler, DraggableConstraint } from '../util';
-
+import { devLog, DragEventHandler, DraggableConstraint, DragType } from '../util';
 
 export interface IDragDropHook<T> {
     currentDes: string | null;
@@ -10,6 +9,7 @@ export interface IDragDropHook<T> {
 }
 
 export function useDragDrop<T extends DraggableConstraint>(
+    type: DragType,
     preOrder: string[],
     updateHandler: (postOrder: string[]) => void
 ): IDragDropHook<T> {
@@ -18,15 +18,21 @@ export function useDragDrop<T extends DraggableConstraint>(
     const onDropHandler = useCallback(
         (src: string, des: string) => {
             if (des !== src) {
-                const result = preOrder.filter((e) => e !== src);
-                const desIdx = preOrder.findIndex((e) => e === des);
-                if (desIdx > -1) {
-                    result.splice(desIdx, 0, src);
-                    updateHandler(result);
+                if (type !== DragType.CardToList) {
+                    const result = preOrder.filter((e) => e !== src);
+                    const desIdx = preOrder.findIndex((e) => e === des);
+                    if (desIdx > -1) {
+                        result.splice(desIdx, 0, src);
+                        updateHandler(result);
+                    }
+                } else if (type === DragType.CardToList) {
+                    console.log('card-to-list');
+                } else {
+                    devLog('error trying to drag ' + type + ' from ' + src + ' to ' + des);
                 }
             }
         },
-        [preOrder, updateHandler]
+        [preOrder, type, updateHandler]
     );
 
     const onDragEnd: DragEventHandler<T> = useCallback(

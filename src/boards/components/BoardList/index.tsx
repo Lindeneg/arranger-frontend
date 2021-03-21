@@ -31,7 +31,7 @@ const BoardList: Functional<BoardListProps> = (props) => {
             <BoardModal show={showModal} onClose={onCloseModal} />
             {props.boards.length <= 0 ? (
                 <div className={[classes.List, 'center'].join(' ')}>
-                    <Card style={{ position: 'absolute', bottom: '50%' }}>
+                    <Card>
                         <h2>No boards found. Go ahead and create one!</h2>
                         <Button onClick={onOpenModal}>Create Board</Button>
                     </Card>

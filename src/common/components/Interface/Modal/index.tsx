@@ -45,6 +45,7 @@ const Modal: Portal<ModalProps> = (props) => {
                         <header className={[classes.Header, props.headerCls].join(' ')}>
                             <h2>{props.headerText}</h2>
                         </header>
+                        <hr/>
                         <form
                             onSubmit={props.onSubmit ? props.onSubmit : (event) => event.preventDefault()}
                             style={props.formStyles}
