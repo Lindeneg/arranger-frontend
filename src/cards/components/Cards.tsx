@@ -7,15 +7,15 @@ import { BaseProps, CardResponse, Functional } from '../../common/util';
 import classes from './Cards.module.css';
 
 interface CardsProps extends BaseProps {
+    listOwnerId: string;
     cards: CardResponse<string[]>[];
-    boardColor: string;
 }
 
 const Cards: Functional<CardsProps> = (props) => {
     const [isViewingCardId, setIsViewingCardId] = useState<string | null>(null);
     const [isCreatingCard, setIsCreatingCard] = useState<boolean>(false);
 
-    const onCreateCardAccept = (e: any) => {
+    const onCreateCardAccept = () => {
         setIsCreatingCard(true);
         setIsViewingCardId(null);
     };
@@ -25,14 +25,19 @@ const Cards: Functional<CardsProps> = (props) => {
         setIsCreatingCard(false);
     };
 
-    const onViewCardDeny = (e: any) => {
+    const onViewCardDeny = () => {
         setIsCreatingCard(false);
         setIsViewingCardId(null);
     };
 
     return (
         <Fragment>
-            <CardModal cardId={isViewingCardId} show={!!isViewingCardId || isCreatingCard} onClick={onViewCardDeny} />
+            <CardModal
+                listOwnerId={props.listOwnerId}
+                cardId={isViewingCardId}
+                show={!!isViewingCardId || isCreatingCard}
+                onClick={onViewCardDeny}
+            />
             <div className={classes.Container}>
                 <div className={classes.Cards}>
                     {props.cards.map((card) => (

@@ -3,16 +3,50 @@
     left: 2%;
     width: 96%;
     height: 80%;
+    overflow-y: scroll;
 }
 
-.Content {
+.ContentDefault {
     height: 100%;
+}
+
+.ContentInitial {
+    height: unset;
 }
 
 .Footer button:last-of-type {
     float: right;
 }
 
+.FooterDelete button {
+    width: 40%;
+}
+
 .Card {
     height: 100%;
+}
+
+.Description,
+.Name {
+    background-color: transparent !important;
+    color: #ccc;
+}
+
+.Name {
+    width: 20% !important;
+}
+
+.Description,
+.DescriptionAlt {
+    overflow-wrap: break-word;
+    overflow-y: scroll;
+    height: 10rem;
+    width: 60% !important;
+    overflow-wrap: break-word;
+    overflow-y: scroll;
+}
+
+.DescriptionAlt:hover {
+    color: #c76e3d;
+    cursor: pointer;
 }
