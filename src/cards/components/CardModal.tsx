@@ -128,7 +128,10 @@ const CardModal: Functional<CardModalProps> = (props) => {
                     Authorization: 'Bearer ' + authContext.token
                 }
             );
-            res && setCard(res);
+            if (res) {
+                setCard(res);
+                onEditDeny();
+            }
         } catch (err) {
             devLog(err);
         }
