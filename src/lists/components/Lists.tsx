@@ -1,7 +1,8 @@
 import { Fragment, useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 
-import { useHttp, useDragDrop } from '../../common/hooks';
+import { useHttp } from '../../common/hooks';
 import { AuthContext } from '../../common/context';
 import ListItem from './ListItem';
 import ListModal from './ListModal';
@@ -9,7 +10,7 @@ import Card from '../../common/components/Interface/Card';
 import Button from '../../common/components/Interactable/Button';
 import ErrorModal from '../../common/components/Interface/Modal/ErrorModal';
 import { BaseProps, Functional } from '../../common/util';
-import { BoardResponse, CardResponse, ListResponse, DragType, getURL, devLog } from '../../common/util';
+import { BoardResponse, CardResponse, ListResponse, getURL, devLog } from '../../common/util';
 import classes from './Lists.module.css';
 
 interface ListsProps extends BaseProps {
@@ -21,7 +22,7 @@ interface ListsProps extends BaseProps {
 }
 
 /**
- * List component. Acts as a wrapper for child Cards and as a drop-target for DragType List.
+ * List component. Acts as a wrapper for child Cards and as a drop-target for a draggable List.
  */
 
 const Lists: Functional<ListsProps> = (props) => {
@@ -29,30 +30,38 @@ const Lists: Functional<ListsProps> = (props) => {
     const authContext = useContext(AuthContext);
     const { error, clearError, sendRequest } = useHttp<BoardResponse<string[]>>();
     const [creating, setCreating] = useState<boolean>(false);
-    const { onDragOver, onDragEnd, currentDes } = useDragDrop<HTMLLIElement>(
-        DragType.ListToList,
-        props.order,
-        async (order: string[]) => {
-            try {
-                const res: BoardResponse<string[]> | void = await sendRequest(
-                    getURL(`boards/${props.boardId}`),
-                    'PATCH',
-                    JSON.stringify({
-                        name: props.boardName,
-                        color: props.boardColor,
-                        order
-                    }),
-                    {
-                        'Content-Type': 'application/json',
-                        Authorization: 'Bearer ' + authContext.token
-                    }
-                );
-                res && history.go(0);
-            } catch (err) {
-                devLog(err);
-            }
+    const [order, setOrder] = useState<string[]>(props.order);
+
+    const updateOrderHandler = async (order: string[]) => {
+        try {
+            const res: BoardResponse<string[]> | void = await sendRequest(
+                getURL(`boards/${props.boardId}`),
+                'PATCH',
+                JSON.stringify({
+                    name: props.boardName,
+                    color: props.boardColor,
+                    order
+                }),
+                {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + authContext.token
+                }
+            );
+            res && history.go(0);
+        } catch (err) {
+            devLog(err);
         }
-    );
+    };
+
+    const onDragEnd = (result: DropResult): void => {
+        if (result.destination && result.destination.index !== result.source.index) {
+            const newOrder = [...props.order];
+            const [src] = newOrder.splice(result.source.index, 1);
+            newOrder.splice(result.destination.index, 0, src);
+            setOrder(newOrder);
+            updateOrderHandler(newOrder);
+        }
+    };
 
     const onCreateHandler = (): void => {
         setCreating(true);
@@ -63,7 +72,7 @@ const Lists: Functional<ListsProps> = (props) => {
     };
 
     return (
-        <Fragment>
+        <DragDropContext onDragEnd={onDragEnd}>
             <ErrorModal show={!!error} error={error} onClear={clearError} />
             <ListModal
                 show={creating}
@@ -81,28 +90,33 @@ const Lists: Functional<ListsProps> = (props) => {
                     )}
                 </div>
             ) : (
-                <ul className={classes.List}>
-                    {props.order.map((orderId) => {
-                        const list = props.lists.find((e) => e._id === orderId);
-                        if (list) {
-                            return (
-                                <ListItem
-                                    {...list}
-                                    key={list._id}
-                                    boardColor={props.boardColor}
-                                    boardId={props.boardId}
-                                    onDragOver={onDragOver}
-                                    onDragEnd={onDragEnd}
-                                    style={{ opacity: currentDes === list._id ? 0.2 : 1 }}
-                                />
-                            );
-                        } else {
-                            return null;
-                        }
-                    })}
-                </ul>
+                <Droppable direction="horizontal" droppableId="list">
+                    {(provided) => (
+                        <Fragment>
+                            <ul ref={provided.innerRef} className={classes.List} {...provided.droppableProps}>
+                                {order.map((orderId, index) => {
+                                    const list = props.lists.find((e) => e._id === orderId);
+                                    if (list) {
+                                        return (
+                                            <ListItem
+                                                {...list}
+                                                index={index}
+                                                key={list._id}
+                                                boardColor={props.boardColor}
+                                                boardId={props.boardId}
+                                            />
+                                        );
+                                    } else {
+                                        return null;
+                                    }
+                                })}
+                            </ul>
+                            {provided.placeholder}
+                        </Fragment>
+                    )}
+                </Droppable>
             )}
-        </Fragment>
+        </DragDropContext>
     );
 };
 

@@ -54,11 +54,6 @@ export type UseReducerTuple<S = {}, A = AnyAction, P = {}> = [S, ReducerDispatch
  ****** PROPS  ********
  **********************/
 
-export interface Draggable<T extends DraggableConstraint> {
-    onDragEnd: DragEventHandler<T>;
-    onDragOver: DragEventHandler<T>;
-}
-
 export interface Identifiable {
     id: string;
 }

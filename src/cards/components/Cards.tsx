@@ -41,9 +41,7 @@ const Cards: Functional<CardsProps> = (props) => {
             <div className={classes.Container}>
                 <div className={classes.Cards}>
                     {props.cards.map((card) => (
-                        <div key={card._id} onClick={onViewCardAccept.bind(null, card._id)}>
-                            <CardItem />
-                        </div>
+                        <CardItem {...card} key={card._id} onClick={onViewCardAccept.bind(null, card._id)} />
                     ))}
                 </div>
                 <Button inverse onClick={onCreateCardAccept}>
