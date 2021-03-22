@@ -1,0 +1,9 @@
+.Item {
+    height: 5rem;
+    border: 1px solid;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 2rem;
+    background: #ccc;
+    color: #393939;
+}
