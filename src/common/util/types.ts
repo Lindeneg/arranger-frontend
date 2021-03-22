@@ -124,6 +124,7 @@ export interface ListResponse<CA extends SArrUnion<CardResponse<string[]>>> exte
 
 export interface CardResponse<CH extends SArrUnion<ChecklistResponse>> extends IResponse, Ownership {
     color: string;
+    description: string;
     checklists: CH;
 }
 

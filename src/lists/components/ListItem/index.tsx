@@ -45,7 +45,7 @@ const ListItem: Functional<ListItemProps> = (props) => {
                         <div onClick={onUpdateAcceptHandler}>&#9776;</div>
                     </div>
                     <hr style={{ marginTop: '0', border: '1px solid rgb(99, 99, 99)' }} />
-                    <Cards boardColor={props.boardColor} cards={props.cards} />
+                    <Cards listOwnerId={props._id} cards={props.cards} />
                 </Card>
             </li>
         </Fragment>

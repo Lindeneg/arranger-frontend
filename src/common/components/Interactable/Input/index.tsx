@@ -10,16 +10,18 @@ import {
     OnBlur,
     OnChange,
     OnClickFunc,
+    OptCls,
     UseReducerTuple,
     ValidationValue,
     Validator
 } from '../../../../common/util';
 import classes from './Input.module.css';
 
-interface InputProps extends BaseProps, Partial<Identifiable> {
+interface InputProps extends BaseProps, OptCls, Partial<Identifiable> {
     onInput: (...args: any[]) => void;
     element: 'input' | 'text-area' | 'select';
     type?: 'text' | 'number' | 'email' | 'password';
+    resize?: 'vertical' | 'horizontal' | 'none';
     value?: string | number;
     label?: string;
     errorText?: string;
@@ -89,6 +91,7 @@ const Input: Functional<InputProps> = (props) => {
                     onChange={onChangeHandler}
                     onBlur={onTouchHandler}
                     value={state.value?.toString()}
+                    className={props.className}
                 />
             );
             break;
@@ -96,9 +99,12 @@ const Input: Functional<InputProps> = (props) => {
             element = (
                 <textarea
                     id={props.id}
+                    placeholder={props.placeHolder}
                     rows={props.rows || 3}
                     onChange={onChangeHandler}
                     onBlur={onTouchHandler}
+                    style={{ resize: props.resize }}
+                    className={props.className}
                     value={state.value?.toString()}
                 />
             );

@@ -16,7 +16,7 @@
 
 .Link a {
     border: 1px solid transparent;
-    color: #292929;
+    color: #ccc;
     text-decoration: none;
     padding: 0.5rem;
 }
@@ -33,10 +33,5 @@
 
     .Link li {
         margin: 0 0.5rem;
-    }
-
-    .Link a {
-        color: white;
-        text-decoration: none;
     }
 }
