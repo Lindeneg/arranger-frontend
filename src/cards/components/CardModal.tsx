@@ -104,6 +104,13 @@ const CardModal: Functional<CardModalProps> = (props) => {
     };
 
     const onEditDeny = () => {
+        setInputState({
+            inputs: {
+                name: { value: currentCard?.name || '', isValid: !!currentCard },
+                description: { value: currentCard?.description || '', isValid: !!currentCard }
+            },
+            isValid: !!currentCard
+        });
         setIsEditing(false);
     };
 
@@ -142,7 +149,7 @@ const CardModal: Functional<CardModalProps> = (props) => {
             <ErrorModal show={!!error} error={error} onClear={clearError} />
             <Modal
                 show={props.show && !error}
-                onClose={props.onClick}
+                onClose={onClose}
                 onSubmit={onSubmitHandler}
                 headerText={isLoading ? 'Loading...' : !currentCard ? 'Create Card' : currentCard.name}
                 className={classes.Modal}
@@ -163,7 +170,7 @@ const CardModal: Functional<CardModalProps> = (props) => {
                     ) : (
                         <Fragment>
                             <Button disabled={!inputState.isValid} type="submit">
-                                {!currentCard ? 'CREATE' : 'UPDATE'}
+                                {!currentCard ? 'CREATE' : 'SAVE'}
                             </Button>
                             <Button onClick={onClose} type="button" inverse>
                                 CLOSE
@@ -229,13 +236,15 @@ const CardModal: Functional<CardModalProps> = (props) => {
                             </div>
                         )}
                         <hr />
-                        <Checklists />
                         {!!currentCard ? (
-                            <Button inverse style={{ width: '100%', marginTop: '1rem' }} type="button">
-                                ADD CHECKLIST
-                            </Button>
+                            <Fragment>
+                                <Checklists checklists={currentCard.checklists} />
+                                <Button inverse style={{ width: '100%', marginTop: '1rem' }} type="button">
+                                    ADD CHECKLIST
+                                </Button>
+                            </Fragment>
                         ) : (
-                            <p className="center">Checklists can be added after the Card has been created.</p>
+                            <p className="center">Checklists can be added after card creation (only temporary).</p>
                         )}
                     </Card>
                 )}
