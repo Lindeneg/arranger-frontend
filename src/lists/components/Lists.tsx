@@ -83,6 +83,7 @@ const Lists: Functional<ListsProps> = (props) => {
                         const newSrcOrder = [...srcList.order];
                         const newDestOrder = [...desList.order];
                         const card = srcList.cards.find((e) => e._id === result.draggableId);
+                        console.log(card);
                         if (card) {
                             const targetOrder = srcList._id === desList._id ? newSrcOrder : newDestOrder;
                             const [target] = newSrcOrder.splice(result.source.index, 1);
@@ -92,10 +93,12 @@ const Lists: Functional<ListsProps> = (props) => {
                                 targetOrder.push(target);
                             }
                             srcList.order = newSrcOrder;
-                            desList.order = newDestOrder;
-                            srcList.cards = srcList.cards.filter((e) => e._id !== card._id);
-                            card.owner = desList._id;
-                            desList.cards.push(card);
+                            if (srcList._id !== desList._id) {
+                                desList.order = newDestOrder;
+                                srcList.cards = srcList.cards.filter((e) => e._id !== card._id);
+                                card.owner = desList._id;
+                                desList.cards.push(card);
+                            }   
                             url = getURL('lists/update/card/order');
                             body = JSON.stringify({
                                 srcListId: srcList._id,
