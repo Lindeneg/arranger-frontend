@@ -26,7 +26,7 @@ import {
 } from '../../common/util';
 import classes from './CardModal.module.css';
 
-interface CardModalProps extends BaseProps, Visibility, Clickable {
+interface CardModalProps extends BaseProps, Visibility, Clickable<HTMLElement, boolean> {
     listOwnerId: string;
     cardId: string | null;
 }
@@ -37,6 +37,7 @@ const CardModal: Functional<CardModalProps> = (props) => {
     const [currentCard, setCurrentCard] = useState<FetchedCard | null>(null);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [shouldUpdate, setShouldUpdate] = useState<boolean>(false);
     const authContext = useContext<IAuthContext>(AuthContext);
     const themeContext = useContext<IThemeContext>(ThemeContext);
     const { isLoading, error, clearError, sendRequest } = useHttp<FetchedCard>();
@@ -88,7 +89,7 @@ const CardModal: Functional<CardModalProps> = (props) => {
             },
             isValid: false
         });
-        props.onClick(e);
+        props.onClick(e, shouldUpdate);
     };
 
     const onDeleteAccept = () => {
@@ -101,6 +102,15 @@ const CardModal: Functional<CardModalProps> = (props) => {
 
     const onEditAccept = () => {
         setIsEditing(true);
+        if (!!currentCard) {
+            setInputState({
+                inputs: {
+                    name: { value: currentCard.name, isValid: true },
+                    description: { value: currentCard.description, isValid: true }
+                },
+                isValid: true
+            });
+        }
     };
 
     const onEditDeny = () => {
@@ -137,6 +147,7 @@ const CardModal: Functional<CardModalProps> = (props) => {
             );
             if (res) {
                 setCard(res);
+                setShouldUpdate(true);
                 onEditDeny();
             }
         } catch (err) {
@@ -197,8 +208,8 @@ const CardModal: Functional<CardModalProps> = (props) => {
                                     element="input"
                                     onInput={inputHandler}
                                     className={classes.Name}
-                                    value={inputState.inputs.name?.value?.toString() || ''}
-                                    valid={inputState.inputs.name?.isValid || false}
+                                    value={inputState.inputs.name.value?.toString() || ''}
+                                    valid={inputState.inputs.name.isValid || false}
                                     validators={[
                                         getValidator(ValidationType.Require),
                                         getValidator(ValidationType.MaxLength, RULE.USR_MAX_LEN)
@@ -213,8 +224,8 @@ const CardModal: Functional<CardModalProps> = (props) => {
                                     element="text-area"
                                     onInput={inputHandler}
                                     className={classes.Description}
-                                    value={inputState.inputs.description?.value?.toString() || ''}
-                                    valid={inputState.inputs.description?.isValid || false}
+                                    value={inputState.inputs.description.value?.toString() || ''}
+                                    valid={inputState.inputs.description.isValid || false}
                                     validators={[
                                         getValidator(ValidationType.Require),
                                         getValidator(ValidationType.MaxLength, RULE.DES_MAX_LEN)

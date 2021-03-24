@@ -13,6 +13,7 @@ interface ErrorModalProps extends BaseProps {
  */
 
 const ErrorModal: Functional<ErrorModalProps> = (props) => {
+    console.log('You need to login to perform the desired action.' === props.error);
     return (
         <Modal
             onClose={props.onClear}
