@@ -79,15 +79,12 @@ const Auth: Functional = (props) => {
                     <a href="https://billboard.soutendijk.org" target="_blank" rel="noreferrer">
                         project
                     </a>{' '}
-                    made by a former colleague.
-                </p>
-                <p>
-                    I wanted to give my shot at creating a similar tool as well as implementing some features of{' '}
+                    made by a former colleague and the popular tool{' '}
                     <a href="https://trello.com" target="_blank" rel="noreferrer">
                         Trello
                     </a>
-                    .
                 </p>
+                <p>I wanted to give my shot at creating something similar but with a personal twist.</p>
                 <p>Arranger allows management of boards, categories, cards and checklists</p>
             </div>
             {!authContext.isLoggedIn && (
