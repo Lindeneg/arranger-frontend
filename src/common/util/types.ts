@@ -10,7 +10,7 @@ export type DraggableConstraint = HTMLLIElement | HTMLDivElement;
 
 export type OnSubmitFunc<T = HTMLFormElement> = React.FormEventHandler<T>;
 
-export type OnClickFunc<T = HTMLElement> = React.MouseEventHandler<T>;
+export type OnClickFunc<T = HTMLElement, O = any> = (event: React.MouseEvent<T, MouseEvent>, opt?: O) => void;
 
 export type OnChange<T = HTMLElement> = React.ChangeEventHandler<T>;
 
@@ -71,8 +71,8 @@ export interface Visibility {
     show: boolean;
 }
 
-export interface Clickable<T = HTMLElement> {
-    onClick: OnClickFunc<T>;
+export interface Clickable<T = HTMLElement, O = any> {
+    onClick: OnClickFunc<T, O>;
 }
 
 /**********************
@@ -100,20 +100,24 @@ export interface IResponse {
     message?: string;
 }
 
+export interface Orderable {
+    order: string[];
+}
+
 export interface UserAuthResponse {
     _id: string;
     token: string;
 }
 
 export interface BoardResponse<LI extends SArrUnion<ListResponse<SArrUnion<CardResponse<string[]>>>>>
-    extends IResponse {
+    extends IResponse,
+        Orderable {
     color: string;
     owner: string;
-    order: string[];
     lists: LI;
 }
 
-export interface ListResponse<CA extends SArrUnion<CardResponse<string[]>>> extends IResponse, Ownership {
+export interface ListResponse<CA extends SArrUnion<CardResponse<string[]>>> extends IResponse, Ownership, Orderable {
     cards: CA;
 }
 

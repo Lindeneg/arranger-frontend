@@ -3,7 +3,12 @@
     border: 1px solid;
     margin-top: 1rem;
     padding: 1rem;
-    border-radius: 2rem;
+    border-radius: 1.5rem;
     background: #ccc;
     color: #393939;
+    cursor: pointer !important;
+}
+
+.Item:hover {
+    background-color: rgba(204, 204, 204, 0.831);
 }
