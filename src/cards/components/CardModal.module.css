@@ -36,6 +36,23 @@
     width: 20% !important;
 }
 
+.DescriptionAlt,
+.AddChecklist {
+    padding: 1rem;
+}
+
+.AddChecklist {
+    border: 1px solid dimgray;
+    border-radius: 1rem;
+    width: 10rem;
+    margin-top: 1rem;
+}
+
+.AddChecklist:hover {
+    cursor: pointer;
+    color: #c76e3d;
+}
+
 .Description,
 .DescriptionAlt {
     overflow-wrap: break-word;

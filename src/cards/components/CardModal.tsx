@@ -1,6 +1,7 @@
 import { Fragment, useCallback, useContext, useEffect, useState } from 'react';
 
 import Checklists from './Checklists';
+import ChecklistInteract from './Checklists/ChecklistInteract';
 import Modal from '../../common/components/Interface/Modal';
 import Button from '../../common/components/Interactable/Button';
 import Input from '../../common/components/Interactable/Input';
@@ -34,12 +35,13 @@ interface CardModalProps extends BaseProps, Visibility, Clickable<HTMLElement, b
 type FetchedCard = CardResponse<ChecklistResponse[]>;
 
 const CardModal: Functional<CardModalProps> = (props) => {
+    const authContext = useContext<IAuthContext>(AuthContext);
+    const themeContext = useContext<IThemeContext>(ThemeContext);
+    const [creatingChecklist, setCreatingChecklist] = useState<boolean>(false);
     const [currentCard, setCurrentCard] = useState<FetchedCard | null>(null);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [shouldUpdate, setShouldUpdate] = useState<boolean>(false);
-    const authContext = useContext<IAuthContext>(AuthContext);
-    const themeContext = useContext<IThemeContext>(ThemeContext);
     const { isLoading, error, clearError, sendRequest } = useHttp<FetchedCard>();
     const [inputState, inputHandler, setInputState] = useForm({
         inputs: {
@@ -82,6 +84,7 @@ const CardModal: Functional<CardModalProps> = (props) => {
         setCurrentCard(null);
         setIsDeleting(false);
         setIsEditing(false);
+        setCreatingChecklist(false);
         setInputState({
             inputs: {
                 name: { value: '', isValid: false },
@@ -102,6 +105,7 @@ const CardModal: Functional<CardModalProps> = (props) => {
 
     const onEditAccept = () => {
         setIsEditing(true);
+        setCreatingChecklist(false);
         if (!!currentCard) {
             setInputState({
                 inputs: {
@@ -180,9 +184,11 @@ const CardModal: Functional<CardModalProps> = (props) => {
                         </div>
                     ) : (
                         <Fragment>
-                            <Button disabled={!inputState.isValid} type="submit">
-                                {!currentCard ? 'CREATE' : 'SAVE'}
-                            </Button>
+                            {!currentCard && (
+                                <Button disabled={!inputState.isValid} type={creatingChecklist ? 'button' : 'submit'}>
+                                    CREATE
+                                </Button>
+                            )}
                             <Button onClick={onClose} type="button" inverse>
                                 CLOSE
                             </Button>
@@ -232,13 +238,18 @@ const CardModal: Functional<CardModalProps> = (props) => {
                                     ]}
                                 />
                                 {isEditing && (
-                                    <Button
-                                        onClick={onEditDeny}
-                                        style={{ width: '100%', marginBottom: '1rem' }}
-                                        inverse
-                                    >
-                                        CANCEL
-                                    </Button>
+                                    <Fragment>
+                                        <Button type="submit" style={{ width: '100%', marginBottom: '0.5rem' }}>
+                                            SAVE
+                                        </Button>
+                                        <Button
+                                            onClick={onEditDeny}
+                                            style={{ width: '100%', marginBottom: '1rem' }}
+                                            inverse
+                                        >
+                                            CANCEL
+                                        </Button>
+                                    </Fragment>
                                 )}
                             </Fragment>
                         ) : (
@@ -247,13 +258,16 @@ const CardModal: Functional<CardModalProps> = (props) => {
                             </div>
                         )}
                         <hr />
-                        {!!currentCard && (
+                        {!!currentCard && !isEditing && !creatingChecklist && (
                             <Fragment>
                                 <Checklists checklists={currentCard.checklists} />
-                                <Button inverse style={{ width: '100%', marginTop: '1rem' }} type="button">
+                                <div className={classes.AddChecklist} onClick={setCreatingChecklist.bind(null, true)}>
                                     ADD CHECKLIST
-                                </Button>
+                                </div>
                             </Fragment>
+                        )}
+                        {!!currentCard && !isEditing && creatingChecklist && (
+                            <ChecklistInteract onClick={setCreatingChecklist.bind(null, false)} />
                         )}
                     </Card>
                 )}
