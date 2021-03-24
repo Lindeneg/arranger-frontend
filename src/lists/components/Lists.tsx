@@ -2,7 +2,7 @@ import { Fragment, useState, useContext } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 
 import { useHttp } from '../../common/hooks';
-import { AuthContext } from '../../common/context';
+import { AuthContext, ThemeContext } from '../../common/context';
 import ListItem from './ListItem';
 import ListModal from './ListModal';
 import Card from '../../common/components/Interface/Card';
@@ -16,7 +16,6 @@ type ILists = ListResponse<CardResponse<string[]>[]>[];
 
 interface ListsProps extends BaseProps, Orderable {
     lists: ILists;
-    boardColor: string;
     boardName: string;
     boardId: string;
     setOrder: (order: string[]) => void;
@@ -34,9 +33,11 @@ type Responses =
 
 const Lists: Functional<ListsProps> = (props) => {
     const authContext = useContext(AuthContext);
+    const theme = useContext(ThemeContext);
     const { error, clearError, sendRequest } = useHttp<Responses>();
     const [creating, setCreating] = useState<boolean>(false);
     const [lists, setLists] = useState<ILists>(props.lists);
+    const boardColor = theme.color;
 
     const updateOrderHandler = async (url: string, body: string) => {
         try {
@@ -62,7 +63,7 @@ const Lists: Functional<ListsProps> = (props) => {
                         url = getURL(`boards/${props.boardId}`);
                         body = JSON.stringify({
                             name: props.boardName,
-                            color: props.boardColor,
+                            color: boardColor,
                             order: newOrder
                         });
                         props.setOrder(newOrder);
@@ -129,16 +130,11 @@ const Lists: Functional<ListsProps> = (props) => {
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <ErrorModal show={!!error} error={error} onClear={clearError} />
-            <ListModal
-                show={creating}
-                onClick={onCancelCreateHandler}
-                owningBoardId={props.boardId}
-                boardColor={props.boardColor}
-            />
+            <ListModal show={creating} onClick={onCancelCreateHandler} owningBoardId={props.boardId} />
             {lists.length <= 0 ? (
                 <div className="center">
                     {!creating && (
-                        <Card style={{ marginTop: '2rem', backgroundColor: props.boardColor }}>
+                        <Card style={{ marginTop: '2rem', backgroundColor: boardColor }}>
                             <h2>No lists found. Go ahead and create one!</h2>
                             <Button onClick={onCreateHandler}>Create List</Button>
                         </Card>
@@ -153,13 +149,7 @@ const Lists: Functional<ListsProps> = (props) => {
                                     const list = lists.find((e) => e._id === orderId);
                                     if (list) {
                                         return (
-                                            <ListItem
-                                                {...list}
-                                                index={index}
-                                                key={list._id}
-                                                boardColor={props.boardColor}
-                                                boardId={props.boardId}
-                                            />
+                                            <ListItem {...list} index={index} key={list._id} boardId={props.boardId} />
                                         );
                                     } else {
                                         return null;

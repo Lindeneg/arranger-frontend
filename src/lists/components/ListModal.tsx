@@ -2,7 +2,7 @@ import { Fragment, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { useForm, useHttp } from '../../common/hooks';
-import { AuthContext } from '../../common/context';
+import { AuthContext, ThemeContext } from '../../common/context';
 import Card from '../../common/components/Interface/Card';
 import Button from '../../common/components/Interactable/Button';
 import ErrorModal from '../../common/components/Interface/Modal/ErrorModal';
@@ -25,7 +25,6 @@ import {
 
 interface ListModalProps extends BaseProps, Clickable, Visibility {
     owningBoardId: string;
-    boardColor: string;
     update?: {
         id: string;
         name: string;
@@ -39,11 +38,13 @@ interface ListModalProps extends BaseProps, Clickable, Visibility {
 const ListModal: Functional<ListModalProps> = (props) => {
     const history = useHistory();
     const authContext = useContext(AuthContext);
+    const theme = useContext(ThemeContext);
     const { isLoading, error, clearError, sendRequest } = useHttp<ListResponse<string[]>>();
     const [inputState, inputHandler, setInputState] = useForm({
         inputs: { name: { value: '', isValid: false } },
         isValid: false
     });
+    const boardColor = theme.color;
 
     useEffect(() => {
         if (props.update) {
@@ -99,12 +100,12 @@ const ListModal: Functional<ListModalProps> = (props) => {
                 onClose={props.onClick}
                 onSubmit={onSubmitHandler}
                 headerText={(props.update ? 'Update' : 'Create') + ' List'}
-                style={{ backgroundColor: props.boardColor }}
+                style={{ backgroundColor: boardColor }}
             >
-                <Card style={{ ...props.style, backgroundColor: props.boardColor }}>
+                <Card style={{ ...props.style, backgroundColor: boardColor }}>
                     {isLoading && (
                         <div className="center">
-                            <Spinner style={{ backgroundColor: props.boardColor }} asOverlay />
+                            <Spinner style={{ backgroundColor: boardColor }} asOverlay />
                         </div>
                     )}
 

@@ -76,12 +76,7 @@ const Board: Functional<BoardProps> = (props) => {
 
     return (
         <Fragment>
-            <ListModal
-                show={creatingList}
-                onClick={onCreateListCancel}
-                owningBoardId={props.board._id}
-                boardColor={props.board.color}
-            />
+            <ListModal show={creatingList} onClick={onCreateListCancel} owningBoardId={props.board._id} />
             <BoardModal
                 show={showModal}
                 onClose={onModelClose}
@@ -137,7 +132,6 @@ const Board: Functional<BoardProps> = (props) => {
                         <Lists
                             lists={props.board.lists}
                             boardName={props.board.name}
-                            boardColor={props.board.color}
                             boardId={props.board._id}
                             order={listOrder}
                             setOrder={setListOrder}

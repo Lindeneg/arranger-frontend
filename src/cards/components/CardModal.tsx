@@ -247,15 +247,13 @@ const CardModal: Functional<CardModalProps> = (props) => {
                             </div>
                         )}
                         <hr />
-                        {!!currentCard ? (
+                        {!!currentCard && (
                             <Fragment>
                                 <Checklists checklists={currentCard.checklists} />
                                 <Button inverse style={{ width: '100%', marginTop: '1rem' }} type="button">
                                     ADD CHECKLIST
                                 </Button>
                             </Fragment>
-                        ) : (
-                            <p className="center">Checklists can be added after card creation (only temporary).</p>
                         )}
                     </Card>
                 )}

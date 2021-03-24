@@ -9,7 +9,6 @@ import classes from './ListItem.module.css';
 
 interface ListItemProps extends BaseProps, OptCls, ListResponse<CardResponse<string[]>[]> {
     index: number;
-    boardColor: string;
     boardId: string;
 }
 
@@ -34,7 +33,6 @@ const ListItem: Functional<ListItemProps> = (props) => {
                 show={updating}
                 onClick={onUpdateCancelHandler}
                 owningBoardId={props.boardId}
-                boardColor={props.boardColor}
                 update={{
                     name: props.name,
                     id: props._id
@@ -57,11 +55,7 @@ const ListItem: Functional<ListItemProps> = (props) => {
                                                 <div onClick={onUpdateAcceptHandler}>&#9776;</div>
                                             </div>
                                             <hr style={{ marginTop: '0', border: '1px solid rgb(99, 99, 99)' }} />
-                                            <Cards
-                                                listOwnerId={props._id}
-                                                cards={props.cards}
-                                                order={props.order}
-                                            />
+                                            <Cards listOwnerId={props._id} cards={props.cards} order={props.order} />
                                         </Card>
                                         {dropProp.placeholder}
                                     </div>
