@@ -30,6 +30,7 @@ const Board: Functional<BoardProps> = (props) => {
     const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
     const [showModal, setShowModal] = useState<boolean>(false);
     const [creatingList, setCreatingList] = useState<boolean>(false);
+    const [listOrder, setListOrder] = useState<string[]>(props.board.order);
 
     const onDeleteHandler = async () => {
         if (confirmDelete) {
@@ -138,7 +139,8 @@ const Board: Functional<BoardProps> = (props) => {
                             boardName={props.board.name}
                             boardColor={props.board.color}
                             boardId={props.board._id}
-                            order={props.board.order}
+                            order={listOrder}
+                            setOrder={setListOrder}
                         />
                     </div>
                 </Card>

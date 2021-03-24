@@ -1,5 +1,4 @@
 import { Fragment, useState, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 
 import { useHttp } from '../../common/hooks';
@@ -9,57 +8,113 @@ import ListModal from './ListModal';
 import Card from '../../common/components/Interface/Card';
 import Button from '../../common/components/Interactable/Button';
 import ErrorModal from '../../common/components/Interface/Modal/ErrorModal';
-import { BaseProps, Functional } from '../../common/util';
+import { BaseProps, ChecklistResponse, DropType, Functional, Orderable } from '../../common/util';
 import { BoardResponse, CardResponse, ListResponse, getURL, devLog } from '../../common/util';
 import classes from './Lists.module.css';
 
-interface ListsProps extends BaseProps {
-    lists: ListResponse<CardResponse<string[]>[]>[];
+type ILists = ListResponse<CardResponse<string[]>[]>[];
+
+interface ListsProps extends BaseProps, Orderable {
+    lists: ILists;
     boardColor: string;
     boardName: string;
     boardId: string;
-    order: string[];
+    setOrder: (order: string[]) => void;
 }
+
+type Responses =
+    | BoardResponse<string[]>
+    | ListResponse<CardResponse<string[]>[]>
+    | CardResponse<ChecklistResponse[]>
+    | ChecklistResponse;
 
 /**
  * List component. Acts as a wrapper for child Cards and as a drop-target for a draggable List.
  */
 
 const Lists: Functional<ListsProps> = (props) => {
-    const history = useHistory();
     const authContext = useContext(AuthContext);
-    const { error, clearError, sendRequest } = useHttp<BoardResponse<string[]>>();
+    const { error, clearError, sendRequest } = useHttp<Responses>();
     const [creating, setCreating] = useState<boolean>(false);
-    const [order, setOrder] = useState<string[]>(props.order);
+    const [lists, setLists] = useState<ILists>(props.lists);
 
-    const updateOrderHandler = async (order: string[]) => {
+    const updateOrderHandler = async (url: string, body: string) => {
         try {
-            const res: BoardResponse<string[]> | void = await sendRequest(
-                getURL(`boards/${props.boardId}`),
-                'PATCH',
-                JSON.stringify({
-                    name: props.boardName,
-                    color: props.boardColor,
-                    order
-                }),
-                {
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer ' + authContext.token
-                }
-            );
-            res && history.go(0);
+            await sendRequest(url, 'PATCH', body, {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + authContext.token
+            });
         } catch (err) {
             devLog(err);
         }
     };
 
     const onDragEnd = (result: DropResult): void => {
-        if (result.destination && result.destination.index !== result.source.index) {
-            const newOrder = [...props.order];
-            const [src] = newOrder.splice(result.source.index, 1);
-            newOrder.splice(result.destination.index, 0, src);
-            setOrder(newOrder);
-            updateOrderHandler(newOrder);
+        let url: string | null = null;
+        let body: string | null = null;
+        if (result.destination) {
+            switch (result.type) {
+                case DropType.List:
+                    if (result.destination.index !== result.source.index) {
+                        const newOrder = [...props.order];
+                        const [src] = newOrder.splice(result.source.index, 1);
+                        newOrder.splice(result.destination.index, 0, src);
+                        url = getURL(`boards/${props.boardId}`);
+                        body = JSON.stringify({
+                            name: props.boardName,
+                            color: props.boardColor,
+                            order: newOrder
+                        });
+                        props.setOrder(newOrder);
+                    }
+                    break;
+                case DropType.Card:
+                    if (
+                        result.source.droppableId === result.destination?.droppableId &&
+                        result.source.index === result.destination.index
+                    ) {
+                        return;
+                    }
+                    const newLists = [...lists];
+                    const srcList = newLists.find((e) => e._id === result.source.droppableId);
+                    const desList = newLists.find((e) => e._id === result.destination?.droppableId);
+                    if (typeof srcList !== 'undefined' && typeof desList !== 'undefined') {
+                        const newSrcOrder = [...srcList.order];
+                        const newDestOrder = [...desList.order];
+                        const card = srcList.cards.find((e) => e._id === result.draggableId);
+                        if (card) {
+                            const targetOrder = srcList._id === desList._id ? newSrcOrder : newDestOrder;
+                            const [target] = newSrcOrder.splice(result.source.index, 1);
+                            if (result.destination.index < targetOrder.length && targetOrder.length > 0) {
+                                targetOrder.splice(result.destination.index, 0, target);
+                            } else {
+                                targetOrder.push(target);
+                            }
+                            srcList.order = newSrcOrder;
+                            desList.order = newDestOrder;
+                            srcList.cards = srcList.cards.filter((e) => e._id !== card._id);
+                            card.owner = desList._id;
+                            desList.cards.push(card);
+                            url = getURL('lists/update/card/order');
+                            body = JSON.stringify({
+                                srcListId: srcList._id,
+                                srcListOrder: newSrcOrder,
+                                desListId: desList._id,
+                                desListOrder: newDestOrder,
+                                cardId: card._id
+                            });
+                            setLists(newLists);
+                        }
+                    }
+                    break;
+                case DropType.Checklist:
+                    break;
+                default:
+                    break;
+            }
+            if (url !== null && body !== null) {
+                updateOrderHandler(url, body);
+            }
         }
     };
 
@@ -80,7 +135,7 @@ const Lists: Functional<ListsProps> = (props) => {
                 owningBoardId={props.boardId}
                 boardColor={props.boardColor}
             />
-            {props.lists.length <= 0 ? (
+            {lists.length <= 0 ? (
                 <div className="center">
                     {!creating && (
                         <Card style={{ marginTop: '2rem', backgroundColor: props.boardColor }}>
@@ -90,12 +145,12 @@ const Lists: Functional<ListsProps> = (props) => {
                     )}
                 </div>
             ) : (
-                <Droppable direction="horizontal" droppableId="list">
+                <Droppable direction="horizontal" droppableId={props.boardId} type={DropType.List}>
                     {(provided) => (
                         <Fragment>
-                            <ul ref={provided.innerRef} className={classes.List} {...provided.droppableProps}>
-                                {order.map((orderId, index) => {
-                                    const list = props.lists.find((e) => e._id === orderId);
+                            <ul {...provided.droppableProps} ref={provided.innerRef} className={classes.List}>
+                                {props.order.map((orderId, index) => {
+                                    const list = lists.find((e) => e._id === orderId);
                                     if (list) {
                                         return (
                                             <ListItem

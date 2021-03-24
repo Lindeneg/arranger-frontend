@@ -7,6 +7,12 @@ export enum HTMLHooks {
     Modal = 'modal-hook'
 }
 
+export enum DropType {
+    List = 'list',
+    Card = 'card',
+    Checklist = 'checklist'
+}
+
 export enum BoardColor {
     Default = '#0f3460',
     Red = '#4a0c0c',

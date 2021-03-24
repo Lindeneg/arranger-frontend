@@ -2,6 +2,7 @@ import { BoardUpdateProps } from '../../boards/components/BoardModal';
 import { SelectOptions } from '../components/Interactable/Input';
 import { State as FormState } from '../hooks';
 import { colorName } from './constants';
+import { IResponse, Orderable, SIndexable } from './types';
 
 const MONTHS: string[] = [
     'JANUARY',
@@ -92,4 +93,14 @@ export const getColorsWithSelectedFirst = (inputState: FormState, update?: Board
                 c: '#ccc'
             }))
     ];
+};
+
+interface OrderableMap extends IResponse, Orderable {}
+
+export const orderMapFromObjectArray = (arr: OrderableMap[]) => {
+    const order: SIndexable<string[]> = {};
+    arr.forEach((entry) => {
+        order[entry._id] = entry.order;
+    });
+    return order;
 };
