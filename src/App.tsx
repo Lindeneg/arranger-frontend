@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
 import Navigation from './common/components/Maneuverable/Navigation';
@@ -6,15 +7,42 @@ import UserBoard from './boards/pages/UserBoard';
 import Auth from './user/pages/Auth';
 import { AuthContext, ThemeContext } from './common/context';
 import { useAuth, IAuthHook, useTheme, IThemeHook } from './common/hooks';
-import { Functional } from './common/util';
+import { Functional, getLocalV, StoredData } from './common/util';
 import classes from './App.module.css';
 import { Fragment } from 'react';
 
 const App: Functional = () => {
     const { token, login, logout, userId }: IAuthHook = useAuth();
     const { color, setTheme, resetTheme }: IThemeHook = useTheme();
+    const [logoutTimeOut, setLogoutTimeOut] = useState<NodeJS.Timeout | null>(null);
+
+    useEffect(() => {
+        if (!!token && logoutTimeOut === null) {
+            const data = getLocalV<StoredData>();
+            if (data !== null) {
+                console.log('setting timeout', data._expires - Date.now());
+                const timer = setTimeout(() => {
+                    console.log('logging out');
+                    setLogoutTimeOut(null);
+                    logout();
+                    window.document.location.reload();
+                }, data._expires - Date.now());
+                setLogoutTimeOut(timer);
+            }
+        }
+    }, [token, logoutTimeOut, logout]);
+
+    const appLogout = () => {
+        if (logoutTimeOut !== null) {
+            console.log('clearling timeout');
+            clearTimeout(logoutTimeOut);
+            setLogoutTimeOut(null);
+        }
+        logout();
+    };
+
     return (
-        <AuthContext.Provider value={{ isLoggedIn: !!token, login, logout, userId, token }}>
+        <AuthContext.Provider value={{ isLoggedIn: !!token, login, logout: appLogout, userId, token }}>
             <ThemeContext.Provider value={{ color, setColor: setTheme, resetColor: resetTheme }}>
                 <BrowserRouter>
                     <Navigation />
@@ -44,7 +72,7 @@ const App: Functional = () => {
                             </Fragment>
                         )}
                     </main>
-                    <footer style={{background: color}} className={classes.Footer}>
+                    <footer style={{ background: color }} className={classes.Footer}>
                         <span>
                             <span className={classes.Clickable}>
                                 <a href="https://www.lindeneg.org" target="_blank" rel="noreferrer">
