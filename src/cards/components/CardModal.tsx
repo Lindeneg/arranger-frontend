@@ -273,7 +273,9 @@ const CardModal: Functional<CardModalProps> = (props) => {
                             </div>
                         )}
                         <hr />
-                        {!!currentCard && !isEditing && <Checklists checklists={currentCard.checklists} />}
+                        {!!currentCard && !isEditing && (
+                            <Checklists owner={currentCard._id} checklists={currentCard.checklists} />
+                        )}
                     </Card>
                 )}
             </Modal>
