@@ -6,6 +6,12 @@ import React from 'react';
 
 type SArrUnion<T> = string[] | T[];
 
+export enum UpdateStateAction {
+    Create = 'CREATE',
+    Delete = 'DELETE',
+    Update = 'UPDATE'
+}
+
 export type DraggableConstraint = HTMLLIElement | HTMLDivElement;
 
 export type OnSubmitFunc<T = HTMLFormElement> = React.FormEventHandler<T>;

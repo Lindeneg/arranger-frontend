@@ -1,4 +1,4 @@
-import { Fragment, useState, useContext, useCallback } from 'react';
+import { Fragment, useState, useContext } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 
 import { DragEndCallbackResult, onDragEndCallback } from '../util/onDragEndCallback';
@@ -9,11 +9,11 @@ import ListModal from './ListModal';
 import Card from '../../common/components/Interface/Card';
 import Button from '../../common/components/Interactable/Button';
 import ErrorModal from '../../common/components/Interface/Modal/ErrorModal';
-import { BaseProps, ChecklistResponse, DropType, Functional, IList, Orderable, UpdateLists } from '../../common/util';
+import { BaseProps, ChecklistResponse, DropType, Functional, IList, ListUpdatable, Orderable } from '../../common/util';
 import { BoardResponse, CardResponse, ListResponse, devLog } from '../../common/util';
 import classes from './Lists.module.css';
 
-interface ListsProps extends BaseProps, Orderable {
+interface ListsProps extends BaseProps, Orderable, ListUpdatable {
     lists: IList[];
     boardName: string;
     boardId: string;
@@ -35,7 +35,6 @@ const Lists: Functional<ListsProps> = (props) => {
     const theme = useContext(ThemeContext);
     const { error, clearError, sendRequest } = useHttp<Responses>();
     const [creating, setCreating] = useState<boolean>(false);
-    const [lists, setLists] = useState<IList[]>(props.lists);
     const boardColor = theme.color;
 
     const updateOrderHandler = async (url: string, body: string) => {
@@ -49,19 +48,15 @@ const Lists: Functional<ListsProps> = (props) => {
         }
     };
 
-    const updateLists = useCallback<UpdateLists>((callback: (lists: IList[]) => IList[]): void => {
-        setLists((e) => callback(e));
-    }, []);
-
     const onDragEnd = (result: DropResult): void => {
-        const dragResult: DragEndCallbackResult = onDragEndCallback(result, props.order, lists, {
+        const dragResult: DragEndCallbackResult = onDragEndCallback(result, props.order, props.lists, {
             id: props.boardId,
             name: props.boardName,
             color: boardColor
         });
         if (dragResult.http.url !== null && dragResult.http.body !== null) {
             props.setOrder(dragResult.newOrder);
-            setLists(dragResult.newLists);
+            props.updateLists(() => dragResult.newLists);
             updateOrderHandler(dragResult.http.url, dragResult.http.body);
         }
     };
@@ -77,8 +72,15 @@ const Lists: Functional<ListsProps> = (props) => {
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <ErrorModal show={!!error} error={error} onClear={clearError} />
-            <ListModal show={creating} onClick={onCancelCreateHandler} owningBoardId={props.boardId} />
-            {lists.length <= 0 ? (
+            <ListModal
+                order={props.order}
+                setOrder={props.setOrder}
+                updateLists={props.updateLists}
+                show={creating}
+                onClick={onCancelCreateHandler}
+                owningBoardId={props.boardId}
+            />
+            {props.lists.length <= 0 ? (
                 <div className="center">
                     {!creating && (
                         <Card style={{ marginTop: '2rem', backgroundColor: boardColor }}>
@@ -93,12 +95,14 @@ const Lists: Functional<ListsProps> = (props) => {
                         <Fragment>
                             <ul {...provided.droppableProps} ref={provided.innerRef} className={classes.List}>
                                 {props.order.map((orderId, index) => {
-                                    const list = lists.find((e) => e._id === orderId);
+                                    const list = props.lists.find((e) => e._id === orderId);
                                     if (list) {
                                         return (
                                             <ListItem
                                                 {...list}
-                                                updateLists={updateLists}
+                                                listOrder={props.order}
+                                                setOrder={props.setOrder}
+                                                updateLists={props.updateLists}
                                                 index={index}
                                                 key={list._id}
                                                 boardId={props.boardId}

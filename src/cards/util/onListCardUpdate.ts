@@ -1,13 +1,7 @@
-import { CardResponse, ChecklistResponse, IList } from '../../common/util';
+import { CardResponse, ChecklistResponse, IList, UpdateStateAction } from '../../common/util';
 
-export enum ListCardAction {
-    Create = 'CREATE',
-    Delete = 'DELETE',
-    Update = 'UPDATE'
-}
-
-export const onInternalListUpdate = (
-    action: ListCardAction,
+export const onListCardUpdate = (
+    action: UpdateStateAction,
     card: CardResponse<ChecklistResponse[]>,
     currentLists: IList[]
 ): IList[] => {
@@ -17,7 +11,7 @@ export const onInternalListUpdate = (
         const targetList = { ...newLists[targetListIdx] };
         if (targetList) {
             const newTargetList = { ...targetList };
-            if (action === ListCardAction.Create) {
+            if (action === UpdateStateAction.Create) {
                 const newCards = [...newTargetList.cards];
                 const newOrder = [...newTargetList.order];
                 newCards.push({ ...card, checklists: card.checklists.map((e) => e._id) });
@@ -27,10 +21,10 @@ export const onInternalListUpdate = (
             } else {
                 const targetCardIdx = newTargetList.cards.findIndex((e) => e._id === card._id);
                 if (targetCardIdx > -1) {
-                    if (action === ListCardAction.Delete) {
+                    if (action === UpdateStateAction.Delete) {
                         newTargetList.cards = newTargetList.cards.filter((e) => e._id !== card._id);
                         newTargetList.order = newTargetList.order.filter((e) => e !== card._id);
-                    } else if (action === ListCardAction.Update) {
+                    } else if (action === UpdateStateAction.Update) {
                         newTargetList.cards[targetCardIdx] = {
                             ...newTargetList.cards[targetCardIdx],
                             name: card.name,

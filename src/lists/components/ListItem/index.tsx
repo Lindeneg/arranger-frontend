@@ -11,11 +11,14 @@ import {
     Functional,
     ListResponse,
     ListUpdatable,
-    OptCls
+    OptCls,
+    Orderable
 } from '../../../common/util';
 import classes from './ListItem.module.css';
 
-interface ListItemProps extends BaseProps, OptCls, ListUpdatable, ListResponse<CardResponse<string[]>[]> {
+interface ListItemProps extends BaseProps, OptCls, Orderable, ListUpdatable, ListResponse<CardResponse<string[]>[]> {
+    listOrder: string[];
+    setOrder: (order: string[]) => void;
     index: number;
     boardId: string;
 }
@@ -38,6 +41,9 @@ const ListItem: Functional<ListItemProps> = (props) => {
     return (
         <Fragment>
             <ListModal
+                order={props.listOrder}
+                setOrder={props.setOrder}
+                updateLists={props.updateLists}
                 show={updating}
                 onClick={onUpdateCancelHandler}
                 owningBoardId={props.boardId}

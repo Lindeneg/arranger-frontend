@@ -1,6 +1,6 @@
 import { Fragment, useContext, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 
+import { onListUpdate } from '../util/onListUpdate';
 import { useForm, useHttp } from '../../common/hooks';
 import { AuthContext, ThemeContext } from '../../common/context';
 import Card from '../../common/components/Interface/Card';
@@ -20,10 +20,14 @@ import {
     Clickable,
     RULE,
     ListResponse,
-    Visibility
+    Visibility,
+    ListUpdatable,
+    UpdateStateAction,
+    Orderable
 } from '../../common/util';
 
-interface ListModalProps extends BaseProps, Clickable, Visibility {
+interface ListModalProps extends BaseProps, Clickable, Visibility, Orderable, ListUpdatable {
+    setOrder: (order: string[]) => void;
     owningBoardId: string;
     update?: {
         id: string;
@@ -36,7 +40,6 @@ interface ListModalProps extends BaseProps, Clickable, Visibility {
  */
 
 const ListModal: Functional<ListModalProps> = (props) => {
-    const history = useHistory();
     const authContext = useContext(AuthContext);
     const theme = useContext(ThemeContext);
     const { isLoading, error, clearError, sendRequest } = useHttp<ListResponse<string[]>>();
@@ -55,6 +58,14 @@ const ListModal: Functional<ListModalProps> = (props) => {
         }
     }, [props.update, setInputState]);
 
+    const onClose = () => {
+        setInputState({
+            inputs: { name: { value: '', isValid: false } },
+            isValid: false
+        });
+        props.onClick();
+    };
+
     const onSubmitHandler: OnSubmitFunc = async (event) => {
         event.preventDefault();
         try {
@@ -70,7 +81,18 @@ const ListModal: Functional<ListModalProps> = (props) => {
                     Authorization: 'Bearer ' + authContext.token
                 }
             );
-            res && history.go(0);
+            if (res) {
+                props.updateLists(
+                    onListUpdate.bind(
+                        null,
+                        props.order,
+                        props.setOrder,
+                        props.update ? UpdateStateAction.Update : UpdateStateAction.Create,
+                        res
+                    )
+                );
+                onClose();
+            }
         } catch (err) {
             devLog(err);
         }
@@ -85,7 +107,11 @@ const ListModal: Functional<ListModalProps> = (props) => {
                     null,
                     { Authorization: 'Bearer ' + authContext.token }
                 );
-                res && history.go(0);
+                if (res) {
+                    props.updateLists(
+                        onListUpdate.bind(null, props.order, props.setOrder, UpdateStateAction.Delete, props.update.id)
+                    );
+                }
             } catch (err) {
                 devLog(err);
             }
@@ -97,7 +123,7 @@ const ListModal: Functional<ListModalProps> = (props) => {
             <ErrorModal show={!!error} error={error} onClear={clearError} />
             <Modal
                 show={props.show && !error}
-                onClose={props.onClick}
+                onClose={onClose}
                 onSubmit={onSubmitHandler}
                 headerText={(props.update ? 'Update' : 'Create') + ' List'}
                 style={{ backgroundColor: boardColor }}
@@ -131,7 +157,7 @@ const ListModal: Functional<ListModalProps> = (props) => {
                             DELETE
                         </Button>
                     )}
-                    <Button type="button" inverse onClick={props.onClick}>
+                    <Button type="button" inverse onClick={onClose}>
                         CANCEL
                     </Button>
                 </Card>

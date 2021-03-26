@@ -1,4 +1,4 @@
-import { Fragment, useState, useContext } from 'react';
+import { Fragment, useState, useContext, useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { useHttp } from '../../common/hooks';
@@ -11,7 +11,7 @@ import Spinner from '../../common/components/Interface/Spinner';
 import Card from '../../common/components/Interface/Card';
 import Button from '../../common/components/Interactable/Button';
 import { BoardResponse } from '../pages/UserBoard';
-import { BaseProps, devLog, Functional, DeleteResponse, getURL } from '../../common/util';
+import { BaseProps, devLog, Functional, DeleteResponse, getURL, IList, UpdateLists } from '../../common/util';
 import classes from './Board.module.css';
 
 interface BoardProps extends BaseProps {
@@ -30,7 +30,20 @@ const Board: Functional<BoardProps> = (props) => {
     const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
     const [showModal, setShowModal] = useState<boolean>(false);
     const [creatingList, setCreatingList] = useState<boolean>(false);
+    const [lists, setLists] = useState<IList[]>(props.board.lists);
     const [listOrder, setListOrder] = useState<string[]>(props.board.order);
+
+    useEffect(() => {
+        
+    })
+
+    const updateLists = useCallback<UpdateLists>((callback: (lists: IList[]) => IList[]): void => {
+        setLists((e) => callback(e));
+    }, []);
+
+    const updateOrder = useCallback((order: string[]) => {
+        setListOrder(order);
+    }, []);
 
     const onDeleteHandler = async () => {
         if (confirmDelete) {
@@ -76,7 +89,14 @@ const Board: Functional<BoardProps> = (props) => {
 
     return (
         <Fragment>
-            <ListModal show={creatingList} onClick={onCreateListCancel} owningBoardId={props.board._id} />
+            <ListModal
+                order={listOrder}
+                setOrder={updateOrder}
+                updateLists={updateLists}
+                show={creatingList}
+                onClick={onCreateListCancel}
+                owningBoardId={props.board._id}
+            />
             <BoardModal
                 show={showModal}
                 onClose={onModelClose}
@@ -84,7 +104,7 @@ const Board: Functional<BoardProps> = (props) => {
                     id: props.board._id,
                     name: props.board.name,
                     color: props.board.color,
-                    order: props.board.order
+                    order: listOrder
                 }}
             />
             <ErrorModal show={!!error} error={error} onClear={clearError} />
@@ -114,7 +134,7 @@ const Board: Functional<BoardProps> = (props) => {
                                 </Fragment>
                             ) : (
                                 <Fragment>
-                                    {props.board.lists.length > 0 && (
+                                    {lists.length > 0 && (
                                         <Button onClick={onCreateListAccept} inverse type="button">
                                             NEW LIST
                                         </Button>
@@ -130,11 +150,12 @@ const Board: Functional<BoardProps> = (props) => {
                         </div>
                         <hr />
                         <Lists
-                            lists={props.board.lists}
+                            lists={lists}
                             boardName={props.board.name}
                             boardId={props.board._id}
                             order={listOrder}
-                            setOrder={setListOrder}
+                            setOrder={updateOrder}
+                            updateLists={updateLists}
                         />
                     </div>
                 </Card>

@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useContext, useEffect, useState } from 'react';
 
-import { onInternalListUpdate, ListCardAction } from '../util/onListUpdate';
+import { onListCardUpdate } from '../util/onListCardUpdate';
 import Checklists from '../../checklists/components';
 import Modal from '../../common/components/Interface/Modal';
 import Button from '../../common/components/Interactable/Button';
@@ -16,6 +16,7 @@ import {
     ChecklistResponse,
     Clickable,
     devLog,
+    UpdateStateAction,
     Functional,
     getURL,
     getValidator,
@@ -131,7 +132,7 @@ const CardModal: Functional<CardModalProps> = (props) => {
                     Authorization: 'Bearer ' + authContext.token
                 });
                 if (res) {
-                    props.updateLists(onInternalListUpdate.bind(null, ListCardAction.Delete, currentCard));
+                    props.updateLists(onListCardUpdate.bind(null, UpdateStateAction.Delete, currentCard));
                     onClose();
                 }
             } catch (err) {
@@ -160,7 +161,11 @@ const CardModal: Functional<CardModalProps> = (props) => {
             if (res) {
                 setCard(res);
                 props.updateLists(
-                    onInternalListUpdate.bind(null, !!currentCard ? ListCardAction.Update : ListCardAction.Create, res)
+                    onListCardUpdate.bind(
+                        null,
+                        !!currentCard ? UpdateStateAction.Update : UpdateStateAction.Create,
+                        res
+                    )
                 );
                 onEditDeny();
             }
