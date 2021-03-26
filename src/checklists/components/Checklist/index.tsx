@@ -107,7 +107,7 @@ const Checklist: Functional<ChecklistProps> = (props) => {
                         <input
                             value={description}
                             className={classes.Description}
-                            maxLength={RULE.DEFAULT_MAX_LEN}
+                            maxLength={RULE.CHECKLIST_MAX_LEN}
                             onChange={onChange}
                             type="text"
                         />
