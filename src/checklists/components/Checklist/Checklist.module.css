@@ -17,6 +17,10 @@
     margin: 0;
 }
 
+.Description, .Description p {
+    font-size: 1rem;
+}
+
 .Content img {
     margin-right: 1rem;
 }
@@ -30,6 +34,11 @@
     display: inherit;
 }
 
-.Content img:hover {
+.Content img:hover, .Content p:hover {
     cursor: pointer;
 }
+
+.Content p:hover {
+    color: #c76e3d;
+}
+
