@@ -1,9 +1,10 @@
-import { useEffect, Fragment } from 'react';
+import { useEffect, Fragment, useCallback } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
 import Navigation from './common/components/Maneuverable/Navigation';
 import UserBoards from './boards/pages/UserBoards';
 import UserBoard from './boards/pages/UserBoard';
+import UpdateUser from './user/pages/UpdateUser';
 import Auth from './user/pages/Auth';
 import { AuthContext, ThemeContext } from './common/context';
 import { useAuth, IAuthHook, useTheme, IThemeHook } from './common/hooks';
@@ -29,14 +30,14 @@ const App: Functional = () => {
         }
     }, [token, logout]);
 
-    const appLogout = () => {
+    const appLogout = useCallback(() => {
         const timer: NodeJS.Timeout | null = getLocalV<NodeJS.Timeout>(LocalKey.Timer, false, false);
         if (timer !== null) {
             clearTimeout(timer);
             setLocalV(timer, LocalKey.Timer, false);
         }
         logout();
-    };
+    }, [logout]);
 
     return (
         <AuthContext.Provider value={{ isLoggedIn: !!token, login, logout: appLogout, userId, token }}>
@@ -53,7 +54,7 @@ const App: Functional = () => {
                                     <UserBoards />
                                 </Route>
                                 <Route path="/profile" exact>
-                                    <div>PROFILE</div>
+                                    <UpdateUser />
                                 </Route>
                                 <Route path="/board/:boardId" exact>
                                     <UserBoard />
