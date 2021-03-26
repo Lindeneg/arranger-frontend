@@ -4,6 +4,10 @@
     height: 100%;
 }
 
+.Checklists h2 {
+    padding: 1rem;
+}
+
 .AddChecklist {
     border: 1px solid dimgray;
     border-radius: 1rem;

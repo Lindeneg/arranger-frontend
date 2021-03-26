@@ -61,23 +61,29 @@ const Checklists: Functional<ChecklistsProps> = (props) => {
     return (
         <div className={classes.Container}>
             {!editingChecklist && (
-                <Fragment>
-                    {checklists.map((checklist) => (
-                        <Checklist
-                            isEditing={false}
-                            key={checklist._id}
-                            display={checklist}
-                            updateChecklists={updateChecklists}
-                            onEditDeny={onEditDeny}
-                            onEditAccept={onEditAccept.bind(null, checklist)}
-                        />
-                    ))}
-                </Fragment>
+                <div className={classes.Checklists}>
+                    {checklists.length > 0 && <h2>Checklist</h2>}
+                    <Fragment>
+                        {checklists.map((checklist) => (
+                            <Checklist
+                                isEditing={false}
+                                key={checklist._id}
+                                display={checklist}
+                                updateChecklists={updateChecklists}
+                                onEditDeny={onEditDeny}
+                                onEditAccept={onEditAccept.bind(null, checklist)}
+                            />
+                        ))}
+                    </Fragment>
+                </div>
             )}
             {!editingChecklist ? (
-                <div className={classes.AddChecklist} onClick={onCreateAccept}>
-                    ADD CHECKLIST
-                </div>
+                <Fragment>
+                    {checklists.length > 0 && <hr />}
+                    <div className={classes.AddChecklist} onClick={onCreateAccept}>
+                        ADD CHECKLIST
+                    </div>
+                </Fragment>
             ) : (
                 <Checklist
                     isEditing={true}
