@@ -1,7 +1,7 @@
 import { BoardUpdateProps } from '../../boards/components/BoardModal';
 import { SelectOptions } from '../components/Interactable/Input';
 import { State as FormState } from '../hooks';
-import { colorName } from './constants';
+import { colorName, LocalKey } from './constants';
 import { IResponse, Orderable, SIndexable } from './types';
 
 const MONTHS: string[] = [
@@ -45,23 +45,24 @@ export const devLog = (err: any): void => {
     process.env.NODE_ENV === 'development' && console.log(err);
 };
 
-export const setLocalV = (data: string | object, key: string = '_arngrprv'): void => {
+export const setLocalV = (data: string | object, key: string = LocalKey.Token, encode = true): void => {
     try {
         const mData: string = typeof data === 'string' ? data : JSON.stringify(data);
-        localStorage.setItem(key, btoa(mData));
+        localStorage.setItem(key, encode ? btoa(mData) : mData);
     } catch (err) {
         devLog(err);
     }
 };
 
-export const removeLocalV = (key: string = '_arngrprv'): void => {
+export const removeLocalV = (key: string = LocalKey.Token): void => {
     localStorage.removeItem(key);
 };
 
-export function getLocalV<T>(key: string = '_arngrprv', parse: boolean = true): T | null {
+export function getLocalV<T>(key: string = LocalKey.Token, parse: boolean = true, decode = true): T | null {
     const item: string | null = localStorage.getItem(key);
     if (item) {
-        return parse ? JSON.parse(atob(item)) : atob(item);
+        const readable = decode ? atob(item) : item;
+        return parse ? JSON.parse(readable) : readable;
     }
     return null;
 }

@@ -1,5 +1,10 @@
 import { SIndexable } from './types';
 
+export enum LocalKey {
+    Token = '_arngrprv',
+    Timer = '_arngprv_timer'
+}
+
 // values must correspond to id names in public html file
 export enum HTMLHooks {
     Drawer = 'drawer-hook',
