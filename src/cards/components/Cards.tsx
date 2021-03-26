@@ -1,19 +1,17 @@
 import { Fragment, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 
 import CardModal from './CardModal';
 import CardItem from './CardItem';
 import Button from '../../common/components/Interactable/Button';
-import { BaseProps, CardResponse, Functional, OnClickFunc, Orderable } from '../../common/util';
+import { BaseProps, CardResponse, Functional, ListUpdatable, Orderable } from '../../common/util';
 import classes from './Cards.module.css';
 
-interface CardsProps extends BaseProps, Orderable {
+interface CardsProps extends BaseProps, Orderable, ListUpdatable {
     listOwnerId: string;
     cards: CardResponse<string[]>[];
 }
 
 const Cards: Functional<CardsProps> = (props) => {
-    const history = useHistory();
     const [isViewingCardId, setIsViewingCardId] = useState<string | null>(null);
     const [isCreatingCard, setIsCreatingCard] = useState<boolean>(false);
 
@@ -27,17 +25,15 @@ const Cards: Functional<CardsProps> = (props) => {
         setIsCreatingCard(false);
     };
 
-    const onViewCardDeny: OnClickFunc<HTMLElement, boolean> = (e, update) => {
+    const onViewCardDeny = () => {
         setIsCreatingCard(false);
         setIsViewingCardId(null);
-        if (typeof update !== 'undefined' && update === true) {
-            history.go(0);
-        }
     };
 
     return (
         <Fragment>
             <CardModal
+                updateLists={props.updateLists}
                 listOwnerId={props.listOwnerId}
                 cardId={isViewingCardId}
                 show={!!isViewingCardId || isCreatingCard}

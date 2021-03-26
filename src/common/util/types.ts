@@ -10,13 +10,17 @@ export type DraggableConstraint = HTMLLIElement | HTMLDivElement;
 
 export type OnSubmitFunc<T = HTMLFormElement> = React.FormEventHandler<T>;
 
-export type OnClickFunc<T = HTMLElement, O = any> = (event: React.MouseEvent<T, MouseEvent>, opt?: O) => void;
+export type OnClickFunc<T = HTMLElement, O = any> = (event?: React.MouseEvent<T, MouseEvent>, opt?: O) => void;
 
 export type OnChange<T = HTMLElement> = React.ChangeEventHandler<T>;
 
 export type OnBlur<T = HTMLElement> = React.FocusEventHandler<T>;
 
 export type DragEventHandler<T> = React.DragEventHandler<T>;
+
+export type IList = ListResponse<CardResponse<string[]>[]>;
+
+export type UpdateLists = (callback: (lists: IList[]) => IList[]) => void;
 
 export interface SIndexable<T> {
     [key: string]: T;
@@ -56,6 +60,10 @@ export type UseReducerTuple<S = {}, A = AnyAction, P = {}> = [S, ReducerDispatch
 
 export interface Identifiable {
     id: string;
+}
+
+export interface ListUpdatable {
+    updateLists: UpdateLists;
 }
 
 export interface BaseProps {

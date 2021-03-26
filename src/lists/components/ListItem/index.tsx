@@ -4,10 +4,18 @@ import { Draggable, Droppable } from 'react-beautiful-dnd';
 import Cards from '../../../cards/components/Cards';
 import Card from '../../../common/components/Interface/Card';
 import ListModal from '../ListModal';
-import { BaseProps, CardResponse, DropType, Functional, ListResponse, OptCls } from '../../../common/util';
+import {
+    BaseProps,
+    CardResponse,
+    DropType,
+    Functional,
+    ListResponse,
+    ListUpdatable,
+    OptCls
+} from '../../../common/util';
 import classes from './ListItem.module.css';
 
-interface ListItemProps extends BaseProps, OptCls, ListResponse<CardResponse<string[]>[]> {
+interface ListItemProps extends BaseProps, OptCls, ListUpdatable, ListResponse<CardResponse<string[]>[]> {
     index: number;
     boardId: string;
 }
@@ -55,7 +63,12 @@ const ListItem: Functional<ListItemProps> = (props) => {
                                                 <div onClick={onUpdateAcceptHandler}>&#9776;</div>
                                             </div>
                                             <hr style={{ marginTop: '0', border: '1px solid rgb(99, 99, 99)' }} />
-                                            <Cards listOwnerId={props._id} cards={props.cards} order={props.order} />
+                                            <Cards
+                                                updateLists={props.updateLists}
+                                                listOwnerId={props._id}
+                                                cards={props.cards}
+                                                order={props.order}
+                                            />
                                         </Card>
                                         {dropProp.placeholder}
                                     </div>
