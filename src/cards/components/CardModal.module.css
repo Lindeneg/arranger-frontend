@@ -3,7 +3,6 @@
     left: 2%;
     width: 96%;
     height: 80%;
-    overflow-y: scroll;
 }
 
 .ContentDefault {
@@ -30,6 +29,7 @@
 
 .Card {
     height: 100%;
+    overflow-y: scroll;
 }
 
 .Description,
@@ -52,8 +52,6 @@
     overflow-wrap: break-word;
     overflow-y: scroll;
     width: 60% !important;
-    overflow-wrap: break-word;
-    overflow-y: scroll;
 }
 
 .DescriptionAlt:hover {

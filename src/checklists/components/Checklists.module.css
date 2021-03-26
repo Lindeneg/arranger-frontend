@@ -1,7 +1,6 @@
 .Container {
     overflow-y: scroll;
     width: 100%;
-    height: 100%;
 }
 
 .Checklists h2 {
