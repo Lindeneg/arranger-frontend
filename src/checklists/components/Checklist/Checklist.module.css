@@ -1,0 +1,35 @@
+.Container {
+    padding: 1rem;
+}
+
+.Content {
+    display: flex;
+    flex-direction: row;
+    place-content: space-between;
+    align-items: center;
+}
+
+.Description {
+    background-color: transparent;
+    color: #ccc;
+    width: 80%;
+    height: 2rem;
+    margin: 0;
+}
+
+.Content img {
+    margin-right: 1rem;
+}
+
+.Checked {
+    font-style: italic;
+    text-decoration: line-through;
+}
+
+.Control {
+    display: inherit;
+}
+
+.Content img:hover {
+    cursor: pointer;
+}

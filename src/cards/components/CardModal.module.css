@@ -16,6 +16,12 @@
 
 .Footer button:last-of-type {
     float: right;
+    margin-right: 1rem;
+}
+
+.Footer button:first-of-type {
+    float: left;
+    margin-left: 1rem;
 }
 
 .FooterDelete button {
@@ -36,21 +42,8 @@
     width: 20% !important;
 }
 
-.DescriptionAlt,
-.AddChecklist {
+.DescriptionAlt {
     padding: 1rem;
-}
-
-.AddChecklist {
-    border: 1px solid dimgray;
-    border-radius: 1rem;
-    width: 10rem;
-    margin-top: 1rem;
-}
-
-.AddChecklist:hover {
-    cursor: pointer;
-    color: #c76e3d;
 }
 
 .Description,

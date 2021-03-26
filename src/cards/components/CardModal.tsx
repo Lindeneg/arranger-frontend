@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useContext, useEffect, useState } from 'react';
 
-import Checklists from './Checklists';
-import ChecklistInteract from './Checklists/ChecklistInteract';
+import { onInternalListUpdate, ListCardAction } from '../util/onListUpdate';
+import Checklists from '../../checklists/components';
 import Modal from '../../common/components/Interface/Modal';
 import Button from '../../common/components/Interactable/Button';
 import Input from '../../common/components/Interactable/Input';
@@ -19,7 +19,7 @@ import {
     Functional,
     getURL,
     getValidator,
-    OnClickFunc,
+    ListUpdatable,
     OnSubmitFunc,
     RULE,
     ValidationType,
@@ -27,7 +27,7 @@ import {
 } from '../../common/util';
 import classes from './CardModal.module.css';
 
-interface CardModalProps extends BaseProps, Visibility, Clickable<HTMLElement, boolean> {
+interface CardModalProps extends BaseProps, Visibility, Clickable, ListUpdatable {
     listOwnerId: string;
     cardId: string | null;
 }
@@ -37,11 +37,9 @@ type FetchedCard = CardResponse<ChecklistResponse[]>;
 const CardModal: Functional<CardModalProps> = (props) => {
     const authContext = useContext<IAuthContext>(AuthContext);
     const themeContext = useContext<IThemeContext>(ThemeContext);
-    const [creatingChecklist, setCreatingChecklist] = useState<boolean>(false);
     const [currentCard, setCurrentCard] = useState<FetchedCard | null>(null);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [isEditing, setIsEditing] = useState<boolean>(false);
-    const [shouldUpdate, setShouldUpdate] = useState<boolean>(false);
     const { isLoading, error, clearError, sendRequest } = useHttp<FetchedCard>();
     const [inputState, inputHandler, setInputState] = useForm({
         inputs: {
@@ -80,11 +78,10 @@ const CardModal: Functional<CardModalProps> = (props) => {
         })();
     }, [props.cardId, authContext.token, sendRequest, setInputState, setCard]);
 
-    const onClose: OnClickFunc = (e) => {
+    const onClose = () => {
         setCurrentCard(null);
         setIsDeleting(false);
         setIsEditing(false);
-        setCreatingChecklist(false);
         setInputState({
             inputs: {
                 name: { value: '', isValid: false },
@@ -92,7 +89,7 @@ const CardModal: Functional<CardModalProps> = (props) => {
             },
             isValid: false
         });
-        props.onClick(e, shouldUpdate);
+        props.onClick();
     };
 
     const onDeleteAccept = () => {
@@ -105,7 +102,6 @@ const CardModal: Functional<CardModalProps> = (props) => {
 
     const onEditAccept = () => {
         setIsEditing(true);
-        setCreatingChecklist(false);
         if (!!currentCard) {
             setInputState({
                 inputs: {
@@ -128,8 +124,20 @@ const CardModal: Functional<CardModalProps> = (props) => {
         setIsEditing(false);
     };
 
-    const onDeleteHandler = () => {
-        console.log('DELETE');
+    const onDeleteHandler = async () => {
+        if (!!currentCard) {
+            try {
+                const res: FetchedCard | void = await sendRequest(getURL(`cards/${currentCard._id}`), 'DELETE', null, {
+                    Authorization: 'Bearer ' + authContext.token
+                });
+                if (res) {
+                    props.updateLists(onInternalListUpdate.bind(null, ListCardAction.Delete, currentCard));
+                    onClose();
+                }
+            } catch (err) {
+                devLog(err);
+            }
+        }
     };
 
     const onSubmitHandler: OnSubmitFunc = async (e) => {
@@ -151,7 +159,9 @@ const CardModal: Functional<CardModalProps> = (props) => {
             );
             if (res) {
                 setCard(res);
-                setShouldUpdate(true);
+                props.updateLists(
+                    onInternalListUpdate.bind(null, !!currentCard ? ListCardAction.Update : ListCardAction.Create, res)
+                );
                 onEditDeny();
             }
         } catch (err) {
@@ -185,16 +195,16 @@ const CardModal: Functional<CardModalProps> = (props) => {
                     ) : (
                         <Fragment>
                             {!currentCard && (
-                                <Button disabled={!inputState.isValid} type={creatingChecklist ? 'button' : 'submit'}>
-                                    CREATE
+                                <Button disabled={!inputState.isValid} type={!!currentCard ? 'button' : 'submit'}>
+                                    CREATE CARD
                                 </Button>
                             )}
                             <Button onClick={onClose} type="button" inverse>
-                                CLOSE
+                                CLOSE CARD
                             </Button>
                             {!!currentCard && (
                                 <Button onClick={onDeleteAccept} type="button" inverse>
-                                    DELETE
+                                    DELETE CARD
                                 </Button>
                             )}
                         </Fragment>
@@ -258,17 +268,7 @@ const CardModal: Functional<CardModalProps> = (props) => {
                             </div>
                         )}
                         <hr />
-                        {!!currentCard && !isEditing && !creatingChecklist && (
-                            <Fragment>
-                                <Checklists checklists={currentCard.checklists} />
-                                <div className={classes.AddChecklist} onClick={setCreatingChecklist.bind(null, true)}>
-                                    ADD CHECKLIST
-                                </div>
-                            </Fragment>
-                        )}
-                        {!!currentCard && !isEditing && creatingChecklist && (
-                            <ChecklistInteract onClick={setCreatingChecklist.bind(null, false)} />
-                        )}
+                        {!!currentCard && !isEditing && <Checklists checklists={currentCard.checklists} />}
                     </Card>
                 )}
             </Modal>
