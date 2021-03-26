@@ -87,7 +87,6 @@ const Auth: Functional = (props) => {
 
     return (
         <Fragment>
-            {console.log(state)}
             <ErrorModal onClear={clearError} error={error} show={!!error} />
             <div className={classes.Intro}>
                 <h2>Arranger </h2>
