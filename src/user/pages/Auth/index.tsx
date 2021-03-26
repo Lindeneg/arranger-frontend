@@ -32,7 +32,7 @@ const Auth: Functional = (props) => {
     const [isInLoginMode, setLoginMode] = useState<boolean>(true);
     const { isLoading, error, clearError, sendRequest } = useHttp<UserAuthResponse>();
 
-    const [state, inputHandler] = useForm({
+    const [state, inputHandler, setFormState] = useForm({
         inputs: {
             username: { value: '', isValid: false },
             password: { value: '', isValid: false }
@@ -64,11 +64,30 @@ const Auth: Functional = (props) => {
     };
 
     const onToggleModeHandler: OnClickFunc = () => {
+        if (!isInLoginMode) {
+            setFormState({
+                inputs: {
+                    username: { ...state.inputs.username },
+                    password: { ...state.inputs.password }
+                },
+                isValid: state.inputs.username.isValid && state.inputs.password.isValid
+            });
+        } else {
+            setFormState({
+                inputs: {
+                    username: { ...state.inputs.username },
+                    password: { ...state.inputs.password },
+                    confirmation: { value: '', isValid: false }
+                },
+                isValid: false
+            });
+        }
         setLoginMode((prevState) => !prevState);
     };
 
     return (
         <Fragment>
+            {console.log(state)}
             <ErrorModal onClear={clearError} error={error} show={!!error} />
             <div className={classes.Intro}>
                 <h2>Arranger </h2>
@@ -108,24 +127,36 @@ const Auth: Functional = (props) => {
                                 getValidator(ValidationType.MinLength, RULE.USR_MIN_LEN),
                                 getValidator(ValidationType.MaxLength, RULE.USR_MAX_LEN)
                             ]}
-                            value={state.inputs.username.value}
-                            valid={state.inputs.username.isValid}
                         />
                         <Input
                             id="password"
                             label="PASSWORD"
                             element="input"
                             type="password"
-                            errorText={`Please enter a valid password (at least ${RULE.PW_MIN_LEN} characters but at most ${RULE.PW_MAX_LEN}).`}
+                            errorText={`Please enter a valid password (at least ${RULE.PW_MIN_LEN} characters but at most ${RULE.PW_MAX_LEN}) with at least one number and uppercase character.`}
                             onInput={inputHandler}
                             validators={[
-                                // TODO require at least a number and a uppercase char
                                 getValidator(ValidationType.MinLength, RULE.PW_MIN_LEN),
-                                getValidator(ValidationType.MaxLength, RULE.PW_MAX_LEN)
+                                getValidator(ValidationType.MaxLength, RULE.PW_MAX_LEN),
+                                getValidator(ValidationType.MinUppercaseCharacters, 1),
+                                getValidator(ValidationType.MinNumericalSymbols, 1)
                             ]}
-                            value={state.inputs.password.value}
-                            valid={state.inputs.password.isValid}
                         />
+                        {!isInLoginMode && (
+                            <Input
+                                id="confirmation"
+                                label="CONFIRM PASSWORD"
+                                element="input"
+                                type="password"
+                                errorText={`Passwords does not match.`}
+                                onInput={inputHandler}
+                                validators={[
+                                    getValidator(ValidationType.MinLength, RULE.PW_MIN_LEN),
+                                    getValidator(ValidationType.MaxLength, RULE.PW_MAX_LEN),
+                                    getValidator(ValidationType.IsEqual, state.inputs.password.value)
+                                ]}
+                            />
+                        )}
                         <Button type="submit" disabled={!state.isValid}>
                             {isInLoginMode ? 'LOGIN' : 'SIGNUP'}
                         </Button>

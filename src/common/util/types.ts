@@ -177,14 +177,17 @@ export enum ValidationType {
     MinLength,
     MaxLength,
     MinValue,
-    MaxValue
+    MaxValue,
+    MinUppercaseCharacters,
+    MinNumericalSymbols,
+    IsEqual
 }
 
 export type ValidationValue = string | number | undefined;
 
 export interface Validator {
     type: ValidationType;
-    value?: number;
+    value?: number | string;
 }
 
 export type ValidationFunc = (value: string | number, isValid: boolean, validator: Validator) => boolean;

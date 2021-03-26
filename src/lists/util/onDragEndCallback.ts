@@ -79,8 +79,6 @@ export const onDragEndCallback = (
                     }
                 }
                 break;
-            case DropType.Checklist:
-                break;
             default:
                 break;
         }

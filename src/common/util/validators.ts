@@ -15,10 +15,35 @@ const validationFunc: NIndexable<ValidationFunc> = {
     },
     [ValidationType.MaxValue]: (value, isValid, validator) => {
         return isValid && +value <= (validator.value || 10);
+    },
+    [ValidationType.MinUppercaseCharacters]: (value, isValid, validator) => {
+        let uppercaseChars: number = 0;
+        const stringifiedValue = value.toString();
+        for (let i = 0; i < stringifiedValue.length; i++) {
+            let e = stringifiedValue[i];
+            if (e >= 'A' && e <= 'Z') {
+                uppercaseChars++;
+            }
+        }
+        return isValid && uppercaseChars >= (validator.value || 0);
+    },
+    [ValidationType.MinNumericalSymbols]: (value, isValid, validator) => {
+        let numericalSymbols: number = 0;
+        const stringifiedValue = value.toString();
+        for (let i = 0; i < stringifiedValue.length; i++) {
+            let n = parseInt(stringifiedValue[i]);
+            if (typeof n === 'number' && !Number.isNaN(n)) {
+                numericalSymbols++;
+            }
+        }
+        return isValid && numericalSymbols >= (validator.value || 0);
+    },
+    [ValidationType.IsEqual]: (value, isValid, validator) => {
+        return isValid && value.toString() === validator.value?.toString();
     }
 };
 
-export const getValidator = (type: ValidationType, value?: number): Validator => ({ type, value });
+export const getValidator = (type: ValidationType, value?: number | string): Validator => ({ type, value });
 
 export const validate = (value: ValidationValue, validators: Validator[]): boolean => {
     let isValid: boolean = true;
