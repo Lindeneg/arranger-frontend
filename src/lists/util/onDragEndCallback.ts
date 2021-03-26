@@ -53,7 +53,6 @@ export const onDragEndCallback = (
                     const newSrcOrder = [...srcList.order];
                     const newDestOrder = [...desList.order];
                     const card = srcList.cards.find((e) => e._id === result.draggableId);
-                    console.log(card);
                     if (card) {
                         const targetOrder = srcList._id === desList._id ? newSrcOrder : newDestOrder;
                         const [target] = newSrcOrder.splice(result.source.index, 1);
