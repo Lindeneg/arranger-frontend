@@ -222,7 +222,8 @@ const CardModal: Functional<CardModalProps> = (props) => {
                         {!currentCard || isEditing ? (
                             <Fragment>
                                 <Input
-                                    placeHolder={'Enter Name...'}
+                                    placeHolder="Enter Name..."
+                                    errorText={`Name is required but limited to ${RULE.USR_MAX_LEN} characters`}
                                     id="name"
                                     label="Name"
                                     type="text"
@@ -237,7 +238,8 @@ const CardModal: Functional<CardModalProps> = (props) => {
                                     ]}
                                 />
                                 <Input
-                                    placeHolder={'Enter Description...'}
+                                    placeHolder="Enter Description..."
+                                    errorText={`Description is required but limited to ${RULE.DES_MAX_LEN} characters`}
                                     id="description"
                                     label="Description"
                                     resize="none"
@@ -254,7 +256,11 @@ const CardModal: Functional<CardModalProps> = (props) => {
                                 />
                                 {isEditing && (
                                     <Fragment>
-                                        <Button type="submit" style={{ width: '100%', marginBottom: '0.5rem' }}>
+                                        <Button
+                                            disabled={!inputState.isValid}
+                                            type="submit"
+                                            style={{ width: '100%', marginBottom: '0.5rem' }}
+                                        >
                                             SAVE
                                         </Button>
                                         <Button
