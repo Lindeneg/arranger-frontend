@@ -17,6 +17,8 @@ const App: Functional = () => {
     const [logoutTimeOut, setLogoutTimeOut] = useState<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
+        // TODO set ref logouttimer in local storage, as the function will rerun on reload
+        // thus, currently multiple equivalent timers are potentially set 
         if (!!token && logoutTimeOut === null) {
             const data = getLocalV<StoredData>();
             if (data !== null) {
