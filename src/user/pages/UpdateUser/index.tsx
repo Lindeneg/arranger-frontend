@@ -1,4 +1,5 @@
 import { Fragment, useState, useContext, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { useForm, useHttp } from '../../../common/hooks';
 import { AuthContext, ThemeContext } from '../../../common/context';
@@ -20,6 +21,7 @@ import {
 import classes from './UpdateUser.module.css';
 
 const UpdateUser: Functional = (props) => {
+    const history = useHistory();
     const { logout, token } = useContext(AuthContext);
     const { resetColor } = useContext(ThemeContext);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -47,6 +49,11 @@ const UpdateUser: Functional = (props) => {
         setIsUpdatingPassword(true);
     };
 
+    const onChangePasswordSuccessAccept = () => {
+        setSuccessfulPasswordUpdate(false);
+        history.push('/boards');
+    };
+
     const onSubmitHandler: OnSubmitFunc = async (event) => {
         event.preventDefault();
         try {
@@ -68,7 +75,6 @@ const UpdateUser: Functional = (props) => {
     };
 
     const onDeleteHandler = async () => {
-        console.log('delete profile');
         try {
             const res: StdRes | void = await sendRequest(getURL('user'), 'DELETE', null, {
                 Authorization: 'Bearer ' + token
@@ -118,9 +124,7 @@ const UpdateUser: Functional = (props) => {
                                     </Button>
                                 </Fragment>
                             )}
-                            {successfulPasswordUpdate && (
-                                <Button onClick={setSuccessfulPasswordUpdate.bind(null, false)}>Okay</Button>
-                            )}
+                            {successfulPasswordUpdate && <Button onClick={onChangePasswordSuccessAccept}>Okay</Button>}
                         </Card>
                     )}
                     {!isDeleting && isUpdatingPassword && (
