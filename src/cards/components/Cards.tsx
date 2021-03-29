@@ -57,7 +57,7 @@ const Cards: Functional<CardsProps> = (props) => {
                         }
                     })}
                 </div>
-                <Button inverse onClick={onCreateCardAccept}>
+                <Button inverse type="button" onClick={onCreateCardAccept}>
                     ADD CARD
                 </Button>
             </div>

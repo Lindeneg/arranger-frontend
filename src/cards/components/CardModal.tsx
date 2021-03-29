@@ -180,7 +180,13 @@ const CardModal: Functional<CardModalProps> = (props) => {
             <Modal
                 show={props.show && !error}
                 onClose={onClose}
-                onSubmit={onSubmitHandler}
+                onSubmit={
+                    !currentCard || isEditing
+                        ? onSubmitHandler
+                        : (e) => {
+                              e.preventDefault();
+                          }
+                }
                 headerText={isLoading ? 'Loading...' : !currentCard ? 'Create Card' : currentCard.name}
                 className={classes.Modal}
                 style={{ backgroundColor: themeContext.color }}
@@ -265,6 +271,7 @@ const CardModal: Functional<CardModalProps> = (props) => {
                                         </Button>
                                         <Button
                                             onClick={onEditDeny}
+                                            type="button"
                                             style={{ width: '100%', marginBottom: '1rem' }}
                                             inverse
                                         >
