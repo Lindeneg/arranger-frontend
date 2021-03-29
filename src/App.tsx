@@ -1,5 +1,5 @@
 import { useEffect, Fragment, useCallback } from 'react';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect, useHistory } from 'react-router-dom';
 
 import Navigation from './common/components/Maneuverable/Navigation';
 import UserBoards from './boards/pages/UserBoards';
@@ -12,6 +12,7 @@ import { Functional, getLocalV, LocalKey, removeLocalV, setLocalV, StoredData } 
 import classes from './App.module.css';
 
 const App: Functional = () => {
+    const history = useHistory();
     const { token, login, logout, userId }: IAuthHook = useAuth();
     const { color, setTheme, resetTheme }: IThemeHook = useTheme();
 
@@ -23,12 +24,12 @@ const App: Functional = () => {
                 const timer = setTimeout(() => {
                     removeLocalV(LocalKey.Timer);
                     logout();
-                    window.document.location.reload();
+                    history.push('/');
                 }, data._expires - Date.now());
                 setLocalV(timer, LocalKey.Timer, false);
             }
         }
-    }, [token, logout]);
+    });
 
     const appLogout = useCallback(() => {
         const timer: NodeJS.Timeout | null = getLocalV<NodeJS.Timeout>(LocalKey.Timer, false, false);
@@ -81,7 +82,7 @@ const App: Functional = () => {
                         </span>
                         -
                         <span className={classes.Clickable}>
-                            <a href="https://github.com/lindeneg/arranger-frontend" target="_blank" rel="noreferrer">
+                            <a href="https://github.com/lindeneg/arranger" target="_blank" rel="noreferrer">
                                 source-code
                             </a>
                         </span>{' '}
