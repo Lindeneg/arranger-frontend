@@ -54,7 +54,7 @@ const ListItem: Functional<ListItemProps> = (props) => {
             />
             <Draggable draggableId={props._id} index={props.index}>
                 {(provided) => (
-                    <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                    <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
                         <li style={{ height: '100%' }}>
                             <Droppable droppableId={props._id} type={DropType.Card}>
                                 {(dropProp) => (
