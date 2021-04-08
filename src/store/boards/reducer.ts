@@ -13,10 +13,10 @@ import {
     createBoardSuccess,
     createBoardError,
     updateBoardStart,
-    updateBoardSuccess,
+    /*     updateBoardSuccess, */
     updateBoardError,
     deleteBoardStart,
-    deleteBoardSuccess,
+    /*     deleteBoardSuccess, */
     deleteBoardError,
     clearAnyBoardError
 } from './actions';
@@ -30,41 +30,6 @@ const initialState: BoardState = {
 };
 
 export default createReducer(initialState, (builder: ActionReducerMapBuilder<BoardState>) => {
-    builder.addMatcher(
-        (ac) => ac.type in [fetchBoardsStart.type, fetchBoardStart.type],
-        (state) => {
-            return {
-                ...state,
-                board: null,
-                boards: null,
-                requesting: true,
-                requested: false,
-                error: null
-            };
-        }
-    );
-    builder.addMatcher(
-        (ac) => ac.type in [createBoardStart.type, updateBoardStart.type, deleteBoardStart.type],
-        (state) => {
-            return {
-                ...state,
-                requesting: true,
-                requested: false,
-                error: null
-            };
-        }
-    );
-    builder.addMatcher<PayloadAction<ResponseError>>(
-        (ac) => ac.type in [fetchBoardsError.type, fetchBoardError.type, createBoardError.type],
-        (state, action) => {
-            return {
-                ...state,
-                requested: true,
-                requesting: false,
-                error: action.payload.message
-            };
-        }
-    );
     builder.addCase(fetchBoardsSuccess, (state, action) => {
         return {
             ...state,
@@ -96,4 +61,47 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
             error: null
         };
     });
+    builder.addMatcher(
+        (ac) => ac.type in [fetchBoardsStart.type, fetchBoardStart.type],
+        (state) => {
+            return {
+                ...state,
+                board: null,
+                boards: null,
+                requesting: true,
+                requested: false,
+                error: null
+            };
+        }
+    );
+    builder.addMatcher(
+        (ac) => ac.type in [createBoardStart.type, updateBoardStart.type, deleteBoardStart.type],
+        (state) => {
+            return {
+                ...state,
+                requesting: true,
+                requested: false,
+                error: null
+            };
+        }
+    );
+    builder.addMatcher<PayloadAction<ResponseError>>(
+        (ac) =>
+            ac.type in
+            [
+                fetchBoardsError.type,
+                fetchBoardError.type,
+                createBoardError.type,
+                updateBoardError.type,
+                deleteBoardError.type
+            ],
+        (state, action) => {
+            return {
+                ...state,
+                requested: true,
+                requesting: false,
+                error: action.payload.message
+            };
+        }
+    );
 });
