@@ -22,3 +22,9 @@ export type Requester = {
     requested: boolean;
     error: string | null;
 };
+
+export interface StoredData {
+    _id: string;
+    _token: string;
+    _expires: number;
+}

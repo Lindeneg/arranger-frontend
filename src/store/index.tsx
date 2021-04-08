@@ -2,9 +2,11 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import reduxThunk from 'redux-thunk';
 
 import boardReducer from './boards/reducer';
+import authReducer from './auth/reducer';
 
 export const rootReducer = combineReducers({
-    board: boardReducer
+    board: boardReducer,
+    auth: authReducer
 });
 
 const store = configureStore({

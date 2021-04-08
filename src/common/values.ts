@@ -10,3 +10,8 @@ export const themeColorClassMap: { [K in keyof ThemeColor]: string } = {
     light: 'light',
     dark: 'dark'
 };
+
+export enum LocalKey {
+    Token = '_arngrprv',
+    Timer = '_arngprv_timer'
+}
