@@ -1,45 +1,7 @@
 import { useEffect, Fragment, useCallback } from 'react';
 import { BrowserRouter, Switch, Route, Redirect, useHistory } from 'react-router-dom';
 
-import Navigation from './common/components/Maneuverable/Navigation';
-import UserBoards from './boards/pages/UserBoards';
-import UserBoard from './boards/pages/UserBoard';
-import UpdateUser from './user/pages/UpdateUser';
-import Auth from './user/pages/Auth';
-import { AuthContext, ThemeContext } from './common/context';
-import { useAuth, IAuthHook, useTheme, IThemeHook } from './common/hooks';
-import { Functional, getLocalV, LocalKey, removeLocalV, setLocalV, StoredData } from './common/util';
-import classes from './App.module.css';
-
 const App: Functional = () => {
-    const history = useHistory();
-    const { token, login, logout, userId }: IAuthHook = useAuth();
-    const { color, setTheme, resetTheme }: IThemeHook = useTheme();
-
-    useEffect(() => {
-        const timer: NodeJS.Timeout | null = getLocalV<NodeJS.Timeout>(LocalKey.Timer, false, false);
-        if (!!token && timer === null) {
-            const data = getLocalV<StoredData>();
-            if (data !== null) {
-                const timer = setTimeout(() => {
-                    removeLocalV(LocalKey.Timer);
-                    logout();
-                    history.push('/');
-                }, data._expires - Date.now());
-                setLocalV(timer, LocalKey.Timer, false);
-            }
-        }
-    });
-
-    const appLogout = useCallback(() => {
-        const timer: NodeJS.Timeout | null = getLocalV<NodeJS.Timeout>(LocalKey.Timer, false, false);
-        if (timer !== null) {
-            clearTimeout(timer);
-            setLocalV(timer, LocalKey.Timer, false);
-        }
-        logout();
-    }, [logout]);
-
     return (
         <AuthContext.Provider value={{ isLoggedIn: !!token, login, logout: appLogout, userId, token }}>
             <ThemeContext.Provider value={{ color, setColor: setTheme, resetColor: resetTheme }}>
