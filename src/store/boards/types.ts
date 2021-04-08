@@ -1,11 +1,12 @@
 import { List } from '../lists/types';
-import { MId, Orderable, ThemeOption, Requester } from '../../common/types';
+import { MId, ThemeOption, Requester } from '../../common/types';
 
-export interface Board<T extends string | List> extends MId, Orderable {
+export interface Board<T extends string | List> extends MId {
     name: string;
     owner: string;
     theme: ThemeOption;
     lists: T[];
+    listOrder: string[];
 }
 
 export interface BoardState extends Requester {

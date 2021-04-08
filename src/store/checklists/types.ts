@@ -1,6 +1,6 @@
-import { MId, Orderable, Owner } from '../../common/types';
+import { MId, Owner } from '../../common/types';
 
-export interface Checklist extends MId, Orderable, Owner {
+export interface Checklist extends MId, Owner {
     objective: string;
     isCompleted: boolean;
 }

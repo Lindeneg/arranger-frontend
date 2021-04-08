@@ -1,14 +1,10 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import reduxThunk from 'redux-thunk';
 
-/* import siteReducer from './site/reducer';
-import navigationReducer from './navigation/reducer';
-import pagesReducer from './pages/reducer'; */
+import boardReducer from './boards/reducer';
 
 export const rootReducer = combineReducers({
-    /*     site: siteReducer,
-    navigation: navigationReducer,
-    pages: pagesReducer */
+    board: boardReducer
 });
 
 const store = configureStore({

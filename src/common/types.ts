@@ -2,8 +2,6 @@ export type MId = { _id: string };
 
 export type Owner = { owner: string; indirectOwner: string };
 
-export type Orderable = { order: number };
-
 export type ThemeOption = 'blue' | 'gray' | 'green' | 'red' | 'yellow' | 'teal' | 'light' | 'dark';
 
 export type ThemeColor = {
@@ -22,6 +20,5 @@ export type ResponseError = { message: string };
 export type Requester = {
     requesting: boolean;
     requested: boolean;
-    error: boolean;
-    errorMessage: string;
+    error: string | null;
 };

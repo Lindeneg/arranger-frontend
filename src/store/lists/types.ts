@@ -1,7 +1,8 @@
 import { Card } from '../cards/types';
-import { MId, Orderable, Owner } from '../../common/types';
+import { MId, Owner } from '../../common/types';
 
-export interface List extends MId, Orderable, Owner {
+export interface List extends MId, Owner {
     name: string;
     cards: Card[];
+    cardOrder: string[];
 }
