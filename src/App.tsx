@@ -1,9 +1,10 @@
 import { useEffect, Fragment, useCallback } from 'react';
 import { BrowserRouter, Switch, Route, Redirect, useHistory } from 'react-router-dom';
 
-const App: Functional = () => {
+const App = () => {
     return (
-        <AuthContext.Provider value={{ isLoggedIn: !!token, login, logout: appLogout, userId, token }}>
+        <div></div>
+        /*         <AuthContext.Provider value={{ isLoggedIn: !!token, login, logout: appLogout, userId, token }}>
             <ThemeContext.Provider value={{ color, setColor: setTheme, resetColor: resetTheme }}>
                 <BrowserRouter>
                     <Navigation />
@@ -51,7 +52,7 @@ const App: Functional = () => {
                     </footer>
                 </BrowserRouter>
             </ThemeContext.Provider>
-        </AuthContext.Provider>
+        </AuthContext.Provider> */
     );
 };
 
