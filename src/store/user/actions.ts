@@ -24,7 +24,7 @@ export const loginUserError = createAction<ResponseError>('LOGIN_USER_ERROR');
 
 export const logoutUserStart = createAction('LOGOUT_USER');
 
-export const clearAnyAuthError = createAction('CLEAR_ANY_AUTH_ERROR');
+export const clearAnyUserError = createAction('CLEAR_ANY_USER_ERROR');
 
 export const createUser = (user: User) => async (dispatch: AppDispatch): Promise<void> => {
     dispatch(createUserStart());
@@ -83,6 +83,6 @@ export const logoutUser = () => async (dispatch: AppDispatch): Promise<void> => 
     dispatch(logoutUserStart());
 };
 
-export const clearAuthError = () => async (dispatch: AppDispatch): Promise<void> => {
-    dispatch(clearAnyAuthError());
+export const clearUserError = () => async (dispatch: AppDispatch): Promise<void> => {
+    dispatch(clearAnyUserError());
 };

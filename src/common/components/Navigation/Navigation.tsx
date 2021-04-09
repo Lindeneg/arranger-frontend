@@ -19,7 +19,6 @@ export const Navigation: FC = (props) => {
         setIsDrawerOpen(false);
     };
 
-    // TODO look for truthy token
     return (
         <Navbar variant={theme} className={getCls('bg-' + theme, 'justify-content-between')} style={{ height: '5em' }}>
             <SideDrawer show={isDrawerOpen} onClose={onDrawerClose}>
@@ -29,7 +28,7 @@ export const Navigation: FC = (props) => {
                 Arranger
             </Navbar.Brand>
             <Links desktop />
-            {!!!token && (
+            {!!token && (
                 <List
                     className="d-md-none"
                     onClick={onDrawerOpen}

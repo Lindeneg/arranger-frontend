@@ -1,10 +1,11 @@
 import { FC, Fragment, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { NavLink, useHistory } from 'react-router-dom';
 import Nav from 'react-bootstrap/Nav';
 import { HouseDoor, Kanban, Person, DoorOpen, DoorClosed, Toggle2On, Toggle2Off } from 'react-bootstrap-icons';
 
 import { RootState } from '../../../../store';
+import { logoutUser } from '../../../../store/actions';
 import { getCls, negateTheme, themeToHex } from '../../../func';
 import classes from './Links.module.css';
 
@@ -35,25 +36,29 @@ export interface LinksProps {
 }
 
 export const Links: FC<LinksProps> = (props) => {
-    const { location } = useHistory();
+    const history = useHistory();
+    const dispatch = useDispatch();
     const { token, theme } = useSelector((state: RootState) => state.user);
     const [negatedHexTheme] = useState<string>(themeToHex(negateTheme(theme)));
     const [activeNavIcon, setActiveNavIcon] = useState<NavIcon | null>(null);
     const [logoutIcon, setLogoutIcon] = useState<LogoutIcon>(LogoutIcon.Open);
 
     useEffect(() => {
-        const icon = pathnameToNavIcon(location.pathname);
+        const icon = pathnameToNavIcon(history.location.pathname);
         if (icon !== activeNavIcon) {
             setActiveNavIcon(icon);
         }
-    }, [activeNavIcon, location.pathname]);
+    }, [activeNavIcon, history.location.pathname]);
 
     const onLogout = (): void => {
-        console.log('logout');
+        dispatch(logoutUser());
+        history.push('/');
+        props.onClick && props.onClick();
     };
 
     const onSwitchThemeHandler = (): void => {
         console.log('switch theme');
+        props.onClick && props.onClick();
     };
 
     const onNavIconClick = (navIcon: NavIcon): void => {
@@ -69,10 +74,9 @@ export const Links: FC<LinksProps> = (props) => {
         setLogoutIcon(LogoutIcon.Open);
     };
 
-    // TODO look for truthy token
     return (
         <Nav className={getCls(props.desktop ? 'd-none d-md-flex ' + classes.desktop : classes.mobile)}>
-            {!!!token && (
+            {!!token && (
                 <Fragment>
                     <Nav.Link onClick={onNavIconClick.bind(null, NavIcon.Home)} as={NavLink} to="/" exact>
                         <HouseDoor

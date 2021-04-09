@@ -13,7 +13,7 @@ const App: FC = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (token !== null) {
+        if (token === null) {
             const authData = getLocalV();
             if (authData !== null) {
                 dispatch(loginUser(null, authData));

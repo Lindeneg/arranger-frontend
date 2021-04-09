@@ -15,7 +15,7 @@ import {
     loginUserSuccess,
     loginUserError,
     logoutUserStart,
-    clearAnyAuthError
+    clearAnyUserError
 } from './actions';
 import { ResponseError } from '../../common/types';
 import { defaultTheme } from '../../common/values';
@@ -37,7 +37,7 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Use
             token: null
         };
     });
-    builder.addCase(clearAnyAuthError, (state) => {
+    builder.addCase(clearAnyUserError, (state) => {
         return {
             ...state,
             error: null
