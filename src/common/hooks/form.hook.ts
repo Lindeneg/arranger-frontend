@@ -13,7 +13,7 @@ type FormStateConstraint = { [key: string]: FormValueType };
 
 type ReducerAction = { type: FormAction; payload: Payload };
 
-type GetInputOptions<T extends FormValueType = string> = {
+type GetInputOptions<T extends FormValueType> = {
     [key: string]: T | number | boolean | undefined;
     isEqual?: T;
     minLength?: number;
@@ -58,7 +58,7 @@ export function getInput<T extends FormValueType>(value: T, options?: GetInputOp
         parsedOptions.isValid = !!options.isValid;
         keys.forEach((key) => {
             if (!(key in ['isValid', 'isTouched'])) {
-                parsedOptions.validators.push(getValidator(key as ValidationType, options[key] || ''));
+                parsedOptions.validators.push(getValidator(key as ValidationType, options[key] as T));
             }
         });
     }
@@ -81,6 +81,7 @@ function formReducer<S extends FormState<any>>(state: S, action: ReducerAction):
                     isValid = isValid && state.inputs[key].isValid;
                 }
             }
+            console.log(state, pl.id);
             return {
                 ...state,
                 inputs: {
@@ -97,6 +98,7 @@ function formReducer<S extends FormState<any>>(state: S, action: ReducerAction):
             return {
                 ...state,
                 inputs: {
+                    ...state.inputs,
                     [pl.id]: {
                         ...state.inputs[pl.id],
                         isTouched: true
