@@ -1,14 +1,14 @@
 import { FormValueType } from './form.hook';
 
 export enum ValidationType {
-    Require,
-    MinLength,
-    MaxLength,
-    MinValue,
-    MaxValue,
-    MinUppercaseCharacters,
-    MinNumericalSymbols,
-    IsEqual
+    Require = 'isRequired',
+    MinLength = 'minLength',
+    MaxLength = 'maxLength',
+    MinValue = 'minValue',
+    MaxValue = 'maxValue',
+    MinUppercaseCharacters = 'minUppercaseCharacters',
+    MinNumericalSymbols = 'minNumericalSymbols',
+    IsEqual = 'isEqual'
 }
 
 export interface Validator {
@@ -18,7 +18,7 @@ export interface Validator {
 
 export type ValidationFunc = (value: FormValueType, isValid: boolean, validator: Validator) => boolean;
 
-const validationFunc: { [key: number]: ValidationFunc } = {
+const validationFunc: { [key: string]: ValidationFunc } = {
     [ValidationType.Require]: (value, isValid, validator) => {
         return isValid && value.toString().trim().length > 0;
     },

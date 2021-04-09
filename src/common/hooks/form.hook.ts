@@ -1,6 +1,6 @@
 import { useReducer, useCallback, Reducer } from 'react';
 
-import { Validator, validate } from './form.validation';
+import { Validator, ValidationType, getValidator, validate } from './form.validation';
 
 enum FormAction {
     INPUT_CHANGE = 'INPUT_CHANGE',
@@ -12,6 +12,20 @@ type FormElementConstraint = HTMLInputElement | HTMLTextAreaElement;
 type FormStateConstraint = { [key: string]: FormValueType };
 
 type ReducerAction = { type: FormAction; payload: Payload };
+
+type GetInputOptions<T extends FormValueType = string> = {
+    [key: string]: T | number | boolean | undefined;
+    isEqual?: T;
+    minLength?: number;
+    maxLength?: number;
+    minValue?: number;
+    maxValue?: number;
+    minUppercaseCharacters?: number;
+    minNumericalSymbols?: number;
+    isRequired?: boolean;
+    isValid?: boolean;
+    isTouched?: boolean;
+};
 
 export type FormValueType = string | number | boolean;
 
@@ -32,19 +46,27 @@ export interface Payload extends Pick<FormEntryState<any>, 'value'> {
     state?: FormState<any>;
 }
 
-/* export function getInput<T extends FormValueType>(
-    value: T,
-    validators: any,
-    isValid?: boolean,
-    isTouched?: boolean
-): FormEntryState<T> {
-    return {
-        value,
-        validators: [],
-        isValid: typeof isValid !== 'undefined' ? isValid : false,
-        isTouched: typeof isTouched !== 'undefined' ? isTouched : false
+export function getInput<T extends FormValueType>(value: T, options?: GetInputOptions<T>): FormEntryState<T> {
+    const parsedOptions: { isValid: boolean; isTouched: boolean; validators: Validator[] } = {
+        isValid: false,
+        isTouched: false,
+        validators: []
     };
-} */
+    if (typeof options !== 'undefined') {
+        const keys = Object.keys(options);
+        parsedOptions.isTouched = !!options.isTouched;
+        parsedOptions.isValid = !!options.isValid;
+        keys.forEach((key) => {
+            if (!(key in ['isValid', 'isTouched'])) {
+                parsedOptions.validators.push(getValidator(key as ValidationType, options[key] || ''));
+            }
+        });
+    }
+    return {
+        ...parsedOptions,
+        value
+    };
+}
 
 function formReducer<S extends FormState<any>>(state: S, action: ReducerAction): S {
     const pl = action.payload;

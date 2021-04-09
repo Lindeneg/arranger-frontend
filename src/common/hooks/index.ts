@@ -1,2 +1,1 @@
-export { default as useForm } from './form.hook';
-export { getValidator, ValidationType } from './form.validation';
+export { default as useForm, getInput } from './form.hook';

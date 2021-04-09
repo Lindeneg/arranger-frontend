@@ -6,9 +6,10 @@ import Button from 'react-bootstrap/Button';
 
 import { RootState } from '../../store';
 import { loginUser, clearUserError } from '../../store/actions';
-import { useForm, getValidator, ValidationType } from '../../common/hooks';
+import { useForm, getInput } from '../../common/hooks';
 import { Spinner, ErrorModal } from '../../common/components';
 import { getCls, negateTheme, themeToHex } from '../../common/func';
+import { FormState } from '../../common/hooks/form.hook';
 
 type AuthFormState = {
     username: string;
@@ -16,33 +17,22 @@ type AuthFormState = {
     passwordConfirmation?: string;
 };
 
+const getDefaultFormState = (): FormState<AuthFormState> => ({
+    inputs: {
+        username: getInput('', { minLength: 5, maxLength: 12 }),
+        password: getInput('', { minLength: 8, maxLength: 20, minNumericalSymbols: 1, minUppercaseCharacters: 1 })
+    },
+    isValid: false
+});
+
 const Auth: FC = () => {
     const dispatch = useDispatch();
     const [isInLoginMode, setLoginMode] = useState<boolean>(true);
     const { theme, requesting, error } = useSelector((state: RootState) => state.user);
 
-    const { formState, onChangeHandler, onTouchHandler, setFormState } = useForm<AuthFormState, HTMLInputElement>({
-        inputs: {
-            username: {
-                value: '',
-                isValid: false,
-                isTouched: false,
-                validators: [getValidator(ValidationType.MinLength, 5), getValidator(ValidationType.MaxLength, 12)]
-            },
-            password: {
-                value: '',
-                isValid: false,
-                isTouched: false,
-                validators: [
-                    getValidator(ValidationType.MinLength, 8),
-                    getValidator(ValidationType.MaxLength, 20),
-                    getValidator(ValidationType.MinNumericalSymbols, 1),
-                    getValidator(ValidationType.MinUppercaseCharacters, 1)
-                ]
-            }
-        },
-        isValid: false
-    });
+    const { formState, onChangeHandler, onTouchHandler, setFormState } = useForm<AuthFormState, HTMLInputElement>(
+        getDefaultFormState()
+    );
 
     useEffect(() => {
         console.log(formState);
