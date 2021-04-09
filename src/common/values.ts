@@ -1,6 +1,6 @@
-import { ThemeColor } from './types';
+import { Color, ThemeOption } from './types';
 
-export const themeColorClassMap: { [K in keyof ThemeColor]: string } = {
+export const colorClassMap: { [K in keyof Color]: string } = {
     blue: 'primary',
     gray: 'secondary',
     green: 'success',
@@ -10,6 +10,8 @@ export const themeColorClassMap: { [K in keyof ThemeColor]: string } = {
     light: 'light',
     dark: 'dark'
 };
+
+export const defaultTheme: ThemeOption = 'dark';
 
 export enum LocalKey {
     Token = '_arngrprv',

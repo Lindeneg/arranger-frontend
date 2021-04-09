@@ -69,7 +69,7 @@ export const deleteBoard = (boardId: string) => async (dispatch: AppDispatch): P
     }
 };
 
-export const createBoard = (payload: BoardPayload<'name' | 'owner' | 'theme'>) => async (
+export const createBoard = (payload: BoardPayload<'name' | 'owner'>) => async (
     dispatch: AppDispatch
 ): Promise<void> => {
     dispatch(createBoardStart());
@@ -84,7 +84,7 @@ export const createBoard = (payload: BoardPayload<'name' | 'owner' | 'theme'>) =
     }
 };
 
-export const updateBoard = (boardId: string, payload: BoardPayload<'name' | 'theme'>) => async (
+export const updateBoard = (boardId: string, payload: BoardPayload<'name'>) => async (
     dispatch: AppDispatch
 ): Promise<void> => {
     dispatch(updateBoardStart());

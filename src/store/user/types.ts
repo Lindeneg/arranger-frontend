@@ -1,16 +1,17 @@
-import { MId, Requester } from '../../common/types';
+import { MId, Requester, ThemeOption } from '../../common/types';
 
 export interface User extends MId {
     username: string;
     password: string;
 }
 
-export interface AuthState extends Requester {
+export interface UserState extends Requester {
     userId: string | null;
     token: string | null;
+    theme: ThemeOption;
 }
 
-export interface AuthResponse extends Pick<AuthState, 'userId' | 'token'> {
+export interface UserResponse extends Pick<UserState, 'userId' | 'token'> {
     expires: number;
 }
 

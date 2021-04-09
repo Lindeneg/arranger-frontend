@@ -3,12 +3,13 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Auth from './user/pages/Auth';
+import { Navigation } from './common/components';
 import { RootState } from './store';
 import { loginUser } from './store/actions';
-import { getLocalV } from './common/func';
+import { getLocalV, themeToHex } from './common/func';
 
 const App: FC = () => {
-    const { token } = useSelector((state: RootState) => state.auth);
+    const { token, theme } = useSelector((state: RootState) => state.user);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -20,10 +21,14 @@ const App: FC = () => {
         }
     }, [dispatch, token]);
 
+    useEffect(() => {
+        document.body.setAttribute('style', `background-color: ${themeToHex(theme, true)} !important`);
+    }, [theme]);
+
     return (
         <Fragment>
-            {/*<Navigation />*/}
-            <main>
+            <Navigation />
+            <main className="mt-5">
                 <Switch>
                     {token !== null ? (
                         <Switch>

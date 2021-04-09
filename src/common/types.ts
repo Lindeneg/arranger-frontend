@@ -2,9 +2,10 @@ export type MId = { _id: string };
 
 export type Owner = { owner: string; indirectOwner: string };
 
-export type ThemeOption = 'blue' | 'gray' | 'green' | 'red' | 'yellow' | 'teal' | 'light' | 'dark';
+export type CardColorOption = 'blue' | 'gray' | 'green' | 'red' | 'yellow' | 'teal' | 'light' | 'dark';
+export type ThemeOption = 'light' | 'dark';
 
-export type ThemeColor = {
+export type Color = {
     blue: string;
     gray: string;
     green: string;

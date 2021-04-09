@@ -1,8 +1,21 @@
-import { StoredData } from './types';
+import { StoredData, ThemeOption } from './types';
 import { LocalKey } from './values';
 
 export const devLog = (err: any): void => {
     process.env.NODE_ENV === 'development' && console.log(err);
+};
+
+export const getCls = (...args: string[]): string => args.join(' ');
+
+export const negateTheme = (theme: ThemeOption): ThemeOption => {
+    return theme === 'dark' ? 'light' : 'dark';
+};
+
+export const themeToHex = (theme: ThemeOption, body?: boolean): string => {
+    if (body) {
+        return theme === 'dark' ? '#4b4e52' : '#ccc';
+    }
+    return theme === 'dark' ? '#343a40' : '#fff';
 };
 
 export const isResponseOk = (status: number): boolean => status >= 200 && status <= 299;
@@ -10,7 +23,7 @@ export const isResponseOk = (status: number): boolean => status >= 200 && status
 export const getAuthHeader = () => {
     return {
         headers: {
-            Authorization: `Bearer ${getLocalV()}`
+            Authorization: `Bearer ${getLocalV()?._token}`
         }
     };
 };

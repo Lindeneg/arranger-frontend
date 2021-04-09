@@ -1,6 +1,6 @@
 import { createReducer, ActionReducerMapBuilder, PayloadAction } from '@reduxjs/toolkit';
 
-import { AuthResponse, AuthState } from './types';
+import { UserResponse, UserState } from './types';
 import {
     createUserStart,
     createUserSuccess,
@@ -18,16 +18,18 @@ import {
     clearAnyAuthError
 } from './actions';
 import { ResponseError } from '../../common/types';
+import { defaultTheme } from '../../common/values';
 
-const initialState: AuthState = {
+const initialState: UserState = {
     userId: null,
     token: null,
+    theme: defaultTheme,
     requested: false,
     requesting: false,
     error: null
 };
 
-export default createReducer(initialState, (builder: ActionReducerMapBuilder<AuthState>) => {
+export default createReducer(initialState, (builder: ActionReducerMapBuilder<UserState>) => {
     builder.addCase(logoutUserStart, (state) => {
         return {
             ...state,
@@ -54,7 +56,7 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Aut
             };
         }
     );
-    builder.addMatcher<PayloadAction<AuthResponse>>(
+    builder.addMatcher<PayloadAction<UserResponse>>(
         (ac) => ac.type in [createUserSuccess.type, loginUserSuccess.type],
         (state, action) => {
             return {
