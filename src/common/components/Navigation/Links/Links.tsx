@@ -1,6 +1,6 @@
-import { FC, Fragment, useState } from 'react';
+import { FC, Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import Nav from 'react-bootstrap/Nav';
 import { HouseDoor, Kanban, Person, DoorOpen, DoorClosed, Toggle2On, Toggle2Off } from 'react-bootstrap-icons';
 
@@ -19,15 +19,34 @@ enum LogoutIcon {
     Closed
 }
 
+const pathnameToNavIcon = (pathname: string): NavIcon => {
+    if (pathname === '/boards') {
+        return NavIcon.Boards;
+    } else if (pathname === '/profile') {
+        return NavIcon.Profile;
+    } else {
+        return NavIcon.Home;
+    }
+};
+
 export interface LinksProps {
     onClick?: () => void;
     desktop?: boolean;
 }
 
 export const Links: FC<LinksProps> = (props) => {
-    const [activeNavIcon, setActiveNavIcon] = useState<NavIcon>(NavIcon.Home);
-    const [logoutIcon, setLogoutIcon] = useState<LogoutIcon>(LogoutIcon.Open);
+    const { location } = useHistory();
     const { token, theme } = useSelector((state: RootState) => state.user);
+    const [negatedHexTheme] = useState<string>(themeToHex(negateTheme(theme)));
+    const [activeNavIcon, setActiveNavIcon] = useState<NavIcon | null>(null);
+    const [logoutIcon, setLogoutIcon] = useState<LogoutIcon>(LogoutIcon.Open);
+
+    useEffect(() => {
+        const icon = pathnameToNavIcon(location.pathname);
+        if (icon !== activeNavIcon) {
+            setActiveNavIcon(icon);
+        }
+    }, [activeNavIcon, location.pathname]);
 
     const onLogout = (): void => {
         console.log('logout');
@@ -58,19 +77,16 @@ export const Links: FC<LinksProps> = (props) => {
                     <Nav.Link onClick={onNavIconClick.bind(null, NavIcon.Home)} as={NavLink} to="/" exact>
                         <HouseDoor
                             size="40"
-                            color={activeNavIcon === NavIcon.Home ? themeToHex(negateTheme(theme)) : 'currentColor'}
+                            color={activeNavIcon === NavIcon.Home ? negatedHexTheme : 'currentColor'}
                         />
                     </Nav.Link>
                     <Nav.Link onClick={onNavIconClick.bind(null, NavIcon.Boards)} as={NavLink} to="/boards" exact>
-                        <Kanban
-                            size="40"
-                            color={activeNavIcon === NavIcon.Boards ? themeToHex(negateTheme(theme)) : 'currentColor'}
-                        />
+                        <Kanban size="40" color={activeNavIcon === NavIcon.Boards ? negatedHexTheme : 'currentColor'} />
                     </Nav.Link>
                     <Nav.Link onClick={onNavIconClick.bind(null, NavIcon.Profile)} as={NavLink} to="/profile" exact>
                         <Person
                             size="40"
-                            color={activeNavIcon === NavIcon.Profile ? themeToHex(negateTheme(theme)) : 'currentColor'}
+                            color={activeNavIcon === NavIcon.Profile ? negatedHexTheme : 'currentColor'}
                         />
                     </Nav.Link>
                     <Nav.Link onClick={onSwitchThemeHandler} role="button">
