@@ -6,10 +6,9 @@ import Button from 'react-bootstrap/Button';
 
 import { RootState } from '../../store';
 import { loginUser, clearUserError } from '../../store/actions';
-import { useForm, getInput } from '../../common/hooks';
+import { CustomValidationRule, FormState, useForm, getInput } from '../../common/hooks';
 import { Spinner, ErrorModal } from '../../common/components';
 import { getCls, negateTheme, themeToHex } from '../../common/func';
-import { FormState } from '../../common/hooks/form.hook';
 
 type AuthFormState = {
     username: string;
@@ -25,6 +24,10 @@ const getDefaultFormState = (): FormState<AuthFormState> => ({
     isValid: false
 });
 
+const customRule: CustomValidationRule<string, AuthFormState> = (value, state) => {
+    return state.inputs.password.isValid && value === state.inputs.password.value;
+};
+
 const Auth: FC = () => {
     const dispatch = useDispatch();
     const [isInLoginMode, setLoginMode] = useState<boolean>(true);
@@ -34,16 +37,34 @@ const Auth: FC = () => {
         getDefaultFormState()
     );
 
-    useEffect(() => {
-        console.log(formState);
-    });
-
     const onSwitchModeHandler = () => {
+        const newFormState = { ...formState };
+        if (isInLoginMode) {
+            setFormState({
+                ...newFormState,
+                inputs: {
+                    ...newFormState.inputs,
+                    passwordConfirmation: getInput('', { customRule })
+                },
+                isValid: false
+            });
+        } else {
+            const newFormInputs = { ...newFormState.inputs };
+            delete newFormInputs.passwordConfirmation;
+            setFormState({
+                ...formState,
+                inputs: {
+                    ...newFormInputs
+                },
+                isValid: newFormInputs.password.isValid && newFormInputs.username.isValid
+            });
+        }
         setLoginMode((prev) => !prev);
     };
 
     const onSubmitHandler: React.FormEventHandler<HTMLFormElement> = (e) => {
         e.preventDefault();
+        console.log(formState);
     };
 
     const clearError = (): void => {
@@ -64,7 +85,7 @@ const Auth: FC = () => {
                             <Form.Control
                                 onChange={onChangeHandler}
                                 onBlur={onTouchHandler}
-                                isInvalid={!formState.inputs.username.isValid}
+                                isInvalid={formState.inputs.username.isTouched && !formState.inputs.username.isValid}
                                 isValid={!!formState.inputs.username.isValid}
                                 type="text"
                                 placeholder="Enter username"
@@ -82,11 +103,17 @@ const Auth: FC = () => {
                         <Form.Group controlId="password">
                             <Form.Label>Password</Form.Label>
                             <Form.Control
+                                onChange={onChangeHandler}
+                                onBlur={onTouchHandler}
+                                isInvalid={formState.inputs.password.isTouched && !formState.inputs.password.isValid}
+                                isValid={!!formState.inputs.password.isValid}
                                 type="password"
                                 placeholder="Password"
                                 aria-describedby="passwordHelpBlock"
                                 required
                             />
+                            <Form.Control.Feedback type="valid">Looks good.</Form.Control.Feedback>
+                            <Form.Control.Feedback type="invalid">Please enter a valid password.</Form.Control.Feedback>
                             {!isInLoginMode && (
                                 <Form.Text id="passwordHelpBlock" muted>
                                     Your password must be 8-20 characters long and contain at least one uppercase letter
@@ -98,18 +125,29 @@ const Auth: FC = () => {
                             <Form.Group controlId="passwordConfirmation">
                                 <Form.Label>Confirm Password</Form.Label>
                                 <Form.Control
+                                    onChange={onChangeHandler}
+                                    onBlur={onTouchHandler}
+                                    isInvalid={
+                                        !!formState.inputs.passwordConfirmation?.isTouched &&
+                                        !formState.inputs.passwordConfirmation?.isValid
+                                    }
+                                    isValid={!!formState.inputs.passwordConfirmation?.isValid}
                                     type="password"
                                     placeholder="Password"
                                     required
                                     aria-describedby="confirmPasswordHelpBlock"
                                 />
+                                <Form.Control.Feedback type="valid">Looks good.</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please confirm a valid password.
+                                </Form.Control.Feedback>
                                 <Form.Text id="confirmPasswordHelpBlock" muted>
                                     Please confirm your password by entering it again.
                                 </Form.Text>
                             </Form.Group>
                         )}
                         <div className="d-flex justify-content-between">
-                            <Button variant={negateTheme(theme)} type="submit">
+                            <Button disabled={!formState.isValid} variant={negateTheme(theme)} type="submit">
                                 {isInLoginMode ? 'LOGIN' : 'SIGNUP'}
                             </Button>
                             <Button onClick={onSwitchModeHandler} variant={theme} type="button">

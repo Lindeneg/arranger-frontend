@@ -1,6 +1,6 @@
 import { useReducer, useCallback, Reducer } from 'react';
 
-import { Validator, ValidationType, getValidator, validate } from './form.validation';
+import { Validator, ValidationType, CustomValidationRule, getValidator, validate } from './form.validation';
 
 enum FormAction {
     INPUT_CHANGE = 'INPUT_CHANGE',
@@ -9,13 +9,13 @@ enum FormAction {
 }
 
 type FormElementConstraint = HTMLInputElement | HTMLTextAreaElement;
-type FormStateConstraint = { [key: string]: FormValueType };
+
+export type FormStateConstraint = { [key: string]: FormValueType };
 
 type ReducerAction = { type: FormAction; payload: Payload };
 
 type GetInputOptions<T extends FormValueType> = {
-    [key: string]: T | number | boolean | undefined;
-    isEqual?: T;
+    [key: string]: T | number | boolean | CustomValidationRule<T> | undefined;
     minLength?: number;
     maxLength?: number;
     minValue?: number;
@@ -25,6 +25,7 @@ type GetInputOptions<T extends FormValueType> = {
     isRequired?: boolean;
     isValid?: boolean;
     isTouched?: boolean;
+    customRule?: CustomValidationRule<T>;
 };
 
 export type FormValueType = string | number | boolean;
@@ -72,7 +73,7 @@ function formReducer<S extends FormState<any>>(state: S, action: ReducerAction):
     const pl = action.payload;
     switch (action.type) {
         case FormAction.INPUT_CHANGE:
-            const plValid = validate(pl.value, state.inputs[pl.id].validators);
+            const plValid = validate(pl.value, state.inputs[pl.id].validators, state);
             let isValid: boolean = true;
             for (const key in state.inputs) {
                 if (key === pl.id) {
@@ -81,7 +82,6 @@ function formReducer<S extends FormState<any>>(state: S, action: ReducerAction):
                     isValid = isValid && state.inputs[key].isValid;
                 }
             }
-            console.log(state, pl.id);
             return {
                 ...state,
                 inputs: {

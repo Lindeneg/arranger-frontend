@@ -1,4 +1,4 @@
-import { FormValueType } from './form.hook';
+import { FormState, FormValueType, FormStateConstraint } from './form.hook';
 
 export enum ValidationType {
     Require = 'isRequired',
@@ -8,31 +8,43 @@ export enum ValidationType {
     MaxValue = 'maxValue',
     MinUppercaseCharacters = 'minUppercaseCharacters',
     MinNumericalSymbols = 'minNumericalSymbols',
-    IsEqual = 'isEqual'
+    CustomRule = 'customRule'
 }
+
+export type CustomValidationRule<T extends FormValueType, S extends FormStateConstraint = any> = (
+    value: T,
+    state: FormState<S>
+) => boolean;
+
+export type ValidationValue = FormValueType | CustomValidationRule<any, any>;
 
 export interface Validator {
     type: ValidationType;
-    value: FormValueType;
+    value: ValidationValue;
 }
 
-export type ValidationFunc = (value: FormValueType, isValid: boolean, validator: Validator) => boolean;
+export type ValidationFunc = (
+    value: FormValueType,
+    isValid: boolean,
+    validator: Validator,
+    state: FormState<any>
+) => boolean;
 
 const validationFunc: { [key: string]: ValidationFunc } = {
-    [ValidationType.Require]: (value, isValid, validator) => {
+    [ValidationType.Require]: (value, isValid) => {
         return isValid && value.toString().trim().length > 0;
     },
     [ValidationType.MinLength]: (value, isValid, validator) => {
-        return isValid && value.toString().trim().length >= (validator.value || 3);
+        return isValid && value.toString().trim().length >= validator.value;
     },
     [ValidationType.MaxLength]: (value, isValid, validator) => {
-        return isValid && value.toString().trim().length <= (validator.value || 12);
+        return isValid && value.toString().trim().length <= validator.value;
     },
     [ValidationType.MinValue]: (value, isValid, validator) => {
-        return isValid && +value >= (validator.value || 0);
+        return isValid && +value >= validator.value;
     },
     [ValidationType.MaxValue]: (value, isValid, validator) => {
-        return isValid && +value <= (validator.value || 10);
+        return isValid && +value <= validator.value;
     },
     [ValidationType.MinUppercaseCharacters]: (value, isValid, validator) => {
         let uppercaseChars: number = 0;
@@ -56,19 +68,19 @@ const validationFunc: { [key: string]: ValidationFunc } = {
         }
         return isValid && numericalSymbols >= (validator.value || 0);
     },
-    [ValidationType.IsEqual]: (value, isValid, validator) => {
-        return isValid && value.toString() === validator.value?.toString();
+    [ValidationType.CustomRule]: (value, isValid, validator, state) => {
+        return isValid && typeof validator.value === 'function' && validator.value(value, state);
     }
 };
 
 export const getValidator = (type: ValidationType, value: FormValueType): Validator => ({ type, value });
 
-export const validate = (value: FormValueType, validators: Validator[]): boolean => {
+export const validate = (value: FormValueType, validators: Validator[], state: FormState<any>): boolean => {
     let isValid: boolean = true;
     validators.forEach((validator) => {
         const func: ValidationFunc | undefined = validationFunc[validator.type];
         if (typeof func !== 'undefined') {
-            isValid = func(value, isValid, validator);
+            isValid = func(value, isValid, validator, state);
         }
     });
     return isValid;
