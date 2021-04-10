@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect, useState } from 'react';
+import { FC, Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 
 import { RootState } from '../../store';
 import { loginUser, clearUserError } from '../../store/actions';
-import { CustomValidationRule, FormState, useForm, getInput } from '../../common/hooks';
+import { useForm, getInput } from '../../common/hooks';
 import { Spinner, ErrorModal } from '../../common/components';
 import { getCls, negateTheme, themeToHex } from '../../common/func';
 
@@ -16,26 +16,23 @@ type AuthFormState = {
     passwordConfirmation?: string;
 };
 
-const getDefaultFormState = (): FormState<AuthFormState> => ({
-    inputs: {
-        username: getInput('', { minLength: 5, maxLength: 12 }),
-        password: getInput('', { minLength: 8, maxLength: 20, minNumericalSymbols: 1, minUppercaseCharacters: 1 })
-    },
-    isValid: false
-});
-
-const customRule: CustomValidationRule<string, AuthFormState> = (value, state) => {
-    return state.inputs.password.isValid && value === state.inputs.password.value;
-};
-
 const Auth: FC = () => {
     const dispatch = useDispatch();
     const [isInLoginMode, setLoginMode] = useState<boolean>(true);
     const { theme, requesting, error } = useSelector((state: RootState) => state.user);
 
-    const { formState, onChangeHandler, onTouchHandler, setFormState } = useForm<AuthFormState, HTMLInputElement>(
-        getDefaultFormState()
-    );
+    const { formState, onChangeHandler, onTouchHandler, setFormState } = useForm<AuthFormState, HTMLInputElement>({
+        inputs: {
+            username: getInput('', { minLength: 5, maxLength: 12 }),
+            password: getInput('', {
+                minLength: 8,
+                maxLength: 20,
+                minNumericalSymbols: 1,
+                minUppercaseCharacters: 1
+            })
+        },
+        isValid: false
+    });
 
     const onSwitchModeHandler = () => {
         const newFormState = { ...formState };
@@ -44,7 +41,10 @@ const Auth: FC = () => {
                 ...newFormState,
                 inputs: {
                     ...newFormState.inputs,
-                    passwordConfirmation: getInput('', { customRule })
+                    passwordConfirmation: getInput<string, AuthFormState>('', {
+                        customRule: (value, state) =>
+                            state.inputs.password.isValid && value === state.inputs.password.value
+                    })
                 },
                 isValid: false
             });

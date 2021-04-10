@@ -14,8 +14,8 @@ export type FormStateConstraint = { [key: string]: FormValueType };
 
 type ReducerAction = { type: FormAction; payload: Payload };
 
-type GetInputOptions<T extends FormValueType> = {
-    [key: string]: T | number | boolean | CustomValidationRule<T> | undefined;
+type GetInputOptions<T extends FormValueType, S extends FormStateConstraint = any> = {
+    [key: string]: T | number | boolean | CustomValidationRule<T, S> | undefined;
     minLength?: number;
     maxLength?: number;
     minValue?: number;
@@ -25,7 +25,7 @@ type GetInputOptions<T extends FormValueType> = {
     isRequired?: boolean;
     isValid?: boolean;
     isTouched?: boolean;
-    customRule?: CustomValidationRule<T>;
+    customRule?: CustomValidationRule<T, S>;
 };
 
 export type FormValueType = string | number | boolean;
@@ -47,7 +47,10 @@ export interface Payload extends Pick<FormEntryState<any>, 'value'> {
     state?: FormState<any>;
 }
 
-export function getInput<T extends FormValueType>(value: T, options?: GetInputOptions<T>): FormEntryState<T> {
+export function getInput<T extends FormValueType, S extends FormStateConstraint>(
+    value: T,
+    options?: GetInputOptions<T, S>
+): FormEntryState<T> {
     const parsedOptions: { isValid: boolean; isTouched: boolean; validators: Validator[] } = {
         isValid: false,
         isTouched: false,
