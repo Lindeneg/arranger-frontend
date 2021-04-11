@@ -11,7 +11,7 @@ export const colorClassMap: { [K in keyof Color]: string } = {
     dark: 'dark'
 };
 
-export const defaultTheme: ThemeOption = 'dark';
+export const defaultTheme: ThemeOption = 'light';
 
 export enum LocalKey {
     Token = '_arngrprv',
