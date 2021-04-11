@@ -4,9 +4,10 @@ import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
+import useForm, { getInput } from 'use-form-state';
+
 import { RootState } from '../../store';
 import { loginUser, clearUserError } from '../../store/actions';
-import { useForm, getInput } from '../../common/hooks';
 import { Spinner, ErrorModal } from '../../common/components';
 import { getCls, negateTheme, themeToHex } from '../../common/func';
 
@@ -21,14 +22,15 @@ const Auth: FC = () => {
     const [isInLoginMode, setLoginMode] = useState<boolean>(true);
     const { theme, requesting, error } = useSelector((state: RootState) => state.user);
 
-    const { formState, onChangeHandler, onTouchHandler, setFormState } = useForm<AuthFormState, HTMLInputElement>({
+    const { formState, onChangeHandler, onTouchHandler, setFormState } = useForm<AuthFormState>({
         inputs: {
-            username: getInput('', { minLength: 5, maxLength: 12 }),
+            username: getInput('', { minLength: 5, maxLength: 12, maxNumericalSymbols: 0 }),
             password: getInput('', {
                 minLength: 8,
                 maxLength: 20,
                 minNumericalSymbols: 1,
-                minUppercaseCharacters: 1
+                minUppercaseCharacters: 1,
+                connectFields: ['passwordConfirmation']
             })
         },
         isValid: false
