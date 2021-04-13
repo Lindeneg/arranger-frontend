@@ -3,6 +3,8 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Auth from './user/pages/Auth';
+import UserBoards from './boards/pages/UserBoards';
+import UserBoard from './boards/pages/UserBoard';
 import { Navigation } from './common/components';
 import { RootState } from './store';
 import { loginUser } from './store/actions';
@@ -36,13 +38,13 @@ const App: FC = () => {
                                 <Auth />
                             </Route>
                             <Route path="/boards" exact>
-                                {/* <UserBoards /> */}
+                                <UserBoards />
+                            </Route>
+                            <Route path="/board/:boardId" exact>
+                                <UserBoard />
                             </Route>
                             <Route path="/profile" exact>
                                 {/* <UpdateUser /> */}
-                            </Route>
-                            <Route path="/board/:boardId" exact>
-                                {/* <UserBoard /> */}
                             </Route>
                             <Redirect to="/boards" />
                         </Switch>
