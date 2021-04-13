@@ -100,7 +100,7 @@ const Auth: FC = () => {
                                     </Form.Control.Feedback>
                                     {!isInLoginMode && (
                                         <Form.Text id="usernameHelpBlock" muted>
-                                            Your username must be between 5-12 characters and contain no numbers.
+                                            Your username must be between 4-16 characters and contain no numbers.
                                         </Form.Text>
                                     )}
                                 </Form.Group>
@@ -125,7 +125,7 @@ const Auth: FC = () => {
                                     </Form.Control.Feedback>
                                     {!isInLoginMode && (
                                         <Form.Text id="passwordHelpBlock" muted>
-                                            Your password must be 8-20 characters long and contain at least one
+                                            Your password must be 8-32 characters long and contain at least one
                                             uppercase letter and at least one number.
                                         </Form.Text>
                                     )}
