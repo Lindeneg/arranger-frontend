@@ -16,4 +16,4 @@ export interface UserResponse extends Pick<UserState, 'userId' | 'token' | 'them
     expires: number;
 }
 
-export type UserPayload = Partial<User>;
+export type UserPayload<T extends keyof User> = Partial<Pick<User, T>>;

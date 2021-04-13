@@ -15,6 +15,9 @@ import {
     loginUserSuccess,
     loginUserError,
     logoutUserStart,
+    switchUserThemeStart,
+    switchUserThemeSuccess,
+    switchUserThemeError,
     clearAnyUserError
 } from './actions';
 import { ResponseError } from '../../common/types';
@@ -42,6 +45,12 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Use
             requesting: true,
             requested: false,
             error: null
+        };
+    });
+    builder.addCase(switchUserThemeStart, (state, action) => {
+        return {
+            ...state,
+            ...action.payload
         };
     });
     builder.addMatcher(
@@ -89,6 +98,12 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Use
                 requested: true,
                 error: action.payload.message
             };
+        }
+    );
+    builder.addMatcher(
+        (ac) => [switchUserThemeSuccess, switchUserThemeError].includes(ac.type),
+        (state) => {
+            return state;
         }
     );
 });
