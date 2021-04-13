@@ -23,42 +23,29 @@ const Auth: FC = () => {
     const { theme, requesting, error } = useSelector((state: RootState) => state.user);
 
     const { formState, onChangeHandler, onTouchHandler, setFormState } = useForm<AuthFormState>({
-        inputs: {
-            username: getInput('', { minLength: 5, maxLength: 12, maxNumericalSymbols: 0 }),
-            password: getInput('', {
-                minLength: 8,
-                maxLength: 20,
-                minNumericalSymbols: 1,
-                minUppercaseCharacters: 1,
-                connectFields: ['passwordConfirmation']
-            })
-        },
-        isValid: false
+        username: getInput('', { minLength: 5, maxLength: 12, maxNumericalSymbols: 0 }),
+        password: getInput('', {
+            minLength: 8,
+            maxLength: 20,
+            minNumericalSymbols: 1,
+            minUppercaseCharacters: 1,
+            connectFields: ['passwordConfirmation']
+        })
     });
 
     const onSwitchModeHandler = () => {
         const newFormState = { ...formState };
         if (isInLoginMode) {
             setFormState({
-                ...newFormState,
-                inputs: {
-                    ...newFormState.inputs,
-                    passwordConfirmation: getInput<string, AuthFormState>('', {
-                        customRule: (value, state) =>
-                            state.inputs.password.isValid && value === state.inputs.password.value
-                    })
-                },
-                isValid: false
+                ...newFormState.inputs,
+                passwordConfirmation: getInput<string, AuthFormState>('', {
+                    customRule: (value, state) => state.inputs.password.isValid && value === state.inputs.password.value
+                })
             });
         } else {
-            const newFormInputs = { ...newFormState.inputs };
-            delete newFormInputs.passwordConfirmation;
             setFormState({
-                ...formState,
-                inputs: {
-                    ...newFormInputs
-                },
-                isValid: newFormInputs.password.isValid && newFormInputs.username.isValid
+                password: { ...newFormState.inputs.password },
+                username: { ...newFormState.inputs.username }
             });
         }
         setLoginMode((prev) => !prev);
@@ -129,10 +116,7 @@ const Auth: FC = () => {
                                 <Form.Control
                                     onChange={onChangeHandler}
                                     onBlur={onTouchHandler}
-                                    isInvalid={
-                                        !!formState.inputs.passwordConfirmation?.isTouched &&
-                                        !formState.inputs.passwordConfirmation?.isValid
-                                    }
+                                    isInvalid={!formState.inputs.passwordConfirmation?.isValid}
                                     isValid={!!formState.inputs.passwordConfirmation?.isValid}
                                     type="password"
                                     placeholder="Password"
