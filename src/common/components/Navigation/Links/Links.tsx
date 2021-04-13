@@ -5,7 +5,7 @@ import Nav from 'react-bootstrap/Nav';
 import { HouseDoor, Kanban, Person, DoorOpen, DoorClosed, Toggle2On, Toggle2Off } from 'react-bootstrap-icons';
 
 import { RootState } from '../../../../store';
-import { logoutUser } from '../../../../store/actions';
+import { updateUser, logoutUser } from '../../../../store/actions';
 import { getCls, negateTheme, themeToHex } from '../../../func';
 import classes from './Links.module.css';
 
@@ -61,7 +61,7 @@ export const Links: FC<LinksProps> = (props) => {
     };
 
     const onSwitchThemeHandler = (): void => {
-        console.log('switch theme');
+        dispatch(updateUser({ theme: negateTheme(theme) }));
         props.onClick && props.onClick();
     };
 

@@ -5,7 +5,7 @@ import { AppDispatch } from '..';
 import { UserResponse, User, UserPayload } from './types';
 import { defaultTheme } from '../../common/values';
 import { ResponseError, StoredData } from '../../common/types';
-import { removeLocalV, setLocalV } from '../../common/func';
+import { getAuthHeader, getLocalV, removeLocalV, setLocalV } from '../../common/func';
 
 export const createUserStart = createAction('CREATE_USER_START');
 export const createUserSuccess = createAction<UserResponse>('CREATE_USER_SUCCESS');
@@ -41,12 +41,21 @@ export const createUser = (user: Omit<User, '_id'>) => async (dispatch: AppDispa
     }
 };
 
-export const updateUser = (payload: UserPayload) => async (dispatch: AppDispatch): Promise<void> => {};
+export const updateUser = (payload: UserPayload) => async (dispatch: AppDispatch): Promise<void> => {
+    dispatch(updateUserStart());
+    try {
+        const { data } = await axios.patch<UserResponse>('/api/user', payload, getAuthHeader());
+        setLocalV({ ...getLocalV(), theme: data.theme });
+        dispatch(updateUserSuccess(data));
+    } catch (err) {
+        dispatch(updateUserError(err.response.data));
+    }
+};
 
 export const deleteUser = () => async (dispatch: AppDispatch): Promise<void> => {
     dispatch(deleteUserStart());
     try {
-        await axios.delete<UserResponse>('/api/user');
+        await axios.delete<UserResponse>('/api/user', getAuthHeader());
         removeLocalV();
         dispatch(deleteUserSuccess());
     } catch (err) {

@@ -3,9 +3,8 @@ import axios from '../../axios-base';
 
 import { AppDispatch } from '..';
 import { Board, BoardPayload } from './types';
+import { ResponseError, getAuthHeader } from '../../common';
 import { List } from '../lists/types';
-import { ResponseError } from '../../common/types';
-import { getAuthHeader, isResponseOk } from '../../common/func';
 
 export const fetchBoardsStart = createAction('FETCH_BOARDS_START');
 export const fetchBoardsSuccess = createAction<Board<string>[]>('FETCH_BOARDS_SUCCESS');
@@ -32,40 +31,31 @@ export const clearAnyBoardError = createAction('CLEAR_ANY_BOARD_ERROR');
 export const getBoards = () => async (dispatch: AppDispatch): Promise<void> => {
     dispatch(fetchBoardsStart());
     try {
-        const { status, data } = await axios.get<Board<string>[]>('/api/boards', getAuthHeader());
-        if (!isResponseOk(status)) {
-            throw new Error(data.toString());
-        }
+        const { data } = await axios.get<Board<string>[]>('/api/boards', getAuthHeader());
         dispatch(fetchBoardsSuccess(data));
     } catch (err) {
-        dispatch(fetchBoardsError(err));
+        dispatch(fetchBoardsError(err.response.data));
     }
 };
 
 export const getBoard = (boardId: string) => async (dispatch: AppDispatch): Promise<void> => {
     dispatch(fetchBoardStart());
     try {
-        const { status, data } = await axios.get<Board<List>>('/api/boards/' + boardId, getAuthHeader());
-        if (!isResponseOk(status)) {
-            throw new Error(data.toString());
-        }
+        const { data } = await axios.get<Board<List>>('/api/boards/' + boardId, getAuthHeader());
         // TODO init lists
         dispatch(fetchBoardSuccess(data));
     } catch (err) {
-        dispatch(fetchBoardError(err));
+        dispatch(fetchBoardError(err.response.data));
     }
 };
 
 export const deleteBoard = (boardId: string) => async (dispatch: AppDispatch): Promise<void> => {
     dispatch(deleteBoardStart());
     try {
-        const { status, data } = await axios.delete<Board<List>>('/api/boards/' + boardId, getAuthHeader());
-        if (!isResponseOk(status)) {
-            throw new Error(data.toString());
-        }
+        const { data } = await axios.delete<Board<List>>('/api/boards/' + boardId, getAuthHeader());
         dispatch(deleteBoardSuccess(data));
     } catch (err) {
-        dispatch(deleteBoardError(err));
+        dispatch(deleteBoardError(err.response.data));
     }
 };
 
@@ -74,28 +64,22 @@ export const createBoard = (payload: BoardPayload<'name' | 'owner'>) => async (
 ): Promise<void> => {
     dispatch(createBoardStart());
     try {
-        const { status, data } = await axios.post<Board<string>>('/api/boards', payload, getAuthHeader());
-        if (!isResponseOk(status)) {
-            throw new Error(data.toString());
-        }
+        const { data } = await axios.post<Board<string>>('/api/boards', payload, getAuthHeader());
         dispatch(createBoardSuccess(data));
     } catch (err) {
-        dispatch(createBoardError(err));
+        dispatch(createBoardError(err.response.data));
     }
 };
 
-export const updateBoard = (boardId: string, payload: BoardPayload<'name'>) => async (
+export const updateBoard = (boardId: string, payload: BoardPayload<'name' | 'lists' | 'listOrder'>) => async (
     dispatch: AppDispatch
 ): Promise<void> => {
     dispatch(updateBoardStart());
     try {
-        const { status, data } = await axios.patch<Board<List>>('/api/boards/' + boardId, payload, getAuthHeader());
-        if (!isResponseOk(status)) {
-            throw new Error(data.toString());
-        }
+        const { data } = await axios.patch<Board<List>>('/api/boards/' + boardId, payload, getAuthHeader());
         dispatch(updateBoardSuccess(data));
     } catch (err) {
-        dispatch(updateBoardError(err));
+        dispatch(updateBoardError(err.response.data));
     }
 };
 

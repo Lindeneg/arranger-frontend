@@ -5,12 +5,12 @@ import {
     createUserStart,
     createUserSuccess,
     createUserError,
-    /*     updateUserStart,
+    updateUserStart,
     updateUserSuccess,
     updateUserError,
     deleteUserStart,
     deleteUserSuccess,
-    deleteUserError, */
+    deleteUserError,
     loginUserStart,
     loginUserSuccess,
     loginUserError,
@@ -30,22 +30,33 @@ const initialState: UserState = {
 };
 
 export default createReducer(initialState, (builder: ActionReducerMapBuilder<UserState>) => {
-    builder.addCase(logoutUserStart, (state) => {
-        return {
-            ...state,
-            theme: defaultTheme,
-            userId: null,
-            token: null
-        };
-    });
     builder.addCase(clearAnyUserError, (state) => {
         return {
             ...state,
             error: null
         };
     });
+    builder.addCase(updateUserStart, (state) => {
+        return {
+            ...state,
+            requesting: true,
+            requested: false,
+            error: null
+        };
+    });
     builder.addMatcher(
-        (ac) => [createUserStart.type, loginUserStart.type].includes(ac.type),
+        (ac) => [logoutUserStart.type, deleteUserSuccess.type].includes(ac.type),
+        (state) => {
+            return {
+                ...state,
+                theme: defaultTheme,
+                userId: null,
+                token: null
+            };
+        }
+    );
+    builder.addMatcher(
+        (ac) => [createUserStart.type, loginUserStart.type, deleteUserStart.type].includes(ac.type),
         (state) => {
             return {
                 ...state,
@@ -58,7 +69,7 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Use
         }
     );
     builder.addMatcher<PayloadAction<UserResponse>>(
-        (ac) => [createUserSuccess.type, loginUserSuccess.type].includes(ac.type),
+        (ac) => [createUserSuccess.type, loginUserSuccess.type, updateUserSuccess.type].includes(ac.type),
         (state, action) => {
             return {
                 ...state,
@@ -69,7 +80,8 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Use
         }
     );
     builder.addMatcher<PayloadAction<ResponseError>>(
-        (ac) => [createUserError.type, loginUserError.type].includes(ac.type),
+        (ac) =>
+            [createUserError.type, loginUserError.type, updateUserError.type, deleteUserError.type].includes(ac.type),
         (state, action) => {
             return {
                 ...state,
