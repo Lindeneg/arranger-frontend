@@ -3,8 +3,9 @@ import axios from '../../axios-base';
 
 import { AppDispatch } from '..';
 import { UserResponse, User, UserPayload } from './types';
+import { defaultTheme } from '../../common/values';
 import { ResponseError, StoredData } from '../../common/types';
-import { isResponseOk, removeLocalV, setLocalV } from '../../common/func';
+import { removeLocalV, setLocalV } from '../../common/func';
 
 export const createUserStart = createAction('CREATE_USER_START');
 export const createUserSuccess = createAction<UserResponse>('CREATE_USER_SUCCESS');
@@ -26,17 +27,17 @@ export const logoutUserStart = createAction('LOGOUT_USER');
 
 export const clearAnyUserError = createAction('CLEAR_ANY_USER_ERROR');
 
-export const createUser = (user: User) => async (dispatch: AppDispatch): Promise<void> => {
+export const createUser = (user: Omit<User, '_id'>) => async (dispatch: AppDispatch): Promise<void> => {
     dispatch(createUserStart());
     try {
-        const { status, data } = await axios.post<UserResponse>('/api/user/signup', user);
-        if (!isResponseOk(status)) {
-            throw new Error(data.toString());
-        }
-        setLocalV({ _id: data.userId, _token: data.token, _expires: data.expires });
+        const { data } = await axios.post<UserResponse>('/api/user/signup', {
+            ...user,
+            theme: defaultTheme
+        });
+        setLocalV({ _id: data.userId, _token: data.token, _theme: defaultTheme, _expires: data.expires });
         dispatch(createUserSuccess(data));
     } catch (err) {
-        dispatch(createUserError(err));
+        dispatch(createUserError(err.response.data));
     }
 };
 
@@ -45,34 +46,35 @@ export const updateUser = (payload: UserPayload) => async (dispatch: AppDispatch
 export const deleteUser = () => async (dispatch: AppDispatch): Promise<void> => {
     dispatch(deleteUserStart());
     try {
-        const { status, data } = await axios.delete<UserResponse>('/api/user');
-        if (!isResponseOk(status)) {
-            throw new Error(data.toString());
-        }
+        await axios.delete<UserResponse>('/api/user');
         removeLocalV();
         dispatch(deleteUserSuccess());
     } catch (err) {
-        dispatch(deleteUserError(err));
+        dispatch(deleteUserError(err.response.data));
     }
 };
 
-export const loginUser = (user: User | null, localUser?: StoredData) => async (
+export const loginUser = (user: Omit<User, '_id'> | null, localUser?: StoredData) => async (
     dispatch: AppDispatch
 ): Promise<void> => {
     dispatch(loginUserStart());
     if (user !== null) {
         try {
-            const { status, data } = await axios.post<UserResponse>('/api/user/login', user);
-            if (!isResponseOk(status)) {
-                throw new Error(data.toString());
-            }
-            setLocalV({ _id: data.userId, _token: data.token, _expires: data.expires });
+            const { data } = await axios.post<UserResponse>('/api/user/login', user);
+            setLocalV({ _id: data.userId, _token: data.token, _theme: data.theme, _expires: data.expires });
             dispatch(loginUserSuccess(data));
         } catch (err) {
-            dispatch(loginUserError(err));
+            dispatch(loginUserError(err.response.data));
         }
     } else if (typeof localUser !== 'undefined') {
-        dispatch(loginUserSuccess({ token: localUser._token, userId: localUser._id, expires: localUser._expires }));
+        dispatch(
+            loginUserSuccess({
+                token: localUser._token,
+                userId: localUser._id,
+                theme: localUser._theme,
+                expires: localUser._expires
+            })
+        );
     } else {
         dispatch(loginUserError({ message: 'invalid login arguments provided' }));
     }

@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Navbar from 'react-bootstrap/Navbar';
 import { List } from 'react-bootstrap-icons';
@@ -8,7 +8,7 @@ import SideDrawer from './SideDrawer/SideDrawer';
 import { RootState } from '../../../store';
 import { getCls, negateTheme, themeToHex } from '../../func';
 
-export const Navigation: FC = (props) => {
+export const Navigation: FC = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
     const { theme, token } = useSelector((state: RootState) => state.user);
 

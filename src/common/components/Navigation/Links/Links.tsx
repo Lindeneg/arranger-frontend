@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect, useState } from 'react';
+import React, { FC, Fragment, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { NavLink, useHistory } from 'react-router-dom';
 import Nav from 'react-bootstrap/Nav';
@@ -39,9 +39,13 @@ export const Links: FC<LinksProps> = (props) => {
     const history = useHistory();
     const dispatch = useDispatch();
     const { token, theme } = useSelector((state: RootState) => state.user);
-    const [negatedHexTheme] = useState<string>(themeToHex(negateTheme(theme)));
+    const [negatedHexTheme, setNegatedHexTheme] = useState<string>(themeToHex(negateTheme(theme)));
     const [activeNavIcon, setActiveNavIcon] = useState<NavIcon | null>(null);
     const [logoutIcon, setLogoutIcon] = useState<LogoutIcon>(LogoutIcon.Open);
+
+    useEffect(() => {
+        setNegatedHexTheme(themeToHex(negateTheme(theme)));
+    }, [theme]);
 
     useEffect(() => {
         const icon = pathnameToNavIcon(history.location.pathname);

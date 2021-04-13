@@ -11,7 +11,7 @@ export const rootReducer = combineReducers({
 
 const store = configureStore({
     reducer: rootReducer,
-    middleware: [reduxThunk as any]
+    middleware: [reduxThunk]
 });
 
 export type AppDispatch = typeof store.dispatch;

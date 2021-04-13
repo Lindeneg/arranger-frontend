@@ -27,5 +27,6 @@ export type Requester = {
 export interface StoredData {
     _id: string;
     _token: string;
+    _theme: ThemeOption;
     _expires: number;
 }

@@ -1,10 +1,10 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
 import BSpinner from 'react-bootstrap/Spinner';
 
 import { RootState } from '../../../store';
-import classes from './Spinner.module.css';
 import { negateTheme } from '../../func';
+import classes from './Spinner.module.css';
 
 export interface SpinnerProps {
     absoluteCentered?: boolean;

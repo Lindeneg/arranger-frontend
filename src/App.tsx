@@ -1,4 +1,4 @@
-import { FC, useEffect, Fragment } from 'react';
+import React, { FC, useEffect, Fragment } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -15,7 +15,7 @@ const App: FC = () => {
     useEffect(() => {
         if (token === null) {
             const authData = getLocalV();
-            if (authData !== null) {
+            if (authData !== null && authData._expires > Date.now()) {
                 dispatch(loginUser(null, authData));
             }
         }

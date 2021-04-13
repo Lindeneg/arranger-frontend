@@ -33,6 +33,7 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Use
     builder.addCase(logoutUserStart, (state) => {
         return {
             ...state,
+            theme: defaultTheme,
             userId: null,
             token: null
         };
@@ -44,7 +45,7 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Use
         };
     });
     builder.addMatcher(
-        (ac) => ac.type in [createUserStart.type, loginUserStart.type],
+        (ac) => [createUserStart.type, loginUserStart.type].includes(ac.type),
         (state) => {
             return {
                 ...state,
@@ -57,7 +58,7 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Use
         }
     );
     builder.addMatcher<PayloadAction<UserResponse>>(
-        (ac) => ac.type in [createUserSuccess.type, loginUserSuccess.type],
+        (ac) => [createUserSuccess.type, loginUserSuccess.type].includes(ac.type),
         (state, action) => {
             return {
                 ...state,
@@ -68,7 +69,7 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Use
         }
     );
     builder.addMatcher<PayloadAction<ResponseError>>(
-        (ac) => ac.type in [createUserError.type, loginUserError.type],
+        (ac) => [createUserError.type, loginUserError.type].includes(ac.type),
         (state, action) => {
             return {
                 ...state,

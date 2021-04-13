@@ -3,6 +3,7 @@ import { MId, Requester, ThemeOption } from '../../common/types';
 export interface User extends MId {
     username: string;
     password: string;
+    theme?: ThemeOption;
 }
 
 export interface UserState extends Requester {
@@ -11,8 +12,8 @@ export interface UserState extends Requester {
     theme: ThemeOption;
 }
 
-export interface UserResponse extends Pick<UserState, 'userId' | 'token'> {
+export interface UserResponse extends Pick<UserState, 'userId' | 'token' | 'theme'> {
     expires: number;
 }
 
-export interface UserPayload extends Partial<User> {}
+export type UserPayload = Partial<User>;
