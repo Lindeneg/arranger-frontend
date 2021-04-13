@@ -45,7 +45,7 @@ export const updateUser = (payload: UserPayload) => async (dispatch: AppDispatch
     dispatch(updateUserStart());
     try {
         const { data } = await axios.patch<UserResponse>('/api/user', payload, getAuthHeader());
-        setLocalV({ ...getLocalV(), theme: data.theme });
+        setLocalV({ ...getLocalV(), _theme: data.theme });
         dispatch(updateUserSuccess(data));
     } catch (err) {
         dispatch(updateUserError(err.response.data));
