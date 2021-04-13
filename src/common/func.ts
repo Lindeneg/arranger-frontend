@@ -1,4 +1,4 @@
-import { StoredData, ThemeOption } from './types';
+import { ResponseError, StoredData, ThemeOption } from './types';
 import { LocalKey } from './values';
 
 export const devLog = (err: unknown): void => {
@@ -26,6 +26,17 @@ export const getAuthHeader = (): { headers: { Authorization: string } } => {
             Authorization: `Bearer ${getLocalV()?._token}`
         }
     };
+};
+
+//eslint-disable-next-line
+export const getError = (err: any): ResponseError => {
+    let message: string;
+    try {
+        message = err.response.data;
+    } catch {
+        message = 'The server seems to be unresponsive. Please try again later.';
+    }
+    return { message };
 };
 
 export const setLocalV = (
