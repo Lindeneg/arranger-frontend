@@ -10,12 +10,12 @@ import useForm, { getInput } from 'use-form-state';
 
 import { RootState } from '../../store';
 import { ColorSelection } from '../../common/components';
-import { Board } from '../../store/boards/types';
+import { Board, BoardPayload } from '../../store/boards/types';
 import { negateTheme, ColorOption } from '../../common';
 
 interface BoardListProps {
     boards: Board<string>[];
-    onCreate: () => void;
+    onCreate: (payload: BoardPayload<'name' | 'color'>) => void;
     onDelete: () => void;
     onUpdate: () => void;
 }
@@ -28,15 +28,16 @@ const colorInput = (color: ColorOption) => getInput<ColorOption>(color, { isVali
 const BoardList: FC<BoardListProps> = (props) => {
     const { theme } = useSelector((state: RootState) => state.user);
     const [creatingBoard, setCreatingBoard] = useState<boolean>(false);
+    const negatedTheme = negateTheme(theme);
 
     const { formState, onChangeHandler, onTouchHandler, setFormState } = useForm<BoardInput>({
         name: initialInput(),
-        color: colorInput(negateTheme(theme))
+        color: colorInput(negatedTheme)
     });
 
     const onBoardCreate = (): void => {
-        console.log(formState.inputs.color.value, formState.inputs.name.value);
-        props.onCreate();
+        setCreatingBoard(false);
+        props.onCreate({ name: formState.inputs.name.value, color: formState.inputs.color.value });
     };
 
     const onCreateBoardAccept = (): void => {
@@ -47,7 +48,7 @@ const BoardList: FC<BoardListProps> = (props) => {
         setFormState({
             ...formState.inputs,
             name: initialInput(),
-            color: colorInput(negateTheme(theme))
+            color: colorInput(negatedTheme)
         });
         setCreatingBoard(false);
     };
@@ -62,7 +63,7 @@ const BoardList: FC<BoardListProps> = (props) => {
     return (
         <Container>
             {props.boards.map((board) => (
-                <div>board {board._id}</div>
+                <div key={board._id}>board {board._id}</div>
             ))}
             {creatingBoard && (
                 <div style={{ width: '18rem' }}>
@@ -81,7 +82,7 @@ const BoardList: FC<BoardListProps> = (props) => {
                             chosenColor={formState.inputs.color.value}
                             onSelect={onSelectColor}
                         />
-                        <FormControl.Feedback type="invalid" className={'text-' + negateTheme(theme)}>
+                        <FormControl.Feedback type="invalid" className={'text-' + negatedTheme}>
                             Board names are limited to 16 characters.
                         </FormControl.Feedback>
                     </InputGroup>
@@ -89,21 +90,21 @@ const BoardList: FC<BoardListProps> = (props) => {
                         onClick={formState.isValid ? onBoardCreate : () => null}
                         role={formState.isValid ? 'button' : 'none'}
                         size="30"
-                        className={'mr-1 ' + (formState.isValid ? 'text-' + negateTheme(theme) : 'text-muted')}
+                        className={'mr-1 ' + (formState.isValid ? 'text-' + negatedTheme : 'text-muted')}
                     />
                     <XCircle
                         onClick={onCreateBoardDeny}
                         role="button"
                         size="30"
-                        className={'ml-1 text-' + negateTheme(theme)}
+                        className={'ml-1 text-' + negatedTheme}
                     />
                 </div>
             )}
             {!creatingBoard && props.boards.length <= 0 && (
-                <p className={'font-italic h6 text-' + negateTheme(theme)}>No boards found. Go ahead and create one.</p>
+                <p className={'font-italic h6 text-' + negatedTheme}>No boards found. Go ahead and create one.</p>
             )}
             {!creatingBoard && (
-                <Button type="button" variant={negateTheme(theme)} onClick={onCreateBoardAccept}>
+                <Button type="button" variant={negatedTheme} onClick={onCreateBoardAccept}>
                     CREATE BOARD
                 </Button>
             )}

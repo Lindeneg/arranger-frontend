@@ -1,4 +1,4 @@
-export type MId = { _id: string };
+export type MId = { _id: string; createdOn?: number; updatedOn?: number };
 
 export type Owner = { owner: string; indirectOwner: string };
 

@@ -3,20 +3,24 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import BoardList from '../components/BoardList';
 import { RootState } from '../../store';
-import { getBoards, clearBoardError } from '../../store/actions';
+import { getBoards, createBoard, clearBoardError } from '../../store/actions';
 import { Spinner, ErrorModal } from '../../common/components';
+import { BoardPayload } from '../../store/boards/types';
 
 const UserBoards: FC = () => {
     const dispatch = useDispatch();
     const { boards, requesting, requested, error } = useSelector((state: RootState) => state.board);
+    const { userId } = useSelector((state: RootState) => state.user);
 
     useEffect(() => {
-        if (boards === null) {
-            dispatch(getBoards());
+        if (boards === null && userId !== null) {
+            dispatch(getBoards(userId));
         }
-    }, [boards, dispatch]);
+    }, [boards, userId, dispatch]);
 
-    const onBoardCreate = (): void => {};
+    const onBoardCreate = (payload: BoardPayload<'name' | 'color'>): void => {
+        dispatch(createBoard(payload));
+    };
 
     const onBoardDelete = (): void => {};
 

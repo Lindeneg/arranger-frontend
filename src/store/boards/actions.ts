@@ -28,10 +28,10 @@ export const updateBoardError = createAction<ResponseError>('UPDATE_BOARD_ERROR'
 
 export const clearAnyBoardError = createAction('CLEAR_ANY_BOARD_ERROR');
 
-export const getBoards = () => async (dispatch: AppDispatch): Promise<void> => {
+export const getBoards = (userId: string) => async (dispatch: AppDispatch): Promise<void> => {
     dispatch(fetchBoardsStart());
     try {
-        const { data } = await axios.get<Board<string>[]>('/api/boards', getAuthHeader());
+        const { data } = await axios.get<Board<string>[]>('/api/boards/user/' + userId, getAuthHeader());
         dispatch(fetchBoardsSuccess(data));
     } catch (err) {
         dispatch(fetchBoardsError(getError(err)));
@@ -59,7 +59,7 @@ export const deleteBoard = (boardId: string) => async (dispatch: AppDispatch): P
     }
 };
 
-export const createBoard = (payload: BoardPayload<'name' | 'owner'>) => async (
+export const createBoard = (payload: BoardPayload<'name' | 'color'>) => async (
     dispatch: AppDispatch
 ): Promise<void> => {
     dispatch(createBoardStart());
