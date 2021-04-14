@@ -24,7 +24,7 @@ enum LogoutIcon {
 }
 
 const pathnameToNavIcon = (pathname: string): NavIcon => {
-    if (pathname === '/boards') {
+    if (/^\/boards$|^\/board\/.+$/.test(pathname)) {
         return NavIcon.Boards;
     } else if (pathname === '/profile') {
         return NavIcon.Profile;
