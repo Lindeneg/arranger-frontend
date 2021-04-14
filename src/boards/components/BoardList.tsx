@@ -1,16 +1,17 @@
 import React, { FC, useState } from 'react';
+import { useSelector } from 'react-redux';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 import FormControl from 'react-bootstrap/FormControl';
 import { CheckCircle, XCircle } from 'react-bootstrap-icons';
 
 import useForm, { getInput } from 'use-form-state';
 
+import { RootState } from '../../store';
+import { ColorSelection } from '../../common/components';
 import { Board } from '../../store/boards/types';
-import { defaultTheme, negateTheme } from '../../common';
+import { negateTheme, ColorOption } from '../../common';
 
 interface BoardListProps {
     boards: Board<string>[];
@@ -19,21 +20,22 @@ interface BoardListProps {
     onUpdate: () => void;
 }
 
-type BoardInput = { name: string; color: string };
+type BoardInput = { name: string; color: ColorOption };
 
 const initialInput = () => getInput<string>('', { maxLength: 16, minLength: 1 });
-const colorInput = (color: string = negateTheme(defaultTheme)) => getInput<string>(color, { isValid: true });
+const colorInput = (color: ColorOption) => getInput<ColorOption>(color, { isValid: true });
 
 const BoardList: FC<BoardListProps> = (props) => {
+    const { theme } = useSelector((state: RootState) => state.user);
     const [creatingBoard, setCreatingBoard] = useState<boolean>(false);
 
     const { formState, onChangeHandler, onTouchHandler, setFormState } = useForm<BoardInput>({
         name: initialInput(),
-        color: colorInput()
+        color: colorInput(negateTheme(theme))
     });
 
     const onBoardCreate = (): void => {
-        console.log(formState.inputs);
+        console.log(formState.inputs.color.value, formState.inputs.name.value);
         props.onCreate();
     };
 
@@ -44,12 +46,13 @@ const BoardList: FC<BoardListProps> = (props) => {
     const onCreateBoardDeny = (): void => {
         setFormState({
             ...formState.inputs,
-            name: initialInput()
+            name: initialInput(),
+            color: colorInput(negateTheme(theme))
         });
         setCreatingBoard(false);
     };
 
-    const onSelectColor = (color: string): void => {
+    const onSelectColor = (color: ColorOption): void => {
         setFormState({
             ...formState.inputs,
             color: colorInput(color)
@@ -73,29 +76,12 @@ const BoardList: FC<BoardListProps> = (props) => {
                             placeholder="Board name..."
                             aria-describedby="boardNameHelpBlock"
                         />
-                        <DropdownButton
-                            as={InputGroup.Prepend}
-                            variant={formState.inputs.color.value}
-                            title="Color"
-                            id="input-group-dropdown-1"
-                        >
-                            <Dropdown.Item
-                                onSelect={(e, i) => {
-                                    i.preventDefault();
-                                    console.log(e);
-                                }}
-                                href="asf"
-                                className="bg-danger text-light"
-                            >
-                                Dark
-                            </Dropdown.Item>
-                            <Dropdown.Divider />
-                            <Dropdown.Item href="#">Another action</Dropdown.Item>
-                            <Dropdown.Divider />
-                            <Dropdown.Item href="#">Something else here</Dropdown.Item>
-                            <Dropdown.Divider />
-                        </DropdownButton>
-                        <FormControl.Feedback type="invalid">
+                        <ColorSelection
+                            asElement={InputGroup.Prepend}
+                            chosenColor={formState.inputs.color.value}
+                            onSelect={onSelectColor}
+                        />
+                        <FormControl.Feedback type="invalid" className={'text-' + negateTheme(theme)}>
                             Board names are limited to 16 characters.
                         </FormControl.Feedback>
                     </InputGroup>
@@ -103,13 +89,21 @@ const BoardList: FC<BoardListProps> = (props) => {
                         onClick={formState.isValid ? onBoardCreate : () => null}
                         role={formState.isValid ? 'button' : 'none'}
                         size="30"
-                        className={'mr-1 ' + (formState.isValid ? '' : 'text-muted')}
+                        className={'mr-1 ' + (formState.isValid ? 'text-' + negateTheme(theme) : 'text-muted')}
                     />
-                    <XCircle onClick={onCreateBoardDeny} role="button" size="30" className="ml-1" />
+                    <XCircle
+                        onClick={onCreateBoardDeny}
+                        role="button"
+                        size="30"
+                        className={'ml-1 text-' + negateTheme(theme)}
+                    />
                 </div>
             )}
+            {!creatingBoard && props.boards.length <= 0 && (
+                <p className={'font-italic h6 text-' + negateTheme(theme)}>No boards found. Go ahead and create one.</p>
+            )}
             {!creatingBoard && (
-                <Button type="button" variant="light" onClick={onCreateBoardAccept}>
+                <Button type="button" variant={negateTheme(theme)} onClick={onCreateBoardAccept}>
                     CREATE BOARD
                 </Button>
             )}
