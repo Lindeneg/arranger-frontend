@@ -2,6 +2,8 @@ import React, { FC, Fragment, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { NavLink, useHistory } from 'react-router-dom';
 import Nav from 'react-bootstrap/Nav';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 import { HouseDoor, Kanban, Person, DoorOpen, DoorClosed, Toggle2On, Toggle2Off } from 'react-bootstrap-icons';
 
 import { RootState } from '../../../../store';
@@ -12,7 +14,8 @@ import classes from './Links.module.css';
 enum NavIcon {
     Home,
     Boards,
-    Profile
+    Profile,
+    None
 }
 
 enum LogoutIcon {
@@ -25,8 +28,10 @@ const pathnameToNavIcon = (pathname: string): NavIcon => {
         return NavIcon.Boards;
     } else if (pathname === '/profile') {
         return NavIcon.Profile;
-    } else {
+    } else if (pathname === '/') {
         return NavIcon.Home;
+    } else {
+        return NavIcon.None;
     }
 };
 
@@ -83,22 +88,36 @@ export const Links: FC<LinksProps> = (props) => {
             {!!token && (
                 <Fragment>
                     <Nav.Link onClick={onNavIconClick.bind(null, NavIcon.Home)} as={NavLink} to="/" exact>
-                        <HouseDoor
-                            size="40"
-                            color={activeNavIcon === NavIcon.Home ? negatedHexTheme : 'currentColor'}
-                        />
+                        <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-bottom">home</Tooltip>}>
+                            <HouseDoor
+                                size="40"
+                                color={activeNavIcon === NavIcon.Home ? negatedHexTheme : 'currentColor'}
+                            />
+                        </OverlayTrigger>
                     </Nav.Link>
                     <Nav.Link onClick={onNavIconClick.bind(null, NavIcon.Boards)} as={NavLink} to="/boards" exact>
-                        <Kanban size="40" color={activeNavIcon === NavIcon.Boards ? negatedHexTheme : 'currentColor'} />
+                        <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-bottom">boards</Tooltip>}>
+                            <Kanban
+                                size="40"
+                                color={activeNavIcon === NavIcon.Boards ? negatedHexTheme : 'currentColor'}
+                            />
+                        </OverlayTrigger>
                     </Nav.Link>
                     <Nav.Link onClick={onNavIconClick.bind(null, NavIcon.Profile)} as={NavLink} to="/profile" exact>
-                        <Person
-                            size="40"
-                            color={activeNavIcon === NavIcon.Profile ? negatedHexTheme : 'currentColor'}
-                        />
+                        <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-bottom">profile</Tooltip>}>
+                            <Person
+                                size="40"
+                                color={activeNavIcon === NavIcon.Profile ? negatedHexTheme : 'currentColor'}
+                            />
+                        </OverlayTrigger>
                     </Nav.Link>
                     <Nav.Link onClick={onSwitchThemeHandler} role="button">
-                        {theme === 'dark' ? <Toggle2Off size="40" /> : <Toggle2On size="40" />}
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={<Tooltip id="tooltip-bottom">switch theme</Tooltip>}
+                        >
+                            {theme === 'dark' ? <Toggle2Off size="40" /> : <Toggle2On size="40" />}
+                        </OverlayTrigger>
                     </Nav.Link>
                     <Nav.Link
                         onMouseEnter={onLogoutHoverEnterHandler}

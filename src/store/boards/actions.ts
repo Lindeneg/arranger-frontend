@@ -3,7 +3,7 @@ import axios from '../../axios-base';
 
 import { AppDispatch } from '..';
 import { Board, BoardPayload } from './types';
-import { ResponseError, getAuthHeader } from '../../common';
+import { ResponseError, getAuthHeader, getError } from '../../common';
 import { List } from '../lists/types';
 
 export const fetchBoardsStart = createAction('FETCH_BOARDS_START');
@@ -34,7 +34,7 @@ export const getBoards = () => async (dispatch: AppDispatch): Promise<void> => {
         const { data } = await axios.get<Board<string>[]>('/api/boards', getAuthHeader());
         dispatch(fetchBoardsSuccess(data));
     } catch (err) {
-        dispatch(fetchBoardsError(err.response.data));
+        dispatch(fetchBoardsError(getError(err)));
     }
 };
 

@@ -11,6 +11,8 @@ export const colorClassMap: { [K in keyof Color]: string } = {
     dark: 'dark'
 };
 
+export const punctuations = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
+
 export const defaultTheme: ThemeOption = 'light';
 
 export enum LocalKey {

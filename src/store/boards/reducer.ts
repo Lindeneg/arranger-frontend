@@ -61,8 +61,17 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
             error: null
         };
     });
+    builder.addCase(fetchBoardsError, (state, action) => {
+        return {
+            ...state,
+            boards: [],
+            requested: true,
+            requesting: false,
+            error: action.payload.message
+        };
+    });
     builder.addMatcher(
-        (ac) => ac.type in [fetchBoardsStart.type, fetchBoardStart.type],
+        (ac) => [fetchBoardsStart.type, fetchBoardStart.type].includes(ac.type),
         (state) => {
             return {
                 ...state,
@@ -75,7 +84,7 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
         }
     );
     builder.addMatcher(
-        (ac) => ac.type in [createBoardStart.type, updateBoardStart.type, deleteBoardStart.type],
+        (ac) => [createBoardStart.type, updateBoardStart.type, deleteBoardStart.type].includes(ac.type),
         (state) => {
             return {
                 ...state,
@@ -87,14 +96,9 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
     );
     builder.addMatcher<PayloadAction<ResponseError>>(
         (ac) =>
-            ac.type in
-            [
-                fetchBoardsError.type,
-                fetchBoardError.type,
-                createBoardError.type,
-                updateBoardError.type,
-                deleteBoardError.type
-            ],
+            [fetchBoardError.type, createBoardError.type, updateBoardError.type, deleteBoardError.type].includes(
+                ac.type
+            ),
         (state, action) => {
             return {
                 ...state,

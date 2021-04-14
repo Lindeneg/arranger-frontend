@@ -1,4 +1,4 @@
-import React, { FC, useEffect, Fragment } from 'react';
+import React, { FC, useState, useEffect, Fragment } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -8,20 +8,20 @@ import UserBoard from './boards/pages/UserBoard';
 import { Navigation } from './common/components';
 import { RootState } from './store';
 import { loginUser } from './store/actions';
-import { getLocalV, themeToHex } from './common/func';
+import { StoredData, getLocalV, themeToHex } from './common';
 
 const App: FC = () => {
     const { token, theme } = useSelector((state: RootState) => state.user);
+    const [localData] = useState<StoredData | null>(getLocalV());
     const dispatch = useDispatch();
 
     useEffect(() => {
         if (token === null) {
-            const authData = getLocalV();
-            if (authData !== null && authData._expires > Date.now()) {
-                dispatch(loginUser(null, authData));
+            if (localData !== null && localData._expires > Date.now()) {
+                dispatch(loginUser(null, localData));
             }
         }
-    }, [dispatch, token]);
+    }, [dispatch, token, localData]);
 
     useEffect(() => {
         document.body.setAttribute('style', `background-color: ${themeToHex(theme, true)} !important`);
@@ -32,7 +32,7 @@ const App: FC = () => {
             <Navigation />
             <main className="mt-5">
                 <Switch>
-                    {token !== null ? (
+                    {localData?._token ? (
                         <Switch>
                             <Route path="/" exact>
                                 <Auth />

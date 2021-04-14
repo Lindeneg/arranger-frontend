@@ -7,10 +7,11 @@ import Button from 'react-bootstrap/Button';
 import useForm, { getInput } from 'use-form-state';
 
 import Intro from '../components/Intro';
+import { Spinner, ErrorModal } from '../../common/components';
 import { RootState } from '../../store';
 import { loginUser, createUser, clearUserError } from '../../store/actions';
 import { getCls, negateTheme, themeToHex } from '../../common';
-import { Spinner, ErrorModal } from '../../common/components';
+
 
 type AuthFormState = {
     username: string;
