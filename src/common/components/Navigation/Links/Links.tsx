@@ -87,46 +87,47 @@ export const Links: FC<LinksProps> = (props) => {
         <Nav className={getCls(props.desktop ? 'd-none d-md-flex ' + classes.desktop : classes.mobile)}>
             {!!token && (
                 <Fragment>
-                    <Nav.Link onClick={onNavIconClick.bind(null, NavIcon.Home)} as={NavLink} to="/" exact>
-                        <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-bottom">home</Tooltip>}>
+                    <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-bottom">home</Tooltip>}>
+                        <Nav.Link onClick={onNavIconClick.bind(null, NavIcon.Home)} as={NavLink} to="/" exact>
                             <HouseDoor
                                 size="40"
                                 color={activeNavIcon === NavIcon.Home ? negatedHexTheme : 'currentColor'}
                             />
-                        </OverlayTrigger>
-                    </Nav.Link>
-                    <Nav.Link onClick={onNavIconClick.bind(null, NavIcon.Boards)} as={NavLink} to="/boards" exact>
-                        <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-bottom">boards</Tooltip>}>
+                        </Nav.Link>
+                    </OverlayTrigger>
+
+                    <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-bottom">boards</Tooltip>}>
+                        <Nav.Link onClick={onNavIconClick.bind(null, NavIcon.Boards)} as={NavLink} to="/boards" exact>
                             <Kanban
                                 size="40"
                                 color={activeNavIcon === NavIcon.Boards ? negatedHexTheme : 'currentColor'}
                             />
-                        </OverlayTrigger>
-                    </Nav.Link>
-                    <Nav.Link onClick={onNavIconClick.bind(null, NavIcon.Profile)} as={NavLink} to="/profile" exact>
-                        <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-bottom">profile</Tooltip>}>
+                        </Nav.Link>
+                    </OverlayTrigger>
+                    <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-bottom">profile</Tooltip>}>
+                        <Nav.Link onClick={onNavIconClick.bind(null, NavIcon.Profile)} as={NavLink} to="/profile" exact>
                             <Person
                                 size="40"
                                 color={activeNavIcon === NavIcon.Profile ? negatedHexTheme : 'currentColor'}
                             />
-                        </OverlayTrigger>
-                    </Nav.Link>
-                    <Nav.Link onClick={onSwitchThemeHandler} role="button">
-                        <OverlayTrigger
-                            placement="bottom"
-                            overlay={<Tooltip id="tooltip-bottom">switch theme</Tooltip>}
-                        >
+                        </Nav.Link>
+                    </OverlayTrigger>
+                    <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-bottom">switch theme</Tooltip>}>
+                        <Nav.Link onClick={onSwitchThemeHandler} role="button">
                             {theme === 'dark' ? <Toggle2Off size="40" /> : <Toggle2On size="40" />}
-                        </OverlayTrigger>
-                    </Nav.Link>
-                    <Nav.Link
-                        onMouseEnter={onLogoutHoverEnterHandler}
-                        onMouseLeave={onLogoutHoverLeaveHandler}
-                        onClick={onLogout}
-                        role="button"
-                    >
-                        {logoutIcon === LogoutIcon.Open ? <DoorOpen size="40" /> : <DoorClosed size="40" />}
-                    </Nav.Link>
+                        </Nav.Link>
+                    </OverlayTrigger>
+
+                    <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip-bottom">logout</Tooltip>}>
+                        <Nav.Link
+                            onMouseEnter={onLogoutHoverEnterHandler}
+                            onMouseLeave={onLogoutHoverLeaveHandler}
+                            onClick={onLogout}
+                            role="button"
+                        >
+                            {logoutIcon === LogoutIcon.Open ? <DoorOpen size="40" /> : <DoorClosed size="40" />}
+                        </Nav.Link>
+                    </OverlayTrigger>
                 </Fragment>
             )}
         </Nav>
