@@ -1,4 +1,5 @@
 import React, { FC, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
@@ -8,6 +9,7 @@ import { CheckCircle, XCircle } from 'react-bootstrap-icons';
 
 import useForm, { getInput } from 'use-form-state';
 
+import BoardItem from './BoardItem';
 import { RootState } from '../../store';
 import { ColorSelection } from '../../common/components';
 import { Board, BoardPayload } from '../../store/boards/types';
@@ -26,6 +28,7 @@ const initialInput = () => getInput<string>('', { maxLength: 16, minLength: 1 })
 const colorInput = (color: ColorOption) => getInput<ColorOption>(color, { isValid: true });
 
 const BoardList: FC<BoardListProps> = (props) => {
+    const history = useHistory();
     const { theme } = useSelector((state: RootState) => state.user);
     const [creatingBoard, setCreatingBoard] = useState<boolean>(false);
     const negatedTheme = negateTheme(theme);
@@ -34,6 +37,10 @@ const BoardList: FC<BoardListProps> = (props) => {
         name: initialInput(),
         color: colorInput(negatedTheme)
     });
+
+    const onBoardSelect = (id: string): void => {
+        history.push('/board/' + id);
+    };
 
     const onBoardCreate = (): void => {
         setCreatingBoard(false);
@@ -62,12 +69,14 @@ const BoardList: FC<BoardListProps> = (props) => {
 
     return (
         <Container>
-            {props.boards.map((board) => (
-                <div key={board._id}>board {board._id}</div>
-            ))}
+            <div className="d-flex justify-content-start flex-wrap">
+                {props.boards.map((board, index) => (
+                    <BoardItem onClick={onBoardSelect.bind(this, board._id)} board={board} key={index} />
+                ))}
+            </div>
             {creatingBoard && (
                 <div style={{ width: '18rem' }}>
-                    <InputGroup className="mb-2">
+                    <InputGroup className="mb-2 mt-3">
                         <FormControl
                             id="name"
                             isInvalid={formState.inputs.name.isTouched && !formState.inputs.name.isValid}
@@ -104,7 +113,7 @@ const BoardList: FC<BoardListProps> = (props) => {
                 <p className={'font-italic h6 text-' + negatedTheme}>No boards found. Go ahead and create one.</p>
             )}
             {!creatingBoard && (
-                <Button type="button" variant={negatedTheme} onClick={onCreateBoardAccept}>
+                <Button type="button" variant={negatedTheme} onClick={onCreateBoardAccept} className="mt-3">
                     CREATE BOARD
                 </Button>
             )}
