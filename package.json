@@ -39,7 +39,9 @@
         "web-vitals": "^1.0.1"
     },
     "scripts": {
-        "lint": "yarn eslint . --cache --config ./.eslintrc.js",
+        "style": "yarn run style:format && yarn run style:lint",
+        "style:lint": "yarn eslint ./src --cache --config ./.eslintrc.js",
+        "style:format": "yarn prettier ./src --check --config ./.prettierrc",
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",

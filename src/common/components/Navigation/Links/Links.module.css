@@ -1,22 +1,22 @@
 .desktop {
-	white-space: nowrap;
+    white-space: nowrap;
 }
 
 .mobile {
-	width: 100%;
-	flex-direction: column !important;
-	align-items: center;
+    width: 100%;
+    flex-direction: column !important;
+    align-items: center;
 }
 
 .desktop a {
-	margin-right: 1rem;
+    margin-right: 1rem;
 }
 
 .mobile a {
-	margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 
 .mobile a,
 .mobile button {
-	font-size: 1.5rem !important;
+    font-size: 1.5rem !important;
 }
