@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Auth from './user/pages/Auth';
 import UserBoards from './boards/pages/UserBoards';
 import UserBoard from './boards/pages/UserBoard';
+import NoLocalStorage from './user/components/NoLocalStorage';
 import { Navigation } from './common/components';
 import { RootState } from './store';
 import { loginUser } from './store/actions';
@@ -52,12 +53,15 @@ const App: FC = () => {
                             <Redirect to="/boards" />
                         </Switch>
                     ) : (
-                        <Fragment>
+                        <Switch>
                             <Route path="/" exact>
                                 <Auth />
                             </Route>
+                            <Route path="/no-local-storage" exact>
+                                <NoLocalStorage />
+                            </Route>
                             <Redirect to="/" />
-                        </Fragment>
+                        </Switch>
                     )}
                 </Switch>
             </main>

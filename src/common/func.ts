@@ -1,4 +1,4 @@
-import { ResponseError, StoredData, ThemeOption } from './types';
+import { ResponseError, StoredData, ThemeOption, ColorOption } from './types';
 import { LocalKey } from './values';
 
 export const devLog = (err: unknown): void => {
@@ -9,6 +9,10 @@ export const getCls = (...args: string[]): string => args.join(' ');
 
 export const negateTheme = (theme: ThemeOption): ThemeOption => {
     return theme === 'dark' ? 'light' : 'dark';
+};
+
+export const getColorText = (color: ColorOption): ThemeOption => {
+    return ['light', 'yellow'].includes(color) ? 'dark' : 'light';
 };
 
 export const themeToHex = (theme: ThemeOption, body?: boolean): string => {
@@ -61,10 +65,17 @@ export function getLocalV<T = StoredData>(
     parse = true,
     decode = true
 ): T | null {
-    const item: string | null = localStorage.getItem(key);
-    if (item) {
-        const readable = decode ? atob(item) : item;
-        return parse ? JSON.parse(readable) : readable;
+    if (document.location.pathname !== '/no-local-storage') {
+        try {
+            const item: string | null = localStorage.getItem(key);
+            if (item) {
+                const readable = decode ? atob(item) : item;
+                return parse ? JSON.parse(readable) : readable;
+            }
+        } catch (err) {
+            devLog(err);
+            document.location.pathname = '/no-local-storage';
+        }
     }
     return null;
 }

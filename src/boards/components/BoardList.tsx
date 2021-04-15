@@ -5,13 +5,11 @@ import Card from 'react-bootstrap/Card';
 
 import { CreationInput } from '../../common/components';
 import { Board, BoardPayload } from '../../store/boards/types';
-import { ColorOption, colorClassMap } from '../../common';
+import { ColorOption, colorClassMap, getColorText } from '../../common';
 
 interface BoardListProps {
     boards: Board<string>[];
     onCreate: (payload: BoardPayload<'name' | 'color'>) => void;
-    onDelete: () => void;
-    onUpdate: () => void;
 }
 
 const BoardList: FC<BoardListProps> = (props) => {
@@ -32,7 +30,7 @@ const BoardList: FC<BoardListProps> = (props) => {
                     <Card
                         key={index}
                         bg={colorClassMap[board.color]}
-                        text={['light', 'yellow'].includes(board.color) ? 'dark' : 'light'}
+                        text={getColorText(board.color)}
                         style={{ width: '16rem', height: '6rem' }}
                         className="mb-2 mr-2"
                         role="button"

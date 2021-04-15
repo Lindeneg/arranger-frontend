@@ -22,10 +22,6 @@ const UserBoards: FC = () => {
         dispatch(createBoard(payload));
     };
 
-    const onBoardDelete = (): void => {};
-
-    const onBoardUpdate = (): void => {};
-
     const clearError = (): void => {
         dispatch(clearBoardError());
     };
@@ -34,14 +30,7 @@ const UserBoards: FC = () => {
         <Fragment>
             <ErrorModal show={!!error} onClose={clearError} errorMessage={error} />
             {requesting && <Spinner absoluteCentered />}
-            {requested && !!boards && (
-                <BoardList
-                    boards={boards}
-                    onCreate={onBoardCreate}
-                    onDelete={onBoardDelete}
-                    onUpdate={onBoardUpdate}
-                />
-            )}
+            {requested && !!boards && <BoardList boards={boards} onCreate={onBoardCreate} />}
         </Fragment>
     );
 };
