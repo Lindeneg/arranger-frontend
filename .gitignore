@@ -20,6 +20,8 @@
 .env.production.local
 paw.ini
 
+arranger-frontend.sublime-project
+arranger-frontend.sublime-workspace
 .eslintcache
 npm-debug.log*
 yarn-debug.log*
