@@ -5,13 +5,13 @@ import boardReducer from './boards/reducer';
 import userReducer from './user/reducer';
 
 export const rootReducer = combineReducers({
-    board: boardReducer,
-    user: userReducer
+	board: boardReducer,
+	user: userReducer
 });
 
 const store = configureStore({
-    reducer: rootReducer,
-    middleware: [reduxThunk]
+	reducer: rootReducer,
+	middleware: [reduxThunk]
 });
 
 export type AppDispatch = typeof store.dispatch;

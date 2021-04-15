@@ -56,7 +56,11 @@ export const removeLocalV = (key: string = LocalKey.Token): void => {
     localStorage.removeItem(key);
 };
 
-export function getLocalV<T = StoredData>(key: string = LocalKey.Token, parse = true, decode = true): T | null {
+export function getLocalV<T = StoredData>(
+    key: string = LocalKey.Token,
+    parse = true,
+    decode = true
+): T | null {
     const item: string | null = localStorage.getItem(key);
     if (item) {
         const readable = decode ? atob(item) : item;

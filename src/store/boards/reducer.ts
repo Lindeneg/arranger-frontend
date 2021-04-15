@@ -84,7 +84,8 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
         }
     );
     builder.addMatcher(
-        (ac) => [createBoardStart.type, updateBoardStart.type, deleteBoardStart.type].includes(ac.type),
+        (ac) =>
+            [createBoardStart.type, updateBoardStart.type, deleteBoardStart.type].includes(ac.type),
         (state) => {
             return {
                 ...state,
@@ -96,9 +97,12 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
     );
     builder.addMatcher<PayloadAction<ResponseError>>(
         (ac) =>
-            [fetchBoardError.type, createBoardError.type, updateBoardError.type, deleteBoardError.type].includes(
-                ac.type
-            ),
+            [
+                fetchBoardError.type,
+                createBoardError.type,
+                updateBoardError.type,
+                deleteBoardError.type
+            ].includes(ac.type),
         (state, action) => {
             return {
                 ...state,

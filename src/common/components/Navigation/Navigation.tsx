@@ -20,7 +20,11 @@ export const Navigation: FC = () => {
     };
 
     return (
-        <Navbar variant={theme} className={getCls('bg-' + theme, 'justify-content-between')} style={{ height: '5em' }}>
+        <Navbar
+            variant={theme}
+            className={getCls('bg-' + theme, 'justify-content-between')}
+            style={{ height: '5em' }}
+        >
             <SideDrawer show={isDrawerOpen} onClose={onDrawerClose}>
                 <Links onClick={onDrawerClose} />
             </SideDrawer>

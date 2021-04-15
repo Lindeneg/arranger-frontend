@@ -6,7 +6,7 @@ import { colorClassMap } from '../../values';
 
 interface ColorSelectionProps {
     chosenColor: ColorOption;
-    asElement: React.ElementType<any>;
+    asElement: React.ElementType;
     onSelect: (color: ColorOption) => void;
 }
 
@@ -27,7 +27,12 @@ const ColorSelection: FC<ColorSelectionProps> = (props) => (
                             i.preventDefault();
                             props.onSelect(key as ColorOption);
                         }}
-                        className={'bg-' + color + ' text-' + (['light', 'warning'].includes(color) ? 'dark' : 'light')}
+                        className={
+                            'bg-' +
+                            color +
+                            ' text-' +
+                            (['light', 'warning'].includes(color) ? 'dark' : 'light')
+                        }
                     >
                         {key[0].toUpperCase() + key.substr(1)}
                     </Dropdown.Item>

@@ -24,7 +24,10 @@ const App: FC = () => {
     }, [dispatch, token, localData]);
 
     useEffect(() => {
-        document.body.setAttribute('style', `background-color: ${themeToHex(theme, true)} !important`);
+        document.body.setAttribute(
+            'style',
+            `background-color: ${themeToHex(theme, true)} !important`
+        );
     }, [theme]);
 
     return (

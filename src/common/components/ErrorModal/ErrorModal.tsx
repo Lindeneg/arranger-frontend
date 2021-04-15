@@ -25,8 +25,14 @@ export const ErrorModal: FC<ErrorModalProps> = (props) => {
             aria-labelledby="contained-modal-title-vcenter"
             centered
         >
-            <Modal.Header className={theme === 'dark' ? classes.dark : classes.light} closeLabel="close" closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">{props.headerTxt || 'An Error Occurred'}</Modal.Title>
+            <Modal.Header
+                className={theme === 'dark' ? classes.dark : classes.light}
+                closeLabel="close"
+                closeButton
+            >
+                <Modal.Title id="contained-modal-title-vcenter">
+                    {props.headerTxt || 'An Error Occurred'}
+                </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <p>{props.errorMessage || 'An unknown error has occurred.'}</p>

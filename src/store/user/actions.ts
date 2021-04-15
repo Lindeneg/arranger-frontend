@@ -5,7 +5,14 @@ import { AppDispatch } from '..';
 import { UserResponse, User, UserPayload } from './types';
 import { defaultTheme } from '../../common/values';
 import { ResponseError, StoredData } from '../../common/types';
-import { devLog, getAuthHeader, getError, getLocalV, removeLocalV, setLocalV } from '../../common/func';
+import {
+    devLog,
+    getAuthHeader,
+    getError,
+    getLocalV,
+    removeLocalV,
+    setLocalV
+} from '../../common/func';
 
 export const createUserStart = createAction('CREATE_USER_START');
 export const createUserSuccess = createAction<UserResponse>('CREATE_USER_SUCCESS');
@@ -31,21 +38,30 @@ export const logoutUserStart = createAction('LOGOUT_USER');
 
 export const clearAnyUserError = createAction('CLEAR_ANY_USER_ERROR');
 
-export const createUser = (user: Omit<User, '_id'>) => async (dispatch: AppDispatch): Promise<void> => {
+export const createUser = (user: Omit<User, '_id'>) => async (
+    dispatch: AppDispatch
+): Promise<void> => {
     dispatch(createUserStart());
     try {
         const { data } = await axios.post<UserResponse>('/api/user/signup', {
             ...user,
             theme: defaultTheme
         });
-        setLocalV({ _id: data.userId, _token: data.token, _theme: defaultTheme, _expires: data.expires });
+        setLocalV({
+            _id: data.userId,
+            _token: data.token,
+            _theme: defaultTheme,
+            _expires: data.expires
+        });
         dispatch(createUserSuccess(data));
     } catch (err) {
         dispatch(createUserError(getError(err)));
     }
 };
 
-export const updateUser = (payload: UserPayload<'password'>) => async (dispatch: AppDispatch): Promise<void> => {
+export const updateUser = (payload: UserPayload<'password'>) => async (
+    dispatch: AppDispatch
+): Promise<void> => {
     dispatch(updateUserStart());
     try {
         const { data } = await axios.patch<UserResponse>('/api/user', payload, getAuthHeader());
@@ -55,7 +71,9 @@ export const updateUser = (payload: UserPayload<'password'>) => async (dispatch:
     }
 };
 
-export const switchUserTheme = (payload: UserPayload<'theme'>) => async (dispatch: AppDispatch): Promise<void> => {
+export const switchUserTheme = (payload: UserPayload<'theme'>) => async (
+    dispatch: AppDispatch
+): Promise<void> => {
     dispatch(switchUserThemeStart(payload));
     setLocalV({ ...getLocalV(), _theme: payload.theme });
     try {
@@ -85,7 +103,12 @@ export const loginUser = (user: Omit<User, '_id'> | null, localUser?: StoredData
     if (user !== null) {
         try {
             const { data } = await axios.post<UserResponse>('/api/user/login', user);
-            setLocalV({ _id: data.userId, _token: data.token, _theme: data.theme, _expires: data.expires });
+            setLocalV({
+                _id: data.userId,
+                _token: data.token,
+                _theme: data.theme,
+                _expires: data.expires
+            });
             dispatch(loginUserSuccess(data));
         } catch (err) {
             dispatch(loginUserError(getError(err)));

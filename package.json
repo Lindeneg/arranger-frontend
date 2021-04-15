@@ -39,6 +39,7 @@
         "web-vitals": "^1.0.1"
     },
     "scripts": {
+        "lint": "yarn eslint . --cache --config ./.eslintrc.js",
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
@@ -61,5 +62,13 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^4.22.0",
+        "@typescript-eslint/parser": "^4.22.0",
+        "eslint": "^7.24.0",
+        "eslint-plugin-react": "^7.23.2",
+        "eslint-plugin-react-hooks": "^4.2.0",
+        "prettier": "^2.2.1"
     }
 }

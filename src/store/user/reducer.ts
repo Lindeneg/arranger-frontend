@@ -78,7 +78,10 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Use
         }
     );
     builder.addMatcher<PayloadAction<UserResponse>>(
-        (ac) => [createUserSuccess.type, loginUserSuccess.type, updateUserSuccess.type].includes(ac.type),
+        (ac) =>
+            [createUserSuccess.type, loginUserSuccess.type, updateUserSuccess.type].includes(
+                ac.type
+            ),
         (state, action) => {
             return {
                 ...state,
@@ -90,7 +93,12 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Use
     );
     builder.addMatcher<PayloadAction<ResponseError>>(
         (ac) =>
-            [createUserError.type, loginUserError.type, updateUserError.type, deleteUserError.type].includes(ac.type),
+            [
+                createUserError.type,
+                loginUserError.type,
+                updateUserError.type,
+                deleteUserError.type
+            ].includes(ac.type),
         (state, action) => {
             return {
                 ...state,

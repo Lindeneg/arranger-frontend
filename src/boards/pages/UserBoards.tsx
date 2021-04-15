@@ -35,7 +35,12 @@ const UserBoards: FC = () => {
             <ErrorModal show={!!error} onClose={clearError} errorMessage={error} />
             {requesting && <Spinner absoluteCentered />}
             {requested && !!boards && (
-                <BoardList boards={boards} onCreate={onBoardCreate} onDelete={onBoardDelete} onUpdate={onBoardUpdate} />
+                <BoardList
+                    boards={boards}
+                    onCreate={onBoardCreate}
+                    onDelete={onBoardDelete}
+                    onUpdate={onBoardUpdate}
+                />
             )}
         </Fragment>
     );

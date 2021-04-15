@@ -10,7 +10,10 @@ const Intro: FC<IntroProps> = (props) => {
     return (
         <div className={'text-center text-' + theme}>
             <p className="h2">Arranger </p>
-            <p className="font-italic"> Kanban-style, list-making application for managing workflows</p>
+            <p className="font-italic">
+                {' '}
+                Kanban-style, list-making application for managing workflows
+            </p>
             <hr />
             <p>
                 This application was mainly inspired by a{' '}

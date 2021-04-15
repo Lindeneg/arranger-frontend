@@ -1,22 +1,22 @@
 .wrapper {
-    height: 100vh;
-    margin-top: 2rem !important;
-    margin-left: 1rem !important;
-    float: left;
+	height: 100vh;
+	margin-top: 2rem !important;
+	margin-left: 1rem !important;
+	float: left;
 }
 
 .content {
-    height: 80vh;
-    width: 80vw !important;
-    min-width: 250px !important;
+	height: 80vh;
+	width: 80vw !important;
+	min-width: 250px !important;
 }
 
 .headerLight,
 .headerLight button {
-    color: #343a40 !important;
+	color: #343a40 !important;
 }
 
 .headerDark,
 .headerDark button {
-    color: #f8f9fa !important;
+	color: #f8f9fa !important;
 }
