@@ -16,7 +16,7 @@ import {
     /*     updateBoardSuccess, */
     updateBoardError,
     deleteBoardStart,
-    /*     deleteBoardSuccess, */
+    deleteBoardSuccess,
     deleteBoardError,
     clearAnyBoardError
 } from './actions';
@@ -33,7 +33,16 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
     builder.addCase(fetchBoardsSuccess, (state, action) => {
         return {
             ...state,
+            board: null,
             boards: action.payload,
+            requested: true,
+            requesting: false
+        };
+    });
+    builder.addCase(deleteBoardSuccess, (state) => {
+        return {
+            ...state,
+            board: null,
             requested: true,
             requesting: false
         };
@@ -41,6 +50,7 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
     builder.addCase(fetchBoardSuccess, (state, action) => {
         return {
             ...state,
+            boards: null,
             board: action.payload,
             requested: true,
             requesting: false
@@ -56,7 +66,6 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
         };
     });
     builder.addCase(clearAnyBoardError, (state) => {
-        console.log('clear 2');
         return {
             ...state,
             error: null

@@ -5,7 +5,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import Board from '../components/Board';
 import { Spinner, ErrorModal } from '../../common/components';
 import { RootState } from '../../store';
-import { getBoard, clearBoardError } from '../../store/actions';
+import { getBoard, deleteBoard, clearBoardError } from '../../store/actions';
 import { BoardPayload } from '../../store/boards/types';
 
 const UserBoard: FC = () => {
@@ -28,7 +28,7 @@ const UserBoard: FC = () => {
     };
 
     const onBoardDelete = (): void => {
-        console.log('delete ' + boardId);
+        dispatch(deleteBoard(boardId));
         history.push('/boards');
     };
 

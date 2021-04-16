@@ -76,7 +76,7 @@ export const createBoard = (payload: BoardPayload<'name' | 'color'>) => async (
 
 export const updateBoard = (
     boardId: string,
-    payload: BoardPayload<'name' | 'lists' | 'listOrder'>
+    payload: BoardPayload<'name' | 'color' | 'lists' | 'listOrder'>
 ) => async (dispatch: AppDispatch): Promise<void> => {
     dispatch(updateBoardStart());
     try {
