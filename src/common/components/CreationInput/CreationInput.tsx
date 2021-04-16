@@ -49,6 +49,7 @@ const CreationInput: FC<CreationInputProps> = (props) => {
     const onCreate = (e: React.MouseEvent): void => {
         e.preventDefault();
         props.onCreate(formState.inputs.name.value, formState.inputs.color.value);
+        props.onClose && props.onClose();
     };
 
     const onCreateAccept = (): void => {
