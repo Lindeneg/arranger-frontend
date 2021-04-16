@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useState } from 'react';
+import React, { FC, Fragment, CSSProperties, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -9,29 +9,41 @@ import useForm, { getInput } from 'use-form-state';
 
 import ColorSelection from '../ColorSelection/ColorSelection';
 import { RootState } from '../../../store';
-import { negateTheme, ColorOption } from '../../';
+import { negateTheme, ColorOption, ThemeOption } from '../../';
 
 interface CreationInputProps {
     type: 'board' | 'list' | 'card' | 'checklist';
     inputMaxLength: number;
-    color?: boolean;
     placeholder: string;
     onCreate: (name: string, color: ColorOption) => void;
+    onClose?: () => void;
+    color?: boolean;
+    alwaysShowInput?: boolean;
+    customColor?: ThemeOption;
+    chosenColor?: ColorOption;
+    inputValue?: string;
+    style?: CSSProperties;
 }
 
-const initialInput = (maxLength: number) => getInput<string>('', { maxLength, minLength: 1 });
+const initialInput = (maxLength: number, value = '') =>
+    getInput<string>(value, {
+        maxLength,
+        minLength: 1,
+        isValid: value.length <= maxLength && value.length >= 1
+    });
 const colorInput = (color: ColorOption) => getInput<ColorOption>(color, { isValid: true });
 
 const CreationInput: FC<CreationInputProps> = (props) => {
     const { theme } = useSelector((state: RootState) => state.user);
     const negatedTheme = negateTheme(theme);
+    const customColor = props.customColor ? props.customColor : negatedTheme;
     const [creating, setCreating] = useState<boolean>(false);
     const { formState, onChangeHandler, onTouchHandler, setFormState } = useForm<{
         name: string;
         color: ColorOption;
     }>({
-        name: initialInput(props.inputMaxLength),
-        color: colorInput(negatedTheme)
+        name: initialInput(props.inputMaxLength, props.inputValue),
+        color: colorInput(props.chosenColor || negatedTheme)
     });
 
     const onCreate = (e: React.MouseEvent): void => {
@@ -46,8 +58,8 @@ const CreationInput: FC<CreationInputProps> = (props) => {
     const onCreateDeny = (): void => {
         setFormState({
             ...formState.inputs,
-            name: initialInput(props.inputMaxLength),
-            color: colorInput(negatedTheme)
+            name: initialInput(props.inputMaxLength, props.inputValue),
+            color: colorInput(props.chosenColor || negatedTheme)
         });
         setCreating(false);
     };
@@ -61,8 +73,8 @@ const CreationInput: FC<CreationInputProps> = (props) => {
 
     return (
         <Fragment>
-            {creating && (
-                <div style={{ width: '18rem' }}>
+            {(props.alwaysShowInput || creating) && (
+                <div style={{ width: '18rem', ...props.style }}>
                     <InputGroup className="mb-2 mt-3">
                         <FormControl
                             id="name"
@@ -70,6 +82,7 @@ const CreationInput: FC<CreationInputProps> = (props) => {
                                 formState.inputs.name.isTouched && !formState.inputs.name.isValid
                             }
                             isValid={formState.inputs.name.isValid}
+                            value={formState.inputs.name.value}
                             onChange={onChangeHandler}
                             onBlur={onTouchHandler}
                             placeholder={props.placeholder + '...'}
@@ -91,21 +104,21 @@ const CreationInput: FC<CreationInputProps> = (props) => {
                         role={formState.isValid ? 'button' : 'none'}
                         size="30"
                         className={
-                            'mr-1 ' + (formState.isValid ? 'text-' + negatedTheme : 'text-muted')
+                            'mr-1 ' + (formState.isValid ? 'text-' + customColor : 'text-muted')
                         }
                     />
                     <XCircle
-                        onClick={onCreateDeny}
+                        onClick={props.onClose ? props.onClose : onCreateDeny}
                         role="button"
                         size="30"
-                        className={'ml-1 text-' + negatedTheme}
+                        className={'ml-1 text-' + customColor}
                     />
                 </div>
             )}
-            {!creating && (
+            {!props.alwaysShowInput && !creating && (
                 <Button
                     type="button"
-                    variant={negatedTheme}
+                    variant={customColor}
                     onClick={onCreateAccept}
                     className="mt-3"
                 >

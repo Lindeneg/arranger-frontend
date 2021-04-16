@@ -8,7 +8,7 @@ import UserBoard from './boards/pages/UserBoard';
 import NoLocalStorage from './user/components/NoLocalStorage';
 import { Navigation } from './common/components';
 import { RootState } from './store';
-import { loginUser } from './store/actions';
+import { loginUser, logoutUser } from './store/actions';
 import { StoredData, getLocalV, themeToHex } from './common';
 
 const App: FC = () => {
@@ -18,8 +18,12 @@ const App: FC = () => {
 
     useEffect(() => {
         if (token === null) {
-            if (localData !== null && localData._expires > Date.now()) {
-                dispatch(loginUser(null, localData));
+            if (localData !== null) {
+                if (localData._expires > Date.now()) {
+                    dispatch(loginUser(null, localData));
+                } else {
+                    dispatch(logoutUser());
+                }
             }
         }
     }, [dispatch, token, localData]);

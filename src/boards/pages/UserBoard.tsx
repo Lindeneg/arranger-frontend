@@ -2,21 +2,20 @@ import React, { FC, Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
-import BoardItem from '../components/BoardItem';
+import Board from '../components/Board';
 import { Spinner, ErrorModal } from '../../common/components';
 import { RootState } from '../../store';
-import { clearBoardError } from '../../store/actions';
+import { getBoard, clearBoardError } from '../../store/actions';
 import { BoardPayload } from '../../store/boards/types';
 
 const UserBoard: FC = () => {
     const dispatch = useDispatch();
     const { boardId } = useParams<{ boardId: string }>();
-    const { board, requesting, error } = useSelector((state: RootState) => state.board);
+    const { board, requested, requesting, error } = useSelector((state: RootState) => state.board);
 
     useEffect(() => {
         if (board === null) {
-            //dispatch(getBoard(boardId));
-            console.log(boardId);
+            dispatch(getBoard(boardId));
         }
     }, [boardId, board, dispatch]);
 
@@ -32,15 +31,15 @@ const UserBoard: FC = () => {
     };
 
     const clearError = (): void => {
-        dispatch(clearBoardError);
+        dispatch(clearBoardError());
     };
 
     return (
         <Fragment>
-            <ErrorModal show={!!error} onClose={clearError} errorMessage={error} />
+            <ErrorModal show={error !== null} onClose={clearError} errorMessage={error} />
             {requesting && <Spinner absoluteCentered />}
-            {board !== null && (
-                <BoardItem board={board} onUpdate={onBoardUpdate} onDelete={onBoardDelete} />
+            {requested && !!board && (
+                <Board board={board} onUpdate={onBoardUpdate} onDelete={onBoardDelete} />
             )}
         </Fragment>
     );

@@ -56,6 +56,7 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
         };
     });
     builder.addCase(clearAnyBoardError, (state) => {
+        console.log('clear 2');
         return {
             ...state,
             error: null

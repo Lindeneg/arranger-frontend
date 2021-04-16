@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { useHistory } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
+import Alert from 'react-bootstrap/Alert';
 
 import { CreationInput } from '../../common/components';
 import { Board, BoardPayload } from '../../store/boards/types';
@@ -43,9 +44,7 @@ const BoardList: FC<BoardListProps> = (props) => {
                 ))}
             </div>
             {props.boards.length <= 0 && (
-                <p className="font-italic h6 text-info">
-                    No boards found. Go ahead and create one.
-                </p>
+                <Alert variant="info">No boards found. Go ahead and create one.</Alert>
             )}
             <CreationInput
                 type="board"

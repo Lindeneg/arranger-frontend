@@ -20,7 +20,7 @@ const NoLocalStorage: FC = () => {
                 <Badge variant="danger">An Error Occurred</Badge>
             </h2>
             <hr />
-            <Alert variant={'danger'}>
+            <Alert variant="danger">
                 Your browser prevents cookies from being used. This means the website will not work
                 as expected.
             </Alert>
