@@ -1,20 +1,20 @@
 import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
 import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
 
 import { RootState } from '../../../store';
 import { negateTheme } from '../../func';
-import classes from './ErrorModal.module.css';
+import classes from './Modal.module.css';
 
-export interface ErrorModalProps {
+export interface ModalProps {
     show: boolean;
     onClose: () => void;
-    errorMessage: string | null;
-    headerTxt?: string;
+    headerTxt: string;
+    body?: JSX.Element;
+    footer?: JSX.Element;
 }
 
-export const ErrorModal: FC<ErrorModalProps> = (props) => {
+export const CModal: FC<ModalProps> = (props) => {
     const { theme } = useSelector((state: RootState) => state.user);
     return (
         <Modal
@@ -30,20 +30,12 @@ export const ErrorModal: FC<ErrorModalProps> = (props) => {
                 closeLabel="close"
                 closeButton
             >
-                <Modal.Title id="contained-modal-title-vcenter">
-                    {props.headerTxt || 'An Error Occurred'}
-                </Modal.Title>
+                <Modal.Title id="contained-modal-title-vcenter">{props.headerTxt}</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-                <p>{props.errorMessage || 'An unknown error has occurred.'}</p>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button onClick={props.onClose} variant={negateTheme(theme)}>
-                    Okay
-                </Button>
-            </Modal.Footer>
+            <Modal.Body>{props.body}</Modal.Body>
+            <Modal.Footer>{props.footer}</Modal.Footer>
         </Modal>
     );
 };
 
-export default ErrorModal;
+export default CModal;
