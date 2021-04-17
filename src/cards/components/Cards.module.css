@@ -1,0 +1,31 @@
+.light:hover {
+	background-color: #ebedf0 !important;
+}
+
+.dark:hover {
+	background-color: #434a52 !important;
+}
+
+.blue:hover {
+	background-color: #2b84e3 !important;
+}
+
+.gray:hover {
+	background-color: #818a91 !important;
+}
+
+.green:hover {
+	background-color: #29ba4a !important;
+}
+
+.red:hover {
+	background-color: #e04856 !important;
+}
+
+.yellow:hover {
+	background-color: #ffca2e !important;
+}
+
+.teal:hover {
+	background-color: #28b1c7 !important;
+}

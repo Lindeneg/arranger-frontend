@@ -41,7 +41,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    height: 60vh;
+    height: 66vh;
 }
 
 .List li {

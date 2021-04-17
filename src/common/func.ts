@@ -34,7 +34,7 @@ export const getAuthHeader = (): { headers: { Authorization: string } } => {
 export const getError = (err: any): ResponseError => {
     let message: string;
     try {
-        if (err.response.status === 521) {
+        if (err.response.status === 511) {
             document.location.pathname = '/';
         }
         message = err.response.data.message;
