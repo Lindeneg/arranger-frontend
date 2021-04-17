@@ -30,3 +30,9 @@ export interface StoredData {
     _theme: ThemeOption;
     _expires: number;
 }
+
+export enum DropType {
+    List = 'list',
+    Card = 'card',
+    Checklist = 'checklist'
+}

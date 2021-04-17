@@ -17,6 +17,9 @@ import {
     deleteBoardStart,
     deleteBoardSuccess,
     deleteBoardError,
+    updateBoardListOrderStart,
+    updateBoardListOrderSuccess,
+    updateBoardListOrderError,
     clearAnyBoardError
 } from './actions';
 
@@ -37,6 +40,23 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
             requested: true,
             requesting: false
         };
+    });
+    builder.addCase(updateBoardListOrderStart, (state, action) => {
+        let board = state.board;
+        if (!!board && !!action.payload.listOrder) {
+            board = {
+                ...board,
+                ...action.payload
+            };
+        }
+        return {
+            ...state,
+            board,
+            error: null
+        };
+    });
+    builder.addCase(updateBoardListOrderSuccess, (state) => {
+        return { ...state };
     });
     builder.addCase(updateBoardSuccess, (state, action) => {
         return {
@@ -118,7 +138,8 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
                 fetchBoardError.type,
                 createBoardError.type,
                 updateBoardError.type,
-                deleteBoardError.type
+                deleteBoardError.type,
+                updateBoardListOrderError.type
             ].includes(ac.type),
         (state, action) => {
             return {

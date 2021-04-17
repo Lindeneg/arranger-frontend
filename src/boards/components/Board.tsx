@@ -59,7 +59,7 @@ const Board: FC<BoardProps> = (props) => {
                     color={props.board.color}
                 />
 
-                <Lists colorText={colorText} />
+                <Lists owner={props.board._id} colorText={colorText} />
             </Container>
         </Fragment>
     );

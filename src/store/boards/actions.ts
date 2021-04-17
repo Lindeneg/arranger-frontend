@@ -23,6 +23,14 @@ export const deleteBoardStart = createAction('DELETE_BOARD_START');
 export const deleteBoardSuccess = createAction<Board<List>>('DELETE_BOARD_SUCCESS');
 export const deleteBoardError = createAction<ResponseError>('DELETE_BOARD_ERROR');
 
+export const updateBoardListOrderStart = createAction<BoardPayload<'listOrder'>>(
+    'UPDATE_BOARD_LIST_ORDER_START'
+);
+export const updateBoardListOrderSuccess = createAction('UPDATE_BOARD_LIST_ORDER_SUCCESS');
+export const updateBoardListOrderError = createAction<ResponseError>(
+    'UPDATE_BOARD_LIST_ORDER_ERROR'
+);
+
 export const updateBoardStart = createAction('UPDATE_BOARD_START');
 export const updateBoardSuccess = createAction<Board<List>>('UPDATE_BOARD_SUCCESS');
 export const updateBoardError = createAction<ResponseError>('UPDATE_BOARD_ERROR');
@@ -75,10 +83,25 @@ export const createBoard = (payload: BoardPayload<'name' | 'color'>) => async (
     }
 };
 
-export const updateBoard = (
-    boardId: string,
-    payload: BoardPayload<'name' | 'color' | 'listOrder'>
-) => async (dispatch: AppDispatch): Promise<void> => {
+export const updateBoardListOrder = (boardId: string, order: string[]) => async (
+    dispatch: AppDispatch
+): Promise<void> => {
+    dispatch(updateBoardListOrderStart({ listOrder: order }));
+    try {
+        await axios.patch<Board<List>>(
+            '/api/boards/' + boardId,
+            { listOrder: order },
+            getAuthHeader()
+        );
+        dispatch(updateBoardListOrderSuccess());
+    } catch (err) {
+        dispatch(updateBoardListOrderError(err.response.data));
+    }
+};
+
+export const updateBoard = (boardId: string, payload: BoardPayload<'name' | 'color'>) => async (
+    dispatch: AppDispatch
+): Promise<void> => {
     dispatch(updateBoardStart());
     try {
         const { data } = await axios.patch<Board<List>>(

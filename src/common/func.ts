@@ -77,3 +77,9 @@ export function getLocalV<T = StoredData>(
     }
     return null;
 }
+
+export const updateOrder = (currentOrder: string[], srcIdx: number, desIdx: number): string[] => {
+    const [src] = currentOrder.splice(srcIdx, 1);
+    currentOrder.splice(desIdx, 0, src);
+    return currentOrder;
+};

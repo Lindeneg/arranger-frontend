@@ -36,8 +36,6 @@ const App: FC = () => {
         );
     }, [theme]);
 
-    console.log('app ', !!token);
-
     return (
         <Fragment>
             <Navigation />

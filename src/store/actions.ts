@@ -4,6 +4,7 @@ export {
     deleteBoard,
     createBoard,
     updateBoard,
+    updateBoardListOrder,
     clearBoardError
 } from './boards/actions';
 export {
