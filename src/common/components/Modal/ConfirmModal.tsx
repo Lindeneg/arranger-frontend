@@ -22,7 +22,15 @@ export const ConfirmModal: FC<ConfirmModalProps> = (props) => (
         }
         footer={
             <div className="w-100 float-left">
-                <Button onClick={props.onConfirm} variant="danger" size="lg" className="mr-2">
+                <Button
+                    onClick={() => {
+                        props.onClose();
+                        props.onConfirm();
+                    }}
+                    variant="danger"
+                    size="lg"
+                    className="mr-2"
+                >
                     CONFIRM
                 </Button>
                 <Button onClick={props.onClose} variant="success" size="lg">

@@ -6,7 +6,7 @@ import Alert from 'react-bootstrap/Alert';
 
 import { CreationInput } from '../../common/components';
 import { Board, BoardPayload } from '../../store/boards/types';
-import { ColorOption, colorClassMap, getColorText } from '../../common';
+import { ColorOption, colorClassMap, getColorText, defaultTheme } from '../../common';
 
 interface BoardListProps {
     boards: Board<string>[];
@@ -20,8 +20,8 @@ const BoardList: FC<BoardListProps> = (props) => {
         history.push('/board/' + id);
     };
 
-    const onBoardCreate = (name: string, color: ColorOption): void => {
-        props.onCreate({ name, color });
+    const onBoardCreate = (name: string, color?: ColorOption): void => {
+        props.onCreate({ name, color: color || defaultTheme });
     };
 
     return (

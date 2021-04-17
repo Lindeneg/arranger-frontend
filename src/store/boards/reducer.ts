@@ -47,10 +47,11 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
             error: null
         };
     });
-    builder.addCase(deleteBoardSuccess, (state) => {
+    builder.addCase(deleteBoardSuccess, (state, action) => {
         return {
             ...state,
             board: null,
+            boards: (state.boards || []).filter(board => board._id !== action.payload._id),
             requested: true,
             requesting: false
         };
@@ -58,7 +59,6 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
     builder.addCase(fetchBoardSuccess, (state, action) => {
         return {
             ...state,
-            boards: null,
             board: action.payload,
             requested: true,
             requesting: false

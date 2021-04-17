@@ -56,6 +56,8 @@ export const Links: FC<LinksProps> = (props) => {
     const [activeNavIcon, setActiveNavIcon] = useState<NavIcon | null>(null);
     const [logoutIcon, setLogoutIcon] = useState<LogoutIcon>(LogoutIcon.Open);
 
+    console.log('link', !!token);
+
     useEffect(() => {
         setNegatedHexTheme(themeToHex(negateTheme(theme)));
     }, [theme]);

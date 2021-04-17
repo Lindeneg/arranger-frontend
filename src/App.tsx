@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, Fragment } from 'react';
+import React, { FC, useEffect, Fragment } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -9,15 +9,16 @@ import NoLocalStorage from './user/components/NoLocalStorage';
 import { Navigation } from './common/components';
 import { RootState } from './store';
 import { loginUser, logoutUser } from './store/actions';
-import { StoredData, getLocalV, themeToHex } from './common';
+import { getLocalV, themeToHex } from './common';
 
 const App: FC = () => {
     const { token, theme } = useSelector((state: RootState) => state.user);
-    const [localData] = useState<StoredData | null>(getLocalV());
     const dispatch = useDispatch();
 
     useEffect(() => {
         if (token === null) {
+            const localData = getLocalV();
+
             if (localData !== null) {
                 if (localData._expires > Date.now()) {
                     dispatch(loginUser(null, localData));
@@ -26,7 +27,7 @@ const App: FC = () => {
                 }
             }
         }
-    }, [dispatch, token, localData]);
+    }, [dispatch, token]);
 
     useEffect(() => {
         document.body.setAttribute(
@@ -35,12 +36,14 @@ const App: FC = () => {
         );
     }, [theme]);
 
+    console.log('app ', !!token);
+
     return (
         <Fragment>
             <Navigation />
             <main className="mt-5">
                 <Switch>
-                    {localData?._token ? (
+                    {getLocalV()?._token ? (
                         <Switch>
                             <Route path="/" exact>
                                 <Auth />

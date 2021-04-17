@@ -9,19 +9,20 @@ import useForm, { getInput } from 'use-form-state';
 
 import ColorSelection from '../ColorSelection/ColorSelection';
 import { RootState } from '../../../store';
-import { negateTheme, ColorOption, ThemeOption } from '../../';
+import { negateTheme, ColorOption, ThemeOption, getCls, getColorText } from '../../';
 
 interface CreationInputProps {
     type: 'board' | 'list' | 'card' | 'checklist';
     inputMaxLength: number;
     placeholder: string;
-    onCreate: (name: string, color: ColorOption) => void;
+    onCreate: (name: string, color?: ColorOption) => void;
     onClose?: () => void;
     color?: boolean;
     alwaysShowInput?: boolean;
     customColor?: ThemeOption;
     chosenColor?: ColorOption;
     inputValue?: string;
+    inputClassName?: string;
     style?: CSSProperties;
 }
 
@@ -76,7 +77,7 @@ const CreationInput: FC<CreationInputProps> = (props) => {
         <Fragment>
             {(props.alwaysShowInput || creating) && (
                 <div style={{ width: '18rem', ...props.style }}>
-                    <InputGroup className="mb-2 mt-3">
+                    <InputGroup className={getCls(props.inputClassName || '', 'mb-1')}>
                         <FormControl
                             id="name"
                             isInvalid={
@@ -95,7 +96,10 @@ const CreationInput: FC<CreationInputProps> = (props) => {
                                 onSelect={onSelectColor}
                             />
                         )}
-                        <FormControl.Feedback type="invalid" className={'text-' + negatedTheme}>
+                        <FormControl.Feedback
+                            type="invalid"
+                            className={'text-' + getColorText(negatedTheme)}
+                        >
                             {props.type[0].toUpperCase() + props.type.substr(1)}s are limited to{' '}
                             {props.inputMaxLength} characters.
                         </FormControl.Feedback>
