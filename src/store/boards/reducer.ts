@@ -12,8 +12,7 @@ import {
     createBoardStart,
     createBoardSuccess,
     createBoardError,
-    updateBoardStart,
-    /*     updateBoardSuccess, */
+    updateBoardSuccess,
     updateBoardError,
     deleteBoardStart,
     deleteBoardSuccess,
@@ -37,6 +36,15 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
             boards: action.payload,
             requested: true,
             requesting: false
+        };
+    });
+    builder.addCase(updateBoardSuccess, (state, action) => {
+        return {
+            ...state,
+            board: action.payload,
+            requested: true,
+            requesting: false,
+            error: null
         };
     });
     builder.addCase(deleteBoardSuccess, (state) => {
@@ -94,8 +102,7 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
         }
     );
     builder.addMatcher(
-        (ac) =>
-            [createBoardStart.type, updateBoardStart.type, deleteBoardStart.type].includes(ac.type),
+        (ac) => [createBoardStart.type, deleteBoardStart.type].includes(ac.type),
         (state) => {
             return {
                 ...state,

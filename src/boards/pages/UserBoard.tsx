@@ -5,7 +5,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import Board from '../components/Board';
 import { Spinner, ErrorModal } from '../../common/components';
 import { RootState } from '../../store';
-import { getBoard, deleteBoard, clearBoardError } from '../../store/actions';
+import { getBoard, deleteBoard, updateBoard, clearBoardError } from '../../store/actions';
 import { BoardPayload } from '../../store/boards/types';
 
 const UserBoard: FC = () => {
@@ -20,11 +20,8 @@ const UserBoard: FC = () => {
         }
     }, [boardId, board, dispatch]);
 
-    const onBoardUpdate = (
-        payload: BoardPayload<'name' | 'color' | 'lists' | 'listOrder'>
-    ): void => {
-        //dispatch(createBoard(payload));
-        console.log('update ' + boardId, payload);
+    const onBoardUpdate = (payload: BoardPayload<'name' | 'color' | 'listOrder'>): void => {
+        dispatch(updateBoard(boardId, payload));
     };
 
     const onBoardDelete = (): void => {
