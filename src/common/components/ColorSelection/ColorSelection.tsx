@@ -8,10 +8,11 @@ interface ColorSelectionProps {
     chosenColor: ColorOption;
     asElement: React.ElementType;
     onSelect: (color: ColorOption) => void;
+    direction: 'up' | 'left' | 'right' | 'down';
 }
 
 const ColorSelection: FC<ColorSelectionProps> = (props) => (
-    <Dropdown>
+    <Dropdown drop={props.direction}>
         <DropdownButton
             as={props.asElement}
             variant={colorClassMap[props.chosenColor]}

@@ -1,8 +1,10 @@
 import React, { FC, Fragment, useState } from 'react';
-import { Draggable } from 'react-beautiful-dnd';
+import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { Trash } from 'react-bootstrap-icons';
 
-import { ThemeOption, getCls } from '../../common';
+import Cards from '../../cards/components/Cards';
+import { ThemeOption, DropType, getCls } from '../../common';
+import { Card } from '../../store/cards/types';
 import { CreationInput, ConfirmModal } from '../../common/components';
 import classes from './Lists.module.css';
 
@@ -10,6 +12,8 @@ interface ListProps {
     id: string;
     name: string;
     index: number;
+    cards: Card[];
+    cardOrder: string[];
     colorText: ThemeOption;
     onUpdate: (id: string, name: string) => void;
     onDelete: (id: string) => void;
@@ -41,51 +45,64 @@ const List: FC<ListProps> = (props) => {
                         ref={provided.innerRef}
                     >
                         <li style={{ height: '100%' }}>
-                            <div style={{ height: '100%' }}>
-                                <div
-                                    className={getCls(
-                                        classes.Item,
-                                        classes.Wrapper,
-                                        'text-' + props.colorText
-                                    )}
-                                >
-                                    <div className={classes.Header}>
-                                        {editing ? (
-                                            <CreationInput
-                                                type="list"
-                                                inputMaxLength={16}
-                                                customColor={props.colorText}
-                                                placeholder="List name"
-                                                inputValue={props.name}
-                                                onClose={() => setEditing(false)}
-                                                onCreate={onUpdate}
-                                                alwaysShowInput={true}
+                            <Droppable droppableId={props.id} type={DropType.Card}>
+                                {(dropProp) => (
+                                    <div
+                                        {...dropProp.droppableProps}
+                                        ref={dropProp.innerRef}
+                                        style={{ height: '100%' }}
+                                    >
+                                        <div
+                                            className={getCls(
+                                                classes.Item,
+                                                classes.Wrapper,
+                                                'text-' + props.colorText
+                                            )}
+                                        >
+                                            <div className={classes.Header}>
+                                                {editing ? (
+                                                    <CreationInput
+                                                        type="list"
+                                                        inputMaxLength={16}
+                                                        customColor={props.colorText}
+                                                        placeholder="List name"
+                                                        inputValue={props.name}
+                                                        onClose={() => setEditing(false)}
+                                                        onCreate={onUpdate}
+                                                        alwaysShowInput={true}
+                                                    />
+                                                ) : (
+                                                    <Fragment>
+                                                        <h3
+                                                            onClick={() => setEditing(true)}
+                                                            className={classes.Name}
+                                                        >
+                                                            {props.name}
+                                                        </h3>
+                                                        <Trash
+                                                            role="button"
+                                                            size="20"
+                                                            onClick={() => setDeleting(true)}
+                                                        />
+                                                    </Fragment>
+                                                )}
+                                            </div>
+                                            <hr
+                                                style={{
+                                                    marginTop: '0',
+                                                    border: '1px solid rgb(99, 99, 99)'
+                                                }}
                                             />
-                                        ) : (
-                                            <Fragment>
-                                                <h3
-                                                    onClick={() => setEditing(true)}
-                                                    className={classes.Name}
-                                                >
-                                                    {props.name}
-                                                </h3>
-                                                <Trash
-                                                    role="button"
-                                                    size="20"
-                                                    onClick={() => setDeleting(true)}
-                                                />
-                                            </Fragment>
-                                        )}
+                                            <Cards
+                                                cards={props.cards}
+                                                cardOrder={props.cardOrder}
+                                                colorText={props.colorText}
+                                            />
+                                        </div>
+                                        {dropProp.placeholder}
                                     </div>
-                                    <hr
-                                        style={{
-                                            marginTop: '0',
-                                            border: '1px solid rgb(99, 99, 99)'
-                                        }}
-                                    />
-                                    {/* LIST CARDS */}
-                                </div>
-                            </div>
+                                )}
+                            </Droppable>
                         </li>
                     </div>
                 )}

@@ -39,19 +39,28 @@ const Lists: FC<ListsProps> = (props) => {
 
     const onDragEnd = (result: DropResult): void => {
         if (board) {
-            if (result.type === DropType.List) {
-                if (result.destination && result.destination.index !== result.source.index) {
-                    dispatch(
-                        updateBoardListOrder(
-                            props.owner,
-                            updateOrder(
-                                [...board.listOrder],
-                                result.source.index,
-                                result.destination.index
+            switch (result.type) {
+                case DropType.List:
+                    if (result.destination && result.destination.index !== result.source.index) {
+                        dispatch(
+                            updateBoardListOrder(
+                                props.owner,
+                                updateOrder(
+                                    [...board.listOrder],
+                                    result.source.index,
+                                    result.destination.index
+                                )
                             )
-                        )
-                    );
-                }
+                        );
+                    }
+                    break;
+                case DropType.Card:
+                    console.log(result);
+                    break;
+                case DropType.Checklist:
+                    break;
+                default:
+                    break;
             }
         }
     };
@@ -79,6 +88,8 @@ const Lists: FC<ListsProps> = (props) => {
                                                 id={list._id}
                                                 name={list.name}
                                                 colorText={props.colorText}
+                                                cards={list.cards}
+                                                cardOrder={list.cardOrder}
                                                 onUpdate={onUpdateList}
                                                 onDelete={onDeleteList}
                                             />

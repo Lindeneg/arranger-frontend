@@ -9,7 +9,7 @@ import useForm, { getInput } from 'use-form-state';
 
 import ColorSelection from '../ColorSelection/ColorSelection';
 import { RootState } from '../../../store';
-import { negateTheme, ColorOption, ThemeOption, getCls, getColorText } from '../../';
+import { negateTheme, ColorOption, ThemeOption, getCls } from '../../';
 
 interface CreationInputProps {
     type: 'board' | 'list' | 'card' | 'checklist';
@@ -23,6 +23,7 @@ interface CreationInputProps {
     chosenColor?: ColorOption;
     inputValue?: string;
     inputClassName?: string;
+    colorSelectionDropDirection?: 'up' | 'left' | 'right' | 'down';
     style?: CSSProperties;
 }
 
@@ -94,14 +95,15 @@ const CreationInput: FC<CreationInputProps> = (props) => {
                                 asElement={InputGroup.Prepend}
                                 chosenColor={formState.inputs.color.value}
                                 onSelect={onSelectColor}
+                                direction={props.colorSelectionDropDirection || 'down'}
                             />
                         )}
-                        <FormControl.Feedback
-                            type="invalid"
-                            className={'text-' + getColorText(negatedTheme)}
-                        >
+                        <FormControl.Feedback type="invalid" className={'text-' + customColor}>
                             {props.type[0].toUpperCase() + props.type.substr(1)}s are limited to{' '}
-                            {props.inputMaxLength} characters.
+                            {props.inputMaxLength}{' '}
+                            {formState.inputs.name.value.length > 0 &&
+                                `(${formState.inputs.name.value.length})`}{' '}
+                            characters.
                         </FormControl.Feedback>
                     </InputGroup>
                     <CheckCircle
