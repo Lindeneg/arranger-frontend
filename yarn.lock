@@ -11315,9 +11315,9 @@ url@^0.11.0:
     punycode "1.3.2"
     querystring "0.2.0"
 
-"use-form-state@https://github.com/Lindeneg/use-form-state.git":
+"use-form-state@https://github.com/Lindeneg/use-form-state":
   version "1.0.0"
-  resolved "https://github.com/Lindeneg/use-form-state.git#64e1c7dfda2f8982ec7aafd5a2cac7f448a89385"
+  resolved "https://github.com/Lindeneg/use-form-state#3b279ff27c95673c549e87f778c221589cef73e6"
 
 use-memo-one@^1.1.1:
   version "1.1.2"

@@ -50,7 +50,7 @@ const BoardHeader: FC<BoardHeaderProps> = (props) => {
                             overlay={<Tooltip id="tooltip-bottom">delete</Tooltip>}
                         >
                             <Trash
-                                className="float-right mr-2"
+                                className="float-right mr-3"
                                 role="button"
                                 size="30"
                                 onClick={onDeleteAccept}
@@ -61,7 +61,7 @@ const BoardHeader: FC<BoardHeaderProps> = (props) => {
                                 borderRight: `0.2em solid ${themeToHex(props.colorText)}`,
                                 height: '2em',
                                 float: 'right',
-                                marginRight: '0.5rem'
+                                marginRight: '1rem'
                             }}
                         ></div>
                     </>
@@ -74,7 +74,7 @@ const BoardHeader: FC<BoardHeaderProps> = (props) => {
                         placeholder="Board name"
                         inputValue={props.name}
                         chosenColor={props.color}
-                        style={{ width: '100%' }}
+                        style={{ width: '100%', textAlign: 'center' }}
                         onClose={onEditDeny}
                         onCreate={props.onUpdate}
                         alwaysShowInput={true}
@@ -88,7 +88,7 @@ const BoardHeader: FC<BoardHeaderProps> = (props) => {
                             overlay={<Tooltip id="tooltip-bottom">edit</Tooltip>}
                         >
                             <PencilSquare
-                                className="float-right mr-2"
+                                className="float-right mr-3"
                                 role="button"
                                 size="30"
                                 onClick={onEditAccept}

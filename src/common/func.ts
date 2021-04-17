@@ -22,8 +22,6 @@ export const themeToHex = (theme: ThemeOption, body?: boolean): string => {
     return theme === 'dark' ? '#343a40' : '#fff';
 };
 
-export const isResponseOk = (status: number): boolean => status >= 200 && status <= 299; // TODO remove
-
 export const getAuthHeader = (): { headers: { Authorization: string } } => {
     return {
         headers: {

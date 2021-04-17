@@ -1,15 +1,12 @@
 import React, { FC } from 'react';
-import { useHistory } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Badge from 'react-bootstrap/Badge';
 import Alert from 'react-bootstrap/Alert';
 
 const NoLocalStorage: FC = () => {
-    const history = useHistory();
-
     try {
         window.localStorage.getItem('');
-        history.push('/');
+        document.location.pathname = '/';
     } catch (err) {
         // local storage still blocked
     }
