@@ -1,0 +1,52 @@
+.Item {
+    padding: 10px;
+    height: 100%;
+    width: 20rem;
+    background-color: transparent;
+    border: 0.2rem solid #16213e;
+    color: #ccc;
+    position: relative;
+    padding: 10px 8px;
+    box-sizing: border-box;
+    overflow-y: scroll;
+}
+
+.Item:hover {
+    border: 0.2rem solid rgb(99, 99, 99);
+    cursor: pointer;
+}
+
+.Header {
+    align-items: baseline;
+    display: flex;
+    justify-content: space-between;
+}
+
+.Header div:hover {
+    color: #c76e3d;
+    cursor: pointer;
+}
+
+.List {
+    padding: 0;
+    overflow-x: scroll;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 65vh;
+}
+
+.List li {
+    list-style: none;
+    margin-right: 1rem;
+}
+
+.Wrapper {
+    position: relative;
+    margin: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+    border-radius: 6px;
+    padding: 1rem;
+    overflow: hidden;
+    color: #ccc;
+}

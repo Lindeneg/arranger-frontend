@@ -5,6 +5,7 @@ import { AppDispatch } from '..';
 import { Board, BoardPayload } from './types';
 import { ResponseError, getAuthHeader, getError } from '../../common';
 import { List } from '../lists/types';
+import { initLists } from '../lists/actions';
 
 export const fetchBoardsStart = createAction('FETCH_BOARDS_START');
 export const fetchBoardsSuccess = createAction<Board<string>[]>('FETCH_BOARDS_SUCCESS');
@@ -45,8 +46,8 @@ export const getBoard = (boardId: string) => async (dispatch: AppDispatch): Prom
     dispatch(fetchBoardStart());
     try {
         const { data } = await axios.get<Board<List>>('/api/boards/' + boardId, getAuthHeader());
-        // TODO init lists
         dispatch(fetchBoardSuccess(data));
+        dispatch(initLists(data.lists));
     } catch (err) {
         dispatch(fetchBoardError(err.response.data));
     }
@@ -76,7 +77,7 @@ export const createBoard = (payload: BoardPayload<'name' | 'color'>) => async (
 
 export const updateBoard = (
     boardId: string,
-    payload: BoardPayload<'name' | 'color' | 'lists' | 'listOrder'>
+    payload: BoardPayload<'name' | 'color' | 'listOrder'>
 ) => async (dispatch: AppDispatch): Promise<void> => {
     dispatch(updateBoardStart());
     try {

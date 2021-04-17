@@ -2,14 +2,14 @@ import React, { FC } from 'react';
 import Container from 'react-bootstrap/Container';
 
 import BoardHeader from './BoardHeader';
-import { CreationInput } from '../../common/components';
+import Lists from '../../lists/components/Lists';
 import { Board as BoardType, BoardPayload } from '../../store/boards/types';
 import { List } from '../../store/lists/types';
-import { getCls, colorClassMap, getColorText, themeToHex, ColorOption } from '../../common';
+import { getCls, colorClassMap, getColorText, ColorOption } from '../../common';
 
 interface BoardProps {
     board: BoardType<List>;
-    onUpdate: (payload: BoardPayload<'name' | 'color' | 'lists' | 'listOrder'>) => void;
+    onUpdate: (payload: BoardPayload<'name' | 'color' | 'listOrder'>) => void;
     onDelete: () => void;
 }
 
@@ -41,17 +41,7 @@ const Board: FC<BoardProps> = (props) => {
                 color={props.board.color}
             />
 
-            <hr style={{ borderTop: '1px solid ' + themeToHex(colorText) }} />
-
-            {/* LISTS */}
-
-            <CreationInput
-                type="list"
-                inputMaxLength={12}
-                placeholder="List name"
-                onCreate={() => null}
-                customColor={colorText}
-            />
+            <Lists colorText={colorText} />
         </Container>
     );
 };
