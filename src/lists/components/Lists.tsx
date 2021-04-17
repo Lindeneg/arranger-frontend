@@ -2,9 +2,11 @@ import React, { FC, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Alert from 'react-bootstrap/Alert';
 
+import List from './List';
 import { RootState } from '../../store';
-import { ThemeOption, themeToHex, getCls } from '../../common';
-import { CreationInput, ErrorModal } from '../../common/components';
+import { updateList, deleteList, clearAnyListError } from '../../store/actions';
+import { ThemeOption, themeToHex } from '../../common';
+import { ErrorModal } from '../../common/components';
 import classes from './Lists.module.css';
 
 interface ListsProps {
@@ -12,57 +14,39 @@ interface ListsProps {
 }
 
 const Lists: FC<ListsProps> = (props) => {
+	const dispatch = useDispatch();
 	const { lists, error } = useSelector((state: RootState) => state.list);
 
-	const createList = (): void => {
-		// todo
+	const onUpdateList = (id: string, name: string): void => {
+		dispatch(updateList(id, { name }));
 	};
 
-	const updateList = (): void => {
-		// todo
-	};
-
-	const deleteList = (): void => {
-		// todo
+	const onDeleteList = (id: string): void => {
+		dispatch(deleteList(id));
 	};
 
 	const clearError = (): void => {
-		// todo
+		dispatch(clearAnyListError());
 	};
 
 	return (
 		<Fragment>
 			<ErrorModal show={!!error} errorMessage={error} onClose={clearError} />
 			<hr style={{ borderTop: '1px solid ' + themeToHex(props.colorText), width: '100%' }} />
-
-			<ul className={classes.List}>
-				{[{ name: 'Not Started' }, { name: 'In Progress' }].map((list, index) => (
-					<li key={index} style={{ height: '100%' }}>
-						<div style={{ height: '100%' }}>
-							<div
-								className={getCls(
-									classes.Item,
-									classes.Wrapper,
-									'text-' + props.colorText
-								)}
-							>
-								<div className={classes.Header}>
-									<h3>{list.name}</h3>
-								</div>
-								<hr
-									style={{
-										marginTop: '0',
-										border: '1px solid rgb(99, 99, 99)'
-									}}
-								/>
-								{/* LIST CARDS */}
-							</div>
-						</div>
-					</li>
-				))}
-			</ul>
-
-			{lists.length <= 0 && (
+			{lists.length > 0 ? (
+				<ul className={classes.List}>
+					{lists.map((list, index) => (
+						<List
+							key={index}
+							id={list._id}
+							name={list.name}
+							colorText={props.colorText}
+							onUpdate={onUpdateList}
+							onDelete={onDeleteList}
+						/>
+					))}
+				</ul>
+			) : (
 				<Alert variant="info">
 					No lists found. Go ahead and create one by clicking the plus icon in the
 					right-corner.

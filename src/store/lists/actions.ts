@@ -21,7 +21,7 @@ export const deleteListError = createAction<ResponseError>('DELETE_LIST_ERROR');
 
 export const clearAnyListError = createAction('CLEAR_ANY_LIST_ERROR');
 
-export const createList = (payload: ListPayload<'name'>) => async (
+export const createList = (payload: ListPayload<'name' | 'owner'>) => async (
     dispatch: AppDispatch
 ): Promise<void> => {
     dispatch(createListStart());

@@ -1,12 +1,13 @@
 import React, { FC, Fragment, useState } from 'react';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-import { PencilSquare, Trash } from 'react-bootstrap-icons';
+import { PlusCircle, PencilSquare, Trash } from 'react-bootstrap-icons';
 
 import { CreationInput, ConfirmModal } from '../../common/components';
 import { ColorOption, ThemeOption, themeToHex } from '../../common';
 
 interface BoardHeaderProps {
+    onCreateList: (name: string) => void;
     onUpdate: (name: string, color: ColorOption) => void;
     onDelete: () => void;
     colorText: ThemeOption;
@@ -16,6 +17,7 @@ interface BoardHeaderProps {
 
 const BoardHeader: FC<BoardHeaderProps> = (props) => {
     const [editing, setEditing] = useState<boolean>(false);
+    const [creating, setCreating] = useState<boolean>(false);
     const [deleting, setDeleting] = useState<boolean>(false);
 
     const onEditAccept = (): void => {
@@ -24,6 +26,22 @@ const BoardHeader: FC<BoardHeaderProps> = (props) => {
 
     const onEditDeny = (): void => {
         setEditing(false);
+    };
+
+    const onCreateAccept = (): void => {
+        setCreating(true);
+    };
+
+    const onCreateDeny = (): void => {
+        setCreating(false);
+    };
+
+    const onUpdate = (name: string, color?: ColorOption): void => {
+        if (editing) {
+            props.onUpdate(name, color || props.color);
+        } else if (creating) {
+            props.onCreateList(name);
+        }
     };
 
     const onDeleteAccept = (): void => {
@@ -43,11 +61,11 @@ const BoardHeader: FC<BoardHeaderProps> = (props) => {
                 headerTxt="Confirm Board Deletion"
             />
             <div className="mt-4">
-                {!editing && (
+                {!editing && !creating && (
                     <>
                         <OverlayTrigger
                             placement="bottom"
-                            overlay={<Tooltip id="tooltip-bottom">delete</Tooltip>}
+                            overlay={<Tooltip id="tooltip-bottom">delete board</Tooltip>}
                         >
                             <Trash
                                 className="float-right mr-3"
@@ -66,26 +84,26 @@ const BoardHeader: FC<BoardHeaderProps> = (props) => {
                         ></div>
                     </>
                 )}
-                {editing && (
+                {(editing || creating) && (
                     <CreationInput
-                        type="board"
+                        type={editing ? 'board' : 'list'}
                         inputMaxLength={16}
                         customColor={props.colorText}
-                        placeholder="Board name"
-                        inputValue={props.name}
+                        placeholder={(editing ? 'Board' : 'List') + ' name'}
+                        inputValue={editing ? props.name : ''}
                         chosenColor={props.color}
                         style={{ width: '100%', textAlign: 'center' }}
-                        onClose={onEditDeny}
-                        onCreate={props.onUpdate}
+                        onClose={editing ? onEditDeny : onCreateDeny}
+                        onCreate={onUpdate}
                         alwaysShowInput={true}
-                        color
+                        color={editing}
                     />
                 )}
-                {!editing && (
+                {!editing && !creating && (
                     <>
                         <OverlayTrigger
                             placement="bottom"
-                            overlay={<Tooltip id="tooltip-bottom">edit</Tooltip>}
+                            overlay={<Tooltip id="tooltip-bottom">edit board</Tooltip>}
                         >
                             <PencilSquare
                                 className="float-right mr-3"
@@ -94,7 +112,26 @@ const BoardHeader: FC<BoardHeaderProps> = (props) => {
                                 onClick={onEditAccept}
                             />
                         </OverlayTrigger>
-                        <p className="h2">{props.name}</p>
+                        <div
+                            style={{
+                                borderRight: `0.2em solid ${themeToHex(props.colorText)}`,
+                                height: '2em',
+                                float: 'right',
+                                marginRight: '1rem'
+                            }}
+                        ></div>
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={<Tooltip id="tooltip-bottom">add list</Tooltip>}
+                        >
+                            <PlusCircle
+                                className="float-right mr-3"
+                                role="button"
+                                size="30"
+                                onClick={onCreateAccept}
+                            />
+                        </OverlayTrigger>
+                        <p className="h2 ml-1">{props.name}</p>
                     </>
                 )}
             </div>

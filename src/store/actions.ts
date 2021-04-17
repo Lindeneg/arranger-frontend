@@ -15,3 +15,4 @@ export {
     switchUserTheme,
     clearUserError
 } from './user/actions';
+export { createList, deleteList, updateList, clearAnyListError } from './lists/actions';
