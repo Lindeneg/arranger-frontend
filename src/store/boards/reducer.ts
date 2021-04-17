@@ -20,6 +20,7 @@ import {
     updateBoardListOrderStart,
     updateBoardListOrderSuccess,
     updateBoardListOrderError,
+    addToBoardListOrder,
     clearAnyBoardError
 } from './actions';
 
@@ -56,7 +57,21 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
         };
     });
     builder.addCase(updateBoardListOrderSuccess, (state) => {
-        return { ...state };
+        return state;
+    });
+    builder.addCase(addToBoardListOrder, (state, action) => {
+        let board = state.board;
+        if (!!board && !!action.payload._id) {
+            board = {
+                ...board,
+                listOrder: [...board.listOrder, action.payload._id]
+            };
+        }
+        return {
+            ...state,
+            board,
+            error: null
+        };
     });
     builder.addCase(updateBoardSuccess, (state, action) => {
         return {

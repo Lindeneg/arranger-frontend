@@ -35,6 +35,8 @@ export const updateBoardStart = createAction('UPDATE_BOARD_START');
 export const updateBoardSuccess = createAction<Board<List>>('UPDATE_BOARD_SUCCESS');
 export const updateBoardError = createAction<ResponseError>('UPDATE_BOARD_ERROR');
 
+export const addToBoardListOrder = createAction<BoardPayload<'_id'>>('ADD_TO_BOARD_LIST_ORDER');
+
 export const clearAnyBoardError = createAction('CLEAR_ANY_BOARD_ERROR');
 
 export const getBoards = (userId: string) => async (dispatch: AppDispatch): Promise<void> => {

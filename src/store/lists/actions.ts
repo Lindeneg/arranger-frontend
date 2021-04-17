@@ -3,6 +3,7 @@ import axios from '../../axios-base';
 
 import { AppDispatch } from '..';
 import { List, ListPayload } from './types';
+import { addToBoardListOrder } from '../boards/actions';
 import { getError, getAuthHeader, ResponseError } from '../../common';
 
 export const initLists = createAction<List[]>('INIT_LIST_START');
@@ -27,6 +28,7 @@ export const createList = (payload: ListPayload<'name' | 'owner'>) => async (
     dispatch(createListStart());
     try {
         const { data } = await axios.post<List>('/api/lists', payload, getAuthHeader());
+        dispatch(addToBoardListOrder({ _id: data._id }));
         dispatch(createListSuccess(data));
     } catch (err) {
         dispatch(createListError(getError(err)));
