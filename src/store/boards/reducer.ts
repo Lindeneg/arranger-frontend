@@ -51,7 +51,7 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
         return {
             ...state,
             board: null,
-            boards: (state.boards || []).filter(board => board._id !== action.payload._id),
+            boards: (state.boards || []).filter((board) => board._id !== action.payload._id),
             requested: true,
             requesting: false
         };
