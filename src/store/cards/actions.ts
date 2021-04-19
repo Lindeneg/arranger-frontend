@@ -53,6 +53,7 @@ export const updateCard = (
     ownerId: string,
     payload: Partial<CardPayload<'name' | 'description' | 'color'>>
 ) => async (dispatch: AppDispatch): Promise<void> => {
+    // TODO
     dispatch(updateCardStart({ _id: cardId, ...payload }));
     dispatch(updateCardInList({ owner: ownerId, _id: cardId, ...payload }));
     try {

@@ -74,13 +74,25 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Lis
     });
     builder.addCase(updateCardInList, (state, action) => {
         const newState = { ...state };
-        const listEntry = newState.lists.find((list) => list._id === action.payload.owner);
-        if (listEntry) {
-            const cardIdx = listEntry.cards.findIndex((card) => card._id === action.payload._id);
+        const listEntryIdx = newState.lists.findIndex((list) => list._id === action.payload.owner);
+        if (listEntryIdx > -1) {
+            const newLists = [...newState.lists];
+            const newListCards = [...newLists[listEntryIdx].cards];
+            const cardIdx = newLists[listEntryIdx].cards.findIndex(
+                (card) => card._id === action.payload._id
+            );
             if (cardIdx > -1) {
-                listEntry.cards[cardIdx] = {
-                    ...listEntry.cards[cardIdx],
+                newListCards[cardIdx] = {
+                    ...newListCards[cardIdx],
                     ...action.payload
+                };
+                newLists[listEntryIdx] = {
+                    ...newLists[listEntryIdx],
+                    cards: newListCards
+                };
+                return {
+                    ...newState,
+                    lists: newLists
                 };
             }
         }

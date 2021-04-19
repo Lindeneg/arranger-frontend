@@ -8,10 +8,12 @@ export interface ConfirmModalProps {
     onConfirm: () => void;
     onClose: () => void;
     headerTxt: string;
+    notCenter?: boolean;
 }
 
 export const ConfirmModal: FC<ConfirmModalProps> = (props) => (
     <Modal
+        notCenter={props.notCenter}
         show={props.show}
         onClose={props.onClose}
         headerTxt={props.headerTxt || 'An Error Occurred'}

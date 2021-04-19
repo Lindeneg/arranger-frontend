@@ -12,6 +12,7 @@ export interface ModalProps {
     headerTxt: string;
     body?: JSX.Element;
     footer?: JSX.Element;
+    notCenter?: boolean;
 }
 
 export const CModal: FC<ModalProps> = (props) => {
@@ -23,7 +24,7 @@ export const CModal: FC<ModalProps> = (props) => {
             size="lg"
             contentClassName={'bg-' + theme + ' text-' + negateTheme(theme)}
             aria-labelledby="contained-modal-title-vcenter"
-            centered
+            centered={!props.notCenter}
         >
             <Modal.Header
                 className={theme === 'dark' ? classes.dark : classes.light}

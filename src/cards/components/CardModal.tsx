@@ -44,6 +44,7 @@ const CardModal: FC = () => {
     const dispatch = useDispatch();
     const { card } = useSelector((state: RootState) => state.card);
     const [deleting, setDeleting] = useState<boolean>(false);
+    const [deleteInProgress, setDeleteInProgress] = useState<boolean>(false);
     const [editing, setEditing] = useState<EditType | null>(null);
     const colorText = card ? getColorText(card.color) : defaultTheme;
 
@@ -59,101 +60,102 @@ const CardModal: FC = () => {
         setEditing(null);
     };
 
-    const onDeleteCard = (): void => {
-        card && dispatch(deleteCard(card._id, card.owner));
-        setDeleting(false);
+    const onDeleteCard = async (): Promise<void> => {
+        setDeleteInProgress(true);
+        if (card) {
+            await dispatch(deleteCard(card._id, card.owner));
+        }
+        setDeleteInProgress(false);
     };
 
     const onDeselectCard = (): void => {
         dispatch(deselectCard());
+        setEditing(null);
     };
 
     return (
         <Fragment>
-            <Fragment>
-                <ConfirmModal
-                    show={deleting}
-                    onClose={() => setDeleting(false)}
-                    onConfirm={onDeleteCard}
-                    headerTxt="Confirm Card Deletion"
-                />
-                <Modal
-                    show={card !== null && !deleting}
-                    onHide={onDeselectCard}
-                    dialogClassName={classes.cardModal}
-                    contentClassName={getCls(
-                        'bg-' + colorClassMap[card?.color || defaultTheme],
-                        'text-' + colorText
-                    )}
-                    aria-labelledby="card-modal-control-options"
-                >
-                    <Modal.Body>
-                        <div className="d-flex align-items-baseline justify-content-between">
-                            {editing === 'name' ? (
-                                <CreationInput
-                                    type="card"
-                                    inputMaxLength={22}
-                                    customColor={colorText}
-                                    chosenColor={card?.color}
-                                    placeholder="Card name"
-                                    inputValue={card?.name}
-                                    onClose={() => setEditing(null)}
-                                    onCreate={onUpdateCard.bind(null, 'name')}
-                                    alwaysShowInput
-                                    color
-                                />
-                            ) : (
-                                <h1 onClick={() => setEditing('name')} className={classes.cardName}>
-                                    {card?.name}
-                                </h1>
-                            )}
-                            <OverlayTrigger
-                                placement="bottom"
-                                overlay={<Tooltip id="tooltip-bottom">delete card</Tooltip>}
+            <ConfirmModal
+                show={deleting}
+                onClose={() => setDeleting(false)}
+                onConfirm={onDeleteCard}
+                headerTxt="Confirm Card Deletion"
+                notCenter
+            />
+            <Modal
+                show={card !== null && !deleting && !deleteInProgress}
+                onHide={onDeselectCard}
+                dialogClassName={classes.cardModal}
+                contentClassName={getCls(
+                    'bg-' + colorClassMap[card?.color || defaultTheme],
+                    'text-' + colorText
+                )}
+                aria-labelledby="card-modal-control-options"
+            >
+                <Modal.Body>
+                    <div className="d-flex align-items-baseline justify-content-between">
+                        {editing === 'name' ? (
+                            <CreationInput
+                                type="card"
+                                inputMaxLength={22}
+                                customColor={colorText}
+                                chosenColor={card?.color}
+                                placeholder="Card name"
+                                inputValue={card?.name}
+                                onClose={() => setEditing(null)}
+                                onCreate={onUpdateCard.bind(null, 'name')}
+                                alwaysShowInput
+                                color
+                            />
+                        ) : (
+                            <h1 onClick={() => setEditing('name')} className={classes.cardName}>
+                                {card?.name}
+                            </h1>
+                        )}
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={<Tooltip id="tooltip-bottom">delete card</Tooltip>}
+                        >
+                            <Trash role="button" size="25" onClick={() => setDeleting(true)} />
+                        </OverlayTrigger>
+                    </div>
+                    <Hr colorText={colorText} />
+                    <div className="mt-4 mb-4">
+                        {editing === 'description' ? (
+                            <CreationInput
+                                style={{ width: '60%' }}
+                                type="card"
+                                as="textarea"
+                                inputMaxLength={32} // TODO description length
+                                customColor={colorText}
+                                chosenColor={card?.color}
+                                placeholder="Card description"
+                                inputValue={
+                                    card?.description === emptyDescription ? '' : card?.description
+                                }
+                                onClose={() => setEditing(null)}
+                                onCreate={onUpdateCard.bind(null, 'description')}
+                                alwaysShowInput
+                            />
+                        ) : (
+                            <pre
+                                className={getCls(
+                                    'text-' + colorText,
+                                    card?.description === emptyDescription ? 'font-italic' : '',
+                                    classes.cardDescription
+                                )}
+                                onClick={() => setEditing('description')}
                             >
-                                <Trash role="button" size="25" onClick={() => setDeleting(true)} />
-                            </OverlayTrigger>
-                        </div>
-                        <Hr colorText={colorText} />
-                        <div className="mt-4 mb-4">
-                            {editing === 'description' ? (
-                                <CreationInput
-                                    style={{ width: '60%' }}
-                                    type="card"
-                                    as="textarea"
-                                    inputMaxLength={32} // TODO description length
-                                    customColor={colorText}
-                                    chosenColor={card?.color}
-                                    placeholder="Card description"
-                                    inputValue={
-                                        card?.description === emptyDescription
-                                            ? ''
-                                            : card?.description
-                                    }
-                                    onClose={() => setEditing(null)}
-                                    onCreate={onUpdateCard.bind(null, 'description')}
-                                    alwaysShowInput
-                                />
-                            ) : (
-                                <pre
-                                    className={getCls(
-                                        'text-' + colorText,
-                                        card?.description === emptyDescription ? 'font-italic' : '',
-                                        classes.cardDescription
-                                    )}
-                                    onClick={() => setEditing('description')}
-                                >
-                                    {card?.description +
-                                        (card?.description === emptyDescription ? '...' : '')}
-                                </pre>
-                            )}
-                        </div>
-                        <Hr colorText={colorText} />
-                        <h3>Checklists</h3>
-                        {/* CHECKLISTS*/}
-                    </Modal.Body>
-                </Modal>
-            </Fragment>
+                                {card?.description +
+                                    (card?.description === emptyDescription ? '...' : '')}
+                            </pre>
+                        )}
+                    </div>
+                    <Hr colorText={colorText} />
+                    <h3>Checklists</h3>
+                    {/* CHECKLISTS*/}
+                </Modal.Body>
+            </Modal>
         </Fragment>
     );
 };
