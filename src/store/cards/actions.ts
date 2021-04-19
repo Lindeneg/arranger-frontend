@@ -53,11 +53,14 @@ export const updateCard = (
     ownerId: string,
     payload: Partial<CardPayload<'name' | 'description' | 'color'>>
 ) => async (dispatch: AppDispatch): Promise<void> => {
-    // TODO
     dispatch(updateCardStart({ _id: cardId, ...payload }));
     dispatch(updateCardInList({ owner: ownerId, _id: cardId, ...payload }));
     try {
-        await axios.patch<Card>('/api/cards', payload, getAuthHeader());
+        await axios.patch<Card>(
+            '/api/cards/' + cardId,
+            { owner: ownerId, ...payload },
+            getAuthHeader()
+        );
         dispatch(updateCardSuccess());
     } catch (err) {
         dispatch(updateCardError(getError(err)));

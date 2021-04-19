@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Modal from 'react-bootstrap/Modal';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-import { Trash } from 'react-bootstrap-icons';
+import { Trash, PencilSquare } from 'react-bootstrap-icons';
 
 import { RootState } from '../../store';
 import { deselectCard, updateCard, deleteCard } from '../../store/actions';
@@ -19,21 +19,21 @@ import { Hr, CreationInput, ConfirmModal } from '../../common/components';
 import classes from './Cards.module.css';
 
 // const testChecklists = [
-// 	{
-// 		_id: 1,
-// 		objective: 'do something really nice',
-// 		isCompleted: false
-// 	},
-// 	{
-// 		_id: 2,
-// 		objective: 'do something else',
-// 		isCompleted: false
-// 	},
-// 	{
-// 		_id: 3,
-// 		objective: 'hey! this is already done',
-// 		isCompleted: false
-// 	}
+//     {
+//         _id: 1,
+//         objective: 'do something really nice',
+//         isCompleted: false
+//     },
+//     {
+//         _id: 2,
+//         objective: 'do something else',
+//         isCompleted: false
+//     },
+//     {
+//         _id: 3,
+//         objective: 'hey! this is already done',
+//         isCompleted: false
+//     }
 // ];
 
 // const testChecklistOrder = [3, 1, 2];
@@ -123,10 +123,11 @@ const CardModal: FC = () => {
                     <div className="mt-4 mb-4">
                         {editing === 'description' ? (
                             <CreationInput
-                                style={{ width: '60%' }}
+                                style={{ width: '100%' }}
                                 type="card"
                                 as="textarea"
-                                inputMaxLength={32} // TODO description length
+                                asProps={{ rows: 5 }}
+                                inputMaxLength={512}
                                 customColor={colorText}
                                 chosenColor={card?.color}
                                 placeholder="Card description"
@@ -138,17 +139,30 @@ const CardModal: FC = () => {
                                 alwaysShowInput
                             />
                         ) : (
-                            <pre
-                                className={getCls(
-                                    'text-' + colorText,
-                                    card?.description === emptyDescription ? 'font-italic' : '',
-                                    classes.cardDescription
-                                )}
-                                onClick={() => setEditing('description')}
-                            >
-                                {card?.description +
-                                    (card?.description === emptyDescription ? '...' : '')}
-                            </pre>
+                            <div className="d-flex align-items-baseline justify-content-between">
+                                <pre
+                                    className={getCls(
+                                        'text-' + colorText,
+                                        card?.description === emptyDescription ? 'font-italic' : '',
+                                        classes.cardDescription
+                                    )}
+                                >
+                                    {card?.description +
+                                        (card?.description === emptyDescription ? '...' : '')}
+                                </pre>
+                                <OverlayTrigger
+                                    placement="bottom"
+                                    overlay={
+                                        <Tooltip id="tooltip-bottom">edit description</Tooltip>
+                                    }
+                                >
+                                    <PencilSquare
+                                        role="button"
+                                        size="25"
+                                        onClick={() => setEditing('description')}
+                                    />
+                                </OverlayTrigger>
+                            </div>
                         )}
                     </div>
                     <Hr colorText={colorText} />

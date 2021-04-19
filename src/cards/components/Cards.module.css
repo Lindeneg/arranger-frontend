@@ -41,8 +41,7 @@
     font-size: 1rem;
 }
 
-.cardName:hover,
-.cardDescription:hover {
+.cardName:hover {
     cursor: pointer;
     color: #c76e3d !important;
 }

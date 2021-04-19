@@ -18,6 +18,7 @@ interface CreationInputProps {
     onCreate: (name: string, color?: ColorOption) => void;
     onClose?: () => void;
     as?: 'input' | 'textarea';
+    asProps?: { rows?: number };
     color?: boolean;
     alwaysShowInput?: boolean;
     customColor?: ThemeOption;
@@ -92,6 +93,7 @@ const CreationInput: FC<CreationInputProps> = (props) => {
                             onChange={onChangeHandler}
                             onBlur={onTouchHandler}
                             placeholder={props.placeholder + '...'}
+                            {...props.asProps}
                         />
                         {props.color === true && (
                             <ColorSelection
