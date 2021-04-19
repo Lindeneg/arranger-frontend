@@ -4,11 +4,13 @@ import reduxThunk from 'redux-thunk';
 import boardReducer from './boards/reducer';
 import userReducer from './user/reducer';
 import listReducer from './lists/reducer';
+import cardReducer from './cards/reducer';
 
 export const rootReducer = combineReducers({
     board: boardReducer,
     user: userReducer,
-    list: listReducer
+    list: listReducer,
+    card: cardReducer
 });
 
 const store = configureStore({

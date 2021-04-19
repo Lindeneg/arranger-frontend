@@ -2,8 +2,9 @@ import { createAction } from '@reduxjs/toolkit';
 import axios from '../../axios-base';
 
 import { AppDispatch } from '..';
-import { List, ListPayload } from './types';
-import { addToBoardListOrder } from '../boards/actions';
+import { List, ListPayload, ListCardOrderPayload } from './types';
+import { addToBoardListOrder, removeFromBoardListOrder } from '../boards/actions';
+import { Card, CardPayload } from '../cards/types';
 import { getError, getAuthHeader, ResponseError } from '../../common';
 
 export const initLists = createAction<List[]>('INIT_LIST_START');
@@ -19,6 +20,16 @@ export const updateListError = createAction<ResponseError>('UPDATE_LIST_ERROR');
 export const deleteListStart = createAction<ListPayload<'_id'>>('DELETE_LIST_START');
 export const deleteListSuccess = createAction('DELETE_LIST_SUCCESS');
 export const deleteListError = createAction<ResponseError>('DELETE_LIST_ERROR');
+
+export const addCardToList = createAction<Card>('ADD_CARD_TO_LIST');
+export const updateCardInList = createAction<
+    Partial<CardPayload<'_id' | 'owner' | 'name' | 'description' | 'color'>>
+>('UPDATE_CARD_IN_LIST');
+export const removeCardFromList = createAction<CardPayload<'owner' | '_id'>>(
+    'REMOVE_CARD_FROM_LIST'
+);
+
+export const updateListCardOrder = createAction<ListCardOrderPayload | null>('UPDATE_LIST_CARD_ORDER');
 
 export const clearAnyListError = createAction('CLEAR_ANY_LIST_ERROR');
 
@@ -49,6 +60,7 @@ export const updateList = (listId: string, payload: ListPayload<'name'>) => asyn
 
 export const deleteList = (listId: string) => async (dispatch: AppDispatch): Promise<void> => {
     dispatch(deleteListStart({ _id: listId }));
+    dispatch(removeFromBoardListOrder({ _id: listId }));
     try {
         await axios.delete<List>('/api/lists/' + listId, getAuthHeader());
         dispatch(deleteListSuccess());

@@ -16,4 +16,5 @@ export {
     switchUserTheme,
     clearUserError
 } from './user/actions';
-export { createList, deleteList, updateList, clearAnyListError } from './lists/actions';
+export { createList, deleteList, updateList, updateListCardOrder, clearAnyListError } from './lists/actions';
+export { createCard, deleteCard, updateCard, clearAnyCardError } from './cards/actions';

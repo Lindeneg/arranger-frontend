@@ -12,7 +12,11 @@ import {
     clearAnyListError,
     createListSuccess,
     deleteListSuccess,
-    updateListSuccess
+    updateListSuccess,
+    addCardToList,
+    updateCardInList,
+    updateListCardOrder,
+    removeCardFromList
 } from './actions';
 import { ResponseError } from '../../common/types';
 
@@ -29,6 +33,72 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Lis
             ...state,
             lists: action.payload
         };
+    });
+    builder.addCase(updateListCardOrder, (state, action) => {
+        const newLists = [...state.lists];
+        if (action.payload !== null) {
+            const { src, des } = action.payload;
+            newLists[src.idx] = {
+                ...newLists[src.idx],
+                cards: src.cards,
+                cardOrder: src.cardOrder
+            };
+            if (src.idx !== des.idx) {
+                newLists[des.idx] = {
+                    ...newLists[des.idx],
+                    cards: des.cards,
+                    cardOrder: des.cardOrder
+                };
+            }
+        }
+        return {
+            ...state,
+            lists: newLists
+        };
+    });
+    builder.addCase(addCardToList, (state, action) => {
+        const newState = { ...state };
+        const newLists = [...newState.lists];
+        const listEntryIdx = newLists.findIndex((list) => list._id === action.payload.owner);
+        if (listEntryIdx > -1) {
+            newLists[listEntryIdx] = {
+                ...newLists[listEntryIdx],
+                cards: [...newLists[listEntryIdx].cards, action.payload],
+                cardOrder: [...newLists[listEntryIdx].cardOrder, action.payload._id]
+            };
+        }
+        return { ...newState, lists: newLists };
+    });
+    builder.addCase(updateCardInList, (state, action) => {
+        const newState = { ...state };
+        const listEntry = newState.lists.find((list) => list._id === action.payload.owner);
+        if (listEntry) {
+            const cardIdx = listEntry.cards.findIndex((card) => card._id === action.payload._id);
+            if (cardIdx > -1) {
+                listEntry.cards[cardIdx] = {
+                    ...listEntry.cards[cardIdx],
+                    ...action.payload
+                };
+            }
+        }
+        return newState;
+    });
+    builder.addCase(removeCardFromList, (state, action) => {
+        const newState = { ...state };
+        const newLists = [...newState.lists];
+        const listEntryIdx = newLists.findIndex((list) => list._id === action.payload.owner);
+        if (listEntryIdx > -1) {
+            newLists[listEntryIdx] = {
+                ...newLists[listEntryIdx],
+                cards: newLists[listEntryIdx].cards.filter(
+                    (card) => card._id !== action.payload._id
+                ),
+                cardOrder: newLists[listEntryIdx].cardOrder.filter(
+                    (cardId) => cardId !== action.payload._id
+                )
+            };
+        }
+        return { ...newState, lists: newLists };
     });
     builder.addCase(createListSuccess, (state, action) => {
         return {

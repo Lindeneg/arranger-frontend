@@ -21,6 +21,7 @@ import {
     updateBoardListOrderSuccess,
     updateBoardListOrderError,
     addToBoardListOrder,
+    removeFromBoardListOrder,
     clearAnyBoardError
 } from './actions';
 
@@ -65,6 +66,20 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Boa
             board = {
                 ...board,
                 listOrder: [...board.listOrder, action.payload._id]
+            };
+        }
+        return {
+            ...state,
+            board,
+            error: null
+        };
+    });
+    builder.addCase(removeFromBoardListOrder, (state, action) => {
+        let board = state.board;
+        if (!!board && !!action.payload._id) {
+            board = {
+                ...board,
+                listOrder: board.listOrder.filter((id) => id !== action.payload._id)
             };
         }
         return {

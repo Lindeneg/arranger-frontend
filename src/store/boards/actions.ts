@@ -36,6 +36,9 @@ export const updateBoardSuccess = createAction<Board<List>>('UPDATE_BOARD_SUCCES
 export const updateBoardError = createAction<ResponseError>('UPDATE_BOARD_ERROR');
 
 export const addToBoardListOrder = createAction<BoardPayload<'_id'>>('ADD_TO_BOARD_LIST_ORDER');
+export const removeFromBoardListOrder = createAction<BoardPayload<'_id'>>(
+    'REMOVE_FROM_BOARD_LIST_ORDER'
+);
 
 export const clearAnyBoardError = createAction('CLEAR_ANY_BOARD_ERROR');
 
