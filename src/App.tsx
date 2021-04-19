@@ -39,7 +39,7 @@ const App: FC = () => {
     return (
         <Fragment>
             <Navigation />
-            <main className="mt-5">
+            <main className="mt-4">
                 <Switch>
                     {getLocalV()?._token ? (
                         <Switch>

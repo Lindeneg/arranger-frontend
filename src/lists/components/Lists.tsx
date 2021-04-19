@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import Alert from 'react-bootstrap/Alert';
@@ -7,11 +7,18 @@ import List from './List';
 import { RootState } from '../../store';
 import {
     updateBoardListOrder,
+    updateListCardOrder,
     updateList,
     deleteList,
     clearAnyListError
 } from '../../store/actions';
-import { ThemeOption, DropType, themeToHex, updateOrder } from '../../common';
+import {
+    ThemeOption,
+    DropType,
+    themeToHex,
+    getUpdatedListOrder,
+    getUpdatedCardOrder
+} from '../../common';
 import { ErrorModal } from '../../common/components';
 import classes from './Lists.module.css';
 
@@ -25,13 +32,19 @@ const Lists: FC<ListsProps> = (props) => {
     const { lists, error } = useSelector((state: RootState) => state.list);
     const { board } = useSelector((state: RootState) => state.board);
 
-    const onUpdateList = (id: string, name: string): void => {
-        dispatch(updateList(id, { name }));
-    };
+    const onUpdateList = useCallback(
+        (id: string, name: string): void => {
+            dispatch(updateList(id, { name }));
+        },
+        [dispatch]
+    );
 
-    const onDeleteList = (id: string): void => {
-        dispatch(deleteList(id));
-    };
+    const onDeleteList = useCallback(
+        (id: string): void => {
+            dispatch(deleteList(id));
+        },
+        [dispatch]
+    );
 
     const clearError = (): void => {
         dispatch(clearAnyListError());
@@ -45,7 +58,7 @@ const Lists: FC<ListsProps> = (props) => {
                         dispatch(
                             updateBoardListOrder(
                                 props.owner,
-                                updateOrder(
+                                getUpdatedListOrder(
                                     [...board.listOrder],
                                     result.source.index,
                                     result.destination.index
@@ -55,7 +68,25 @@ const Lists: FC<ListsProps> = (props) => {
                     }
                     break;
                 case DropType.Card:
-                    console.log(result);
+                    if (
+                        (result.source.droppableId === result.destination?.droppableId &&
+                            result.source.index === result.destination.index) ||
+                        typeof result.destination === 'undefined'
+                    ) {
+                        break;
+                    }
+                    dispatch(
+                        updateListCardOrder(
+                            getUpdatedCardOrder(
+                                [...lists],
+                                result.draggableId,
+                                result.source.droppableId,
+                                result.source.index,
+                                result.destination.droppableId,
+                                result.destination.index
+                            )
+                        )
+                    );
                     break;
                 case DropType.Checklist:
                     break;

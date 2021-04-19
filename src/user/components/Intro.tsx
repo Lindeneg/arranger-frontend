@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { negateTheme, ThemeOption } from '../../common';
+import { negateTheme, ThemeOption, getCls } from '../../common';
 
 interface IntroProps {
     theme: ThemeOption;
@@ -8,7 +8,7 @@ interface IntroProps {
 const Intro: FC<IntroProps> = (props) => {
     const theme = negateTheme(props.theme);
     return (
-        <div className={'text-center text-' + theme}>
+        <div className={getCls('text-center', 'text-' + theme)}>
             <p className="h2">Arranger </p>
             <p className="font-italic">
                 {' '}

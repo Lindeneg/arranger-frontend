@@ -1,4 +1,4 @@
-import React, { FC, useEffect, Fragment } from 'react';
+import React, { FC, Fragment, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import BoardList from '../components/BoardList';
@@ -18,9 +18,12 @@ const UserBoards: FC = () => {
         }
     }, [boards, userId, dispatch]);
 
-    const onBoardCreate = (payload: BoardPayload<'name' | 'color'>): void => {
-        dispatch(createBoard(payload));
-    };
+    const onBoardCreate = useCallback(
+        (payload: BoardPayload<'name' | 'color'>): void => {
+            dispatch(createBoard(payload));
+        },
+        [dispatch]
+    );
 
     const clearError = (): void => {
         dispatch(clearBoardError());

@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useState } from 'react';
+import React, { FC, Fragment, useState, useCallback } from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { Trash } from 'react-bootstrap-icons';
 
@@ -23,11 +23,16 @@ const List: FC<ListProps> = (props) => {
     const [deleting, setDeleting] = useState<boolean>(false);
     const [editing, setEditing] = useState<boolean>(false);
 
-    const onUpdate = (name: string): void => {
-        if (name !== props.name) {
-            props.onUpdate(props.id, name);
-        }
-    };
+    const { onUpdate, id, name } = props;
+
+    const onListUpdate = useCallback(
+        (newName: string): void => {
+            if (newName !== name) {
+                onUpdate(id, newName);
+            }
+        },
+        [onUpdate, id, name]
+    );
 
     return (
         <Fragment>
@@ -68,7 +73,7 @@ const List: FC<ListProps> = (props) => {
                                                         placeholder="List name"
                                                         inputValue={props.name}
                                                         onClose={() => setEditing(false)}
-                                                        onCreate={onUpdate}
+                                                        onCreate={onListUpdate}
                                                         alwaysShowInput={true}
                                                     />
                                                 ) : (
@@ -94,6 +99,7 @@ const List: FC<ListProps> = (props) => {
                                                 }}
                                             />
                                             <Cards
+                                                owner={props.id}
                                                 cards={props.cards}
                                                 cardOrder={props.cardOrder}
                                                 colorText={props.colorText}

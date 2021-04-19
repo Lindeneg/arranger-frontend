@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, useCallback } from 'react';
 import Container from 'react-bootstrap/Container';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -22,15 +22,23 @@ const Board: FC<BoardProps> = (props) => {
     const { error } = useSelector((state: RootState) => state.list);
     const colorText = getColorText(props.board.color);
 
-    const updateBoard = (name: string, color: ColorOption): void => {
-        if (name !== props.board.name || color !== props.board.color) {
-            props.onUpdate({ name, color });
-        }
-    };
+    const { board, onUpdate } = props;
 
-    const onCreateList = (name: string): void => {
-        dispatch(createList({ name, owner: props.board._id }));
-    };
+    const updateBoard = useCallback(
+        (name: string, color: ColorOption): void => {
+            if (name !== board.name || color !== board.color) {
+                onUpdate({ name, color });
+            }
+        },
+        [board, onUpdate]
+    );
+
+    const onCreateList = useCallback(
+        (name: string): void => {
+            dispatch(createList({ name, owner: board._id }));
+        },
+        [dispatch, board]
+    );
 
     const clearError = (): void => {
         dispatch(clearAnyListError());
@@ -44,7 +52,7 @@ const Board: FC<BoardProps> = (props) => {
                 className={getCls('bg-' + colorClassMap[props.board.color], 'text-' + colorText)}
                 style={{
                     width: '96vw',
-                    height: '80vh',
+                    height: '85vh',
                     marginLeft: '2vw',
                     borderRadius: '1rem',
                     overflowX: 'scroll'

@@ -1,8 +1,7 @@
 import React, { FC } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
-import { ColorOption } from '../../types';
-import { colorClassMap } from '../../values';
+import { ColorOption, getCls, getColorText, colorClassMap } from '../../';
 
 interface ColorSelectionProps {
     chosenColor: ColorOption;
@@ -28,12 +27,10 @@ const ColorSelection: FC<ColorSelectionProps> = (props) => (
                             i.preventDefault();
                             props.onSelect(key as ColorOption);
                         }}
-                        className={
-                            'bg-' +
-                            color +
-                            ' text-' +
-                            (['light', 'warning'].includes(color) ? 'dark' : 'light')
-                        }
+                        className={getCls(
+                            'bg-' + color,
+                            'text-' + getColorText(key as ColorOption)
+                        )}
                     >
                         {key[0].toUpperCase() + key.substr(1)}
                     </Dropdown.Item>

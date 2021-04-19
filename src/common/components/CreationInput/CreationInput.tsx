@@ -52,6 +52,7 @@ const CreationInput: FC<CreationInputProps> = (props) => {
         e.preventDefault();
         props.onCreate(formState.inputs.name.value, formState.inputs.color.value);
         props.onClose && props.onClose();
+        onCreateDeny();
     };
 
     const onCreateAccept = (): void => {
@@ -110,9 +111,10 @@ const CreationInput: FC<CreationInputProps> = (props) => {
                         onClick={formState.isValid ? onCreate : () => null}
                         role={formState.isValid ? 'button' : 'none'}
                         size="30"
-                        className={
-                            'mr-1 ' + (formState.isValid ? 'text-' + customColor : 'text-muted')
-                        }
+                        className={getCls(
+                            'mr-1',
+                            formState.isValid ? 'text-' + customColor : 'text-muted'
+                        )}
                     />
                     <XCircle
                         onClick={props.onClose ? props.onClose : onCreateDeny}

@@ -1,3 +1,4 @@
+import { List, ListCardOrderPayload } from '../store/lists/types';
 import { ResponseError, StoredData, ThemeOption, ColorOption } from './types';
 import { LocalKey } from './values';
 
@@ -81,8 +82,55 @@ export function getLocalV<T = StoredData>(
     return null;
 }
 
-export const updateOrder = (currentOrder: string[], srcIdx: number, desIdx: number): string[] => {
+export const getUpdatedListOrder = (
+    currentOrder: string[],
+    srcIdx: number,
+    desIdx: number
+): string[] => {
     const [src] = currentOrder.splice(srcIdx, 1);
     currentOrder.splice(desIdx, 0, src);
     return currentOrder;
+};
+
+export const getUpdatedCardOrder = (
+    lists: List[],
+    targetId: string,
+    srcId: string,
+    srcIdx: number,
+    desId: string,
+    desIdx: number
+): ListCardOrderPayload | null => {
+    const newLists = [...lists];
+    const srcListIdx = newLists.findIndex((list) => list._id === srcId);
+    const desListIdx = newLists.findIndex((list) => list._id === desId);
+    if (srcListIdx > -1 && desListIdx > -1) {
+        const srcIsDes = srcListIdx === desListIdx;
+        const targetIdx = newLists[srcListIdx].cards.findIndex((card) => card._id === targetId);
+        if (targetIdx > -1) {
+            const newSrcCards = [...newLists[srcListIdx].cards];
+            const newSrcCardOrder = [...newLists[srcListIdx].cardOrder];
+            const newDesCards = [...newLists[desListIdx].cards];
+            const newDesCardOrder = [...newLists[desListIdx].cardOrder];
+
+            const [orderTarget] = newSrcCardOrder.splice(srcIdx, 1);
+            (srcIsDes ? newSrcCardOrder : newDesCardOrder).splice(desIdx, 0, orderTarget);
+            if (!srcIsDes) {
+                const [cardTarget] = newSrcCards.splice(targetIdx, 1);
+                newDesCards.push({ ...cardTarget, owner: newLists[desListIdx]._id });
+            }
+            return {
+                src: {
+                    idx: srcListIdx,
+                    cards: newSrcCards,
+                    cardOrder: newSrcCardOrder
+                },
+                des: {
+                    idx: desListIdx,
+                    cards: newDesCards,
+                    cardOrder: newDesCardOrder
+                }
+            };
+        }
+    }
+    return null;
 };

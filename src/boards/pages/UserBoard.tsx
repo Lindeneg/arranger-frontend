@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useEffect } from 'react';
+import React, { FC, Fragment, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
 
@@ -20,14 +20,17 @@ const UserBoard: FC = () => {
         }
     }, [boardId, board, dispatch]);
 
-    const onBoardUpdate = (payload: BoardPayload<'name' | 'color' | 'listOrder'>): void => {
-        dispatch(updateBoard(boardId, payload));
-    };
+    const onBoardUpdate = useCallback(
+        (payload: BoardPayload<'name' | 'color' | 'listOrder'>): void => {
+            dispatch(updateBoard(boardId, payload));
+        },
+        [dispatch, boardId]
+    );
 
-    const onBoardDelete = (): void => {
+    const onBoardDelete = useCallback((): void => {
         dispatch(deleteBoard(boardId));
         history.push('/boards');
-    };
+    }, [dispatch, boardId, history]);
 
     const clearError = (): void => {
         dispatch(clearBoardError());

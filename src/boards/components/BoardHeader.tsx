@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useState } from 'react';
+import React, { FC, Fragment, useState, useCallback } from 'react';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { PlusCircle, PencilSquare, Trash } from 'react-bootstrap-icons';
@@ -20,6 +20,19 @@ const BoardHeader: FC<BoardHeaderProps> = (props) => {
     const [creating, setCreating] = useState<boolean>(false);
     const [deleting, setDeleting] = useState<boolean>(false);
 
+    const { onUpdate, onCreateList, color } = props;
+
+    const onBoardUpdate = useCallback(
+        (name: string, chosenColor?: ColorOption): void => {
+            if (editing) {
+                onUpdate(name, chosenColor || color);
+            } else if (creating) {
+                onCreateList(name);
+            }
+        },
+        [onUpdate, onCreateList, color, editing, creating]
+    );
+
     const onEditAccept = (): void => {
         setEditing(true);
     };
@@ -34,14 +47,6 @@ const BoardHeader: FC<BoardHeaderProps> = (props) => {
 
     const onCreateDeny = (): void => {
         setCreating(false);
-    };
-
-    const onUpdate = (name: string, color?: ColorOption): void => {
-        if (editing) {
-            props.onUpdate(name, color || props.color);
-        } else if (creating) {
-            props.onCreateList(name);
-        }
     };
 
     const onDeleteAccept = (): void => {
@@ -94,7 +99,7 @@ const BoardHeader: FC<BoardHeaderProps> = (props) => {
                         chosenColor={props.color}
                         style={{ width: '100%', textAlign: 'center' }}
                         onClose={editing ? onEditDeny : onCreateDeny}
-                        onCreate={onUpdate}
+                        onCreate={onBoardUpdate}
                         alwaysShowInput={true}
                         color={editing}
                     />

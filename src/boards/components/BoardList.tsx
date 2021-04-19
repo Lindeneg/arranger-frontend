@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
@@ -16,13 +16,21 @@ interface BoardListProps {
 const BoardList: FC<BoardListProps> = (props) => {
     const history = useHistory();
 
-    const onBoardSelect = (id: string): void => {
-        history.push('/board/' + id);
-    };
+    const { onCreate } = props;
 
-    const onBoardCreate = (name: string, color?: ColorOption): void => {
-        props.onCreate({ name, color: color || defaultTheme });
-    };
+    const onBoardSelect = useCallback(
+        (id: string): void => {
+            history.push('/board/' + id);
+        },
+        [history]
+    );
+
+    const onBoardCreate = useCallback(
+        (name: string, color?: ColorOption): void => {
+            onCreate({ name, color: color || defaultTheme });
+        },
+        [onCreate]
+    );
 
     return (
         <Container>
