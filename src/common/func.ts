@@ -40,7 +40,7 @@ export const getError = (err: any): ResponseError => {
         }
         message = err.response.data.message;
     } catch {
-        message = 'The server seems to be unresponsive. Please try again later.';
+        message = 'The server seems to be unresponsive. The performed action could not be saved.';
     }
     return { message };
 };
@@ -128,7 +128,8 @@ export const getUpdatedCardOrder = (
                     idx: desListIdx,
                     cards: newDesCards,
                     cardOrder: newDesCardOrder
-                }
+                },
+                targetId
             };
         }
     }

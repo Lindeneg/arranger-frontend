@@ -19,7 +19,7 @@ import {
     getUpdatedListOrder,
     getUpdatedCardOrder
 } from '../../common';
-import { ErrorModal } from '../../common/components';
+import { ErrorModal, Hr } from '../../common/components';
 import classes from './Lists.module.css';
 
 interface ListsProps {
@@ -100,7 +100,7 @@ const Lists: FC<ListsProps> = (props) => {
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <ErrorModal show={!!error} errorMessage={error} onClose={clearError} />
-            <hr style={{ borderTop: '1px solid ' + themeToHex(props.colorText), width: '100%' }} />
+            <Hr colorText={props.colorText} />
             {lists.length > 0 && board ? (
                 <Droppable direction="horizontal" droppableId={props.owner} type={DropType.List}>
                     {(provided) => (

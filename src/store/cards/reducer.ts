@@ -3,6 +3,7 @@ import { createReducer, ActionReducerMapBuilder, PayloadAction } from '@reduxjs/
 import { CardState } from './types';
 import {
     initCardStart,
+    deselectCardStart,
     createCardStart,
     createCardSuccess,
     createCardError,
@@ -28,6 +29,12 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Car
         return {
             ...state,
             card: action.payload
+        };
+    });
+    builder.addCase(deselectCardStart, (state) => {
+        return {
+            ...state,
+            card: null
         };
     });
     builder.addCase(updateCardStart, (state, action) => {

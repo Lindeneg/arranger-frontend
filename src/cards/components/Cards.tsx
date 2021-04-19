@@ -3,10 +3,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import ListGroup from 'react-bootstrap/ListGroup';
 
+import CardModal from './CardModal';
 import { CreationInput, ErrorModal } from '../../common/components';
 import { RootState } from '../../store';
 import { Card } from '../../store/cards/types';
-import { createCard, updateCard, deleteCard, clearAnyCardError } from '../../store/actions';
+import {
+    initCard,
+    deselectCard,
+    createCard,
+    updateCard,
+    deleteCard,
+    clearAnyCardError
+} from '../../store/actions';
 import {
     ColorOption,
     ThemeOption,
@@ -35,21 +43,28 @@ const Cards: FC<CardsProps> = (props) => {
     };
 
     const onUpdateCard = useCallback(
-        (id: string, name: string, color: ColorOption, description: string) => {
+        (id: string, name: string, color: ColorOption, description: string): void => {
             dispatch(updateCard(id, owner, { name, color, description }));
         },
         [dispatch, owner]
     );
 
     const onDeleteCard = useCallback(
-        (id: string) => {
+        (id: string): void => {
             dispatch(deleteCard(id, owner));
         },
         [dispatch, owner]
     );
 
-    const onSelectCard = (id: string) => {
-        console.log('select card ', id);
+    const onSelectCard = (id: string): void => {
+        const card = props.cards.find((card) => card._id === id);
+        if (card) {
+            dispatch(initCard(card));
+        }
+    };
+
+    const onDeselectCard = (): void => {
+        dispatch(deselectCard());
     };
 
     const clearError = (): void => {
@@ -59,6 +74,7 @@ const Cards: FC<CardsProps> = (props) => {
     return (
         <Fragment>
             <ErrorModal show={!!error} errorMessage={error} onClose={clearError} />
+            <CardModal onUpdate={onUpdateCard} onDelete={onDeleteCard} onClose={onDeselectCard} />
             <ListGroup>
                 {props.cardOrder.map((cardId, index) => {
                     const card = props.cards.find((c) => c._id === cardId);
@@ -92,7 +108,7 @@ const Cards: FC<CardsProps> = (props) => {
                     return null;
                 })}
                 <CreationInput
-                    style={{ marginTop: '1rem' }}
+                    style={{ marginTop: '1rem', width: '16.5rem' }}
                     type="card"
                     customColor={props.colorText}
                     inputMaxLength={22}

@@ -7,6 +7,7 @@ import { addCardToList, updateCardInList, removeCardFromList } from '../lists/ac
 import { getError, getAuthHeader, ResponseError } from '../../common';
 
 export const initCardStart = createAction<Card>('INIT_CARD_START');
+export const deselectCardStart = createAction('DESELECT_CARD_START');
 
 export const createCardStart = createAction('CREATE_CARD_START');
 export const createCardSuccess = createAction('CREATE_CARD_SUCCESS');
@@ -25,7 +26,13 @@ export const deleteCardError = createAction<ResponseError>('DELETE_CARD_ERROR');
 export const clearAnyCardError = createAction('CLEAR_ANY_CARD_ERROR');
 
 export const initCard = (card: Card) => async (dispatch: AppDispatch): Promise<void> => {
+    // TODO init checklists
     dispatch(initCardStart(card));
+};
+
+export const deselectCard = () => async (dispatch: AppDispatch): Promise<void> => {
+    // TODO reset checklists
+    dispatch(deselectCardStart());
 };
 
 export const createCard = (payload: CardPayload<'name' | 'color' | 'owner'>) => async (

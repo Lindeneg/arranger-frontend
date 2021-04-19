@@ -16,3 +16,5 @@ export const defaultTheme: ThemeOption = 'light';
 export enum LocalKey {
     Token = '_arngrprv'
 }
+
+export const emptyDescription = 'Please enter a description';

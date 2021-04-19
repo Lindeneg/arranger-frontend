@@ -29,9 +29,32 @@ export const removeCardFromList = createAction<CardPayload<'owner' | '_id'>>(
     'REMOVE_CARD_FROM_LIST'
 );
 
-export const updateListCardOrder = createAction<ListCardOrderPayload | null>('UPDATE_LIST_CARD_ORDER');
+export const updateListCardOrderStart = createAction<ListCardOrderPayload>(
+    'UPDATE_LIST_CARD_ORDER_START'
+);
+export const updateListCardOrderSuccess = createAction('UPDATE_LIST_CARD_ORDER_SUCCESS');
+export const updateListCardOrderError = createAction<ResponseError>('UPDATE_LIST_CARD_ORDER_ERROR');
 
 export const clearAnyListError = createAction('CLEAR_ANY_LIST_ERROR');
+
+export const updateListCardOrder = (payload: ListCardOrderPayload | null) => async (
+    dispatch: AppDispatch
+): Promise<void> => {
+    if (payload !== null) {
+        // TODO
+        dispatch(updateListCardOrderStart(payload));
+        try {
+            await axios.patch<List>(
+                '/api/lists/cards/order',
+                { srcIdx: payload.src.idx, desIdx: payload.des.idx, targetId: payload.targetId },
+                getAuthHeader()
+            );
+            dispatch(updateListCardOrderSuccess());
+        } catch (err) {
+            dispatch(updateListCardOrderError(getError(err)));
+        }
+    }
+};
 
 export const createList = (payload: ListPayload<'name' | 'owner'>) => async (
     dispatch: AppDispatch

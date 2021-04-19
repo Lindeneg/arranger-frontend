@@ -29,3 +29,9 @@
 .teal:hover {
     background-color: #28b1c7 !important;
 }
+
+.cardModal {
+    max-width: unset !important;
+    width: 90vw !important;
+    margin: 1.75rem auto !important;
+}

@@ -15,7 +15,9 @@ import {
     updateListSuccess,
     addCardToList,
     updateCardInList,
-    updateListCardOrder,
+    updateListCardOrderStart,
+    updateListCardOrderSuccess,
+    updateListCardOrderError,
     removeCardFromList
 } from './actions';
 import { ResponseError } from '../../common/types';
@@ -34,26 +36,27 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Lis
             lists: action.payload
         };
     });
-    builder.addCase(updateListCardOrder, (state, action) => {
+    builder.addCase(updateListCardOrderStart, (state, action) => {
         const newLists = [...state.lists];
-        if (action.payload !== null) {
-            const { src, des } = action.payload;
-            newLists[src.idx] = {
-                ...newLists[src.idx],
-                cards: src.cards,
-                cardOrder: src.cardOrder
+        const { src, des } = action.payload;
+        newLists[src.idx] = {
+            ...newLists[src.idx],
+            cards: src.cards,
+            cardOrder: src.cardOrder
+        };
+        if (src.idx !== des.idx) {
+            newLists[des.idx] = {
+                ...newLists[des.idx],
+                cards: des.cards,
+                cardOrder: des.cardOrder
             };
-            if (src.idx !== des.idx) {
-                newLists[des.idx] = {
-                    ...newLists[des.idx],
-                    cards: des.cards,
-                    cardOrder: des.cardOrder
-                };
-            }
         }
         return {
             ...state,
-            lists: newLists
+            lists: newLists,
+            requesting: true,
+            requested: false,
+            error: null
         };
     });
     builder.addCase(addCardToList, (state, action) => {
@@ -149,7 +152,12 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Lis
         };
     });
     builder.addMatcher(
-        (ac) => [deleteListSuccess.type, updateListSuccess.type].includes(ac.type),
+        (ac) =>
+            [
+                deleteListSuccess.type,
+                updateListSuccess.type,
+                updateListCardOrderSuccess.type
+            ].includes(ac.type),
         (state) => {
             return {
                 ...state,
@@ -160,7 +168,12 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Lis
     );
     builder.addMatcher<PayloadAction<ResponseError>>(
         (ac) =>
-            [createListError.type, updateListError.type, deleteListError.type].includes(ac.type),
+            [
+                createListError.type,
+                updateListError.type,
+                deleteListError.type,
+                updateListCardOrderError.type
+            ].includes(ac.type),
         (state, action) => {
             return {
                 ...state,
