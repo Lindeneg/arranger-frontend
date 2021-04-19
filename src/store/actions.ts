@@ -23,4 +23,11 @@ export {
     updateListCardOrder,
     clearAnyListError
 } from './lists/actions';
-export { initCard, deselectCard, createCard, deleteCard, updateCard, clearAnyCardError } from './cards/actions';
+export {
+    initCard,
+    deselectCard,
+    createCard,
+    deleteCard,
+    updateCard,
+    clearAnyCardError
+} from './cards/actions';

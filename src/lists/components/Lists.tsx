@@ -15,7 +15,6 @@ import {
 import {
     ThemeOption,
     DropType,
-    themeToHex,
     getUpdatedListOrder,
     getUpdatedCardOrder
 } from '../../common';
