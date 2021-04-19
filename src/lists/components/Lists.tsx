@@ -71,7 +71,8 @@ const Lists: FC<ListsProps> = (props) => {
                     if (
                         (result.source.droppableId === result.destination?.droppableId &&
                             result.source.index === result.destination.index) ||
-                        typeof result.destination === 'undefined'
+                        typeof result.destination === 'undefined' ||
+                        result.destination === null
                     ) {
                         break;
                     }
