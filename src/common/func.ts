@@ -1,4 +1,5 @@
 import { List, ListCardOrderPayload } from '../store/lists/types';
+import { Checklist } from '../store/checklists/types';
 import { ResponseError, StoredData, ThemeOption, ColorOption } from './types';
 import { LocalKey } from './values';
 
@@ -134,4 +135,12 @@ export const getUpdatedCardOrder = (
         }
     }
     return null;
+};
+
+export const countCompletedChecklistEntries = (checklists: Checklist[]): number => {
+    let count = 0;
+    for (let i = 0; i < checklists.length; i++) {
+        checklists[i].isCompleted && count++;
+    }
+    return count;
 };

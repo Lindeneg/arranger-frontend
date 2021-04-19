@@ -1,25 +1,18 @@
-import React, { FC, Fragment, useCallback } from 'react';
+import React, { FC, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-import CardModal from './CardModal';
 import { CreationInput, ErrorModal } from '../../common/components';
 import { RootState } from '../../store';
 import { Card } from '../../store/cards/types';
-import {
-    initCard,
-    deselectCard,
-    createCard,
-    updateCard,
-    deleteCard,
-    clearAnyCardError
-} from '../../store/actions';
+import { initCard, createCard, clearAnyCardError } from '../../store/actions';
 import {
     ColorOption,
     ThemeOption,
     getCls,
     getColorText,
+    countCompletedChecklistEntries,
     colorClassMap,
     defaultTheme
 } from '../../common';
@@ -36,35 +29,15 @@ const Cards: FC<CardsProps> = (props) => {
     const dispatch = useDispatch();
     const { error } = useSelector((state: RootState) => state.card);
 
-    const { owner } = props;
-
     const onCreateCard = (name: string, color?: ColorOption): void => {
         dispatch(createCard({ name, owner: props.owner, color: color || defaultTheme }));
     };
-
-    const onUpdateCard = useCallback(
-        (id: string, name: string, color: ColorOption, description: string): void => {
-            dispatch(updateCard(id, owner, { name, color, description }));
-        },
-        [dispatch, owner]
-    );
-
-    const onDeleteCard = useCallback(
-        (id: string): void => {
-            dispatch(deleteCard(id, owner));
-        },
-        [dispatch, owner]
-    );
 
     const onSelectCard = (id: string): void => {
         const card = props.cards.find((card) => card._id === id);
         if (card) {
             dispatch(initCard(card));
         }
-    };
-
-    const onDeselectCard = (): void => {
-        dispatch(deselectCard());
     };
 
     const clearError = (): void => {
@@ -74,7 +47,6 @@ const Cards: FC<CardsProps> = (props) => {
     return (
         <Fragment>
             <ErrorModal show={!!error} errorMessage={error} onClose={clearError} />
-            <CardModal onUpdate={onUpdateCard} onDelete={onDeleteCard} onClose={onDeselectCard} />
             <ListGroup>
                 {props.cardOrder.map((cardId, index) => {
                     const card = props.cards.find((c) => c._id === cardId);
@@ -98,13 +70,22 @@ const Cards: FC<CardsProps> = (props) => {
                                             )}
                                         >
                                             {card.name}
+                                            {card.checklists.length > 0 && (
+                                                <span className="float-right">
+                                                    {(countCompletedChecklistEntries(
+                                                        card.checklists
+                                                    ) /
+                                                        card.checklists.length) *
+                                                        100 +
+                                                        '%'}
+                                                </span>
+                                            )}
                                         </ListGroup.Item>
                                     </div>
                                 )}
                             </Draggable>
                         );
                     }
-                    console.log('not found: ', cardId);
                     return null;
                 })}
                 <CreationInput

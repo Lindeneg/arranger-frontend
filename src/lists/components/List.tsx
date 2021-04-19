@@ -1,5 +1,7 @@
 import React, { FC, Fragment, useState, useCallback } from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 import { Trash } from 'react-bootstrap-icons';
 
 import Cards from '../../cards/components/Cards';
@@ -84,11 +86,20 @@ const List: FC<ListProps> = (props) => {
                                                         >
                                                             {props.name}
                                                         </h3>
-                                                        <Trash
-                                                            role="button"
-                                                            size="20"
-                                                            onClick={() => setDeleting(true)}
-                                                        />
+                                                        <OverlayTrigger
+                                                            placement="bottom"
+                                                            overlay={
+                                                                <Tooltip id="tooltip-bottom">
+                                                                    delete list
+                                                                </Tooltip>
+                                                            }
+                                                        >
+                                                            <Trash
+                                                                role="button"
+                                                                size="20"
+                                                                onClick={() => setDeleting(true)}
+                                                            />
+                                                        </OverlayTrigger>
                                                     </Fragment>
                                                 )}
                                             </div>

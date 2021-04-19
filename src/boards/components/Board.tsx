@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import BoardHeader from './BoardHeader';
 import Lists from '../../lists/components/Lists';
+import CardModal from '../../cards/components/CardModal';
 import { ErrorModal } from '../../common/components';
 import { RootState } from '../../store';
 import { createList, clearAnyListError } from '../../store/actions';
@@ -47,6 +48,7 @@ const Board: FC<BoardProps> = (props) => {
     return (
         <Fragment>
             <ErrorModal show={!!error} errorMessage={error} onClose={clearError} />
+            <CardModal />
             <Container
                 fluid={true}
                 className={getCls('bg-' + colorClassMap[props.board.color], 'text-' + colorText)}

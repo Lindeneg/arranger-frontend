@@ -17,6 +17,7 @@ interface CreationInputProps {
     placeholder: string;
     onCreate: (name: string, color?: ColorOption) => void;
     onClose?: () => void;
+    as?: 'input' | 'textarea';
     color?: boolean;
     alwaysShowInput?: boolean;
     customColor?: ThemeOption;
@@ -81,6 +82,7 @@ const CreationInput: FC<CreationInputProps> = (props) => {
                 <div style={{ width: '18rem', ...props.style }}>
                     <InputGroup className={getCls(props.inputClassName || '', 'mb-1')}>
                         <FormControl
+                            as={props.as || 'input'}
                             id="name"
                             isInvalid={
                                 formState.inputs.name.isTouched && !formState.inputs.name.isValid

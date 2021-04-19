@@ -12,12 +12,7 @@ import {
     deleteList,
     clearAnyListError
 } from '../../store/actions';
-import {
-    ThemeOption,
-    DropType,
-    getUpdatedListOrder,
-    getUpdatedCardOrder
-} from '../../common';
+import { ThemeOption, DropType, getUpdatedListOrder, getUpdatedCardOrder } from '../../common';
 import { ErrorModal, Hr } from '../../common/components';
 import classes from './Lists.module.css';
 
