@@ -84,6 +84,7 @@ const Lists: FC<ListsProps> = (props) => {
                     );
                     break;
                 case DropType.Checklist:
+                    console.log(result);
                     break;
                 default:
                     break;

@@ -62,7 +62,7 @@ export const getBoard = (boardId: string) => async (dispatch: AppDispatch): Prom
         dispatch(fetchBoardSuccess(data));
         dispatch(initLists(data.lists));
     } catch (err) {
-        dispatch(fetchBoardError(err.response.data));
+        dispatch(fetchBoardError(getError(err)));
     }
 };
 
@@ -72,7 +72,7 @@ export const deleteBoard = (boardId: string) => async (dispatch: AppDispatch): P
         const { data } = await axios.delete<Board<List>>('/api/boards/' + boardId, getAuthHeader());
         dispatch(deleteBoardSuccess(data));
     } catch (err) {
-        dispatch(deleteBoardError(err.response.data));
+        dispatch(deleteBoardError(getError(err)));
     }
 };
 
@@ -84,7 +84,7 @@ export const createBoard = (payload: BoardPayload<'name' | 'color'>) => async (
         const { data } = await axios.post<Board<string>>('/api/boards', payload, getAuthHeader());
         dispatch(createBoardSuccess(data));
     } catch (err) {
-        dispatch(createBoardError(err.response.data));
+        dispatch(createBoardError(getError(err)));
     }
 };
 
@@ -100,7 +100,7 @@ export const updateBoardListOrder = (boardId: string, order: string[]) => async 
         );
         dispatch(updateBoardListOrderSuccess());
     } catch (err) {
-        dispatch(updateBoardListOrderError(err.response.data));
+        dispatch(updateBoardListOrderError(getError(err)));
     }
 };
 
@@ -116,7 +116,7 @@ export const updateBoard = (boardId: string, payload: BoardPayload<'name' | 'col
         );
         dispatch(updateBoardSuccess(data));
     } catch (err) {
-        dispatch(updateBoardError(err.response.data));
+        dispatch(updateBoardError(getError(err)));
     }
 };
 

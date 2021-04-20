@@ -41,12 +41,17 @@ export const updateListCardOrder = (payload: ListCardOrderPayload | null) => asy
     dispatch: AppDispatch
 ): Promise<void> => {
     if (payload !== null) {
-        // TODO
         dispatch(updateListCardOrderStart(payload));
         try {
             await axios.patch<List>(
-                '/api/lists/cards/order',
-                { srcIdx: payload.src.idx, desIdx: payload.des.idx, targetId: payload.targetId },
+                '/api/lists/update/card/order',
+                {
+                    srcId: payload.src.id,
+                    srcOrder: payload.src.cardOrder,
+                    desId: payload.des.id,
+                    desOrder: payload.des.cardOrder,
+                    targetId: payload.targetId
+                },
                 getAuthHeader()
             );
             dispatch(updateListCardOrderSuccess());

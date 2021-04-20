@@ -3,6 +3,7 @@ import axios from '../../axios-base';
 
 import { AppDispatch } from '..';
 import { Card, CardPayload } from './types';
+import { Checklist, ChecklistPayload } from '../checklists/types';
 import { addCardToList, updateCardInList, removeCardFromList } from '../lists/actions';
 import { getError, getAuthHeader, ResponseError } from '../../common';
 
@@ -23,15 +24,22 @@ export const deleteCardStart = createAction('DELETE_CARD_START');
 export const deleteCardSuccess = createAction('DELETE_CARD_SUCCESS');
 export const deleteCardError = createAction<ResponseError>('DELETE_CARD_ERROR');
 
+export const addChecklistToCard = createAction<Checklist>('ADD_CHECKLIST_TO_CARD'); // TODO
+export const updateChecklistInCard = createAction<
+    // TODO
+    Partial<ChecklistPayload<'_id' | 'objective' | 'isCompleted'>>
+>('UPDATE_CHECKLIST_IN_CARD');
+export const removeChecklistFromCard = createAction<ChecklistPayload<'_id'>>( // TODO
+    'REMOVE_CHECKLIST_FROM_CARD'
+);
+
 export const clearAnyCardError = createAction('CLEAR_ANY_CARD_ERROR');
 
 export const initCard = (card: Card) => async (dispatch: AppDispatch): Promise<void> => {
-    // TODO init checklists
     dispatch(initCardStart(card));
 };
 
 export const deselectCard = () => async (dispatch: AppDispatch): Promise<void> => {
-    // TODO reset checklists
     dispatch(deselectCardStart());
 };
 

@@ -13,7 +13,7 @@ export interface ListState extends Requester {
 
 export type ListPayload<T extends keyof List<Card>> = Pick<List<Card>, T>;
 export type ListCardOrderPayload = {
-    src: { idx: number; cards: Card[]; cardOrder: string[] };
-    des: { idx: number; cards: Card[]; cardOrder: string[] };
+    src: { idx: number; id: string; cards: Card[]; cardOrder: string[] };
+    des: { idx: number; id: string; cards: Card[]; cardOrder: string[] };
     targetId: string;
 };

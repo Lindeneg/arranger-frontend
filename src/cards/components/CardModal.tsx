@@ -5,6 +5,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { Trash, PencilSquare } from 'react-bootstrap-icons';
 
+import Checklists from '../../checklists/components/Checklists';
 import { RootState } from '../../store';
 import { deselectCard, updateCard, deleteCard } from '../../store/actions';
 import {
@@ -17,26 +18,6 @@ import {
 } from '../../common';
 import { Hr, CreationInput, ConfirmModal } from '../../common/components';
 import classes from './Cards.module.css';
-
-// const testChecklists = [
-//     {
-//         _id: 1,
-//         objective: 'do something really nice',
-//         isCompleted: false
-//     },
-//     {
-//         _id: 2,
-//         objective: 'do something else',
-//         isCompleted: false
-//     },
-//     {
-//         _id: 3,
-//         objective: 'hey! this is already done',
-//         isCompleted: false
-//     }
-// ];
-
-// const testChecklistOrder = [3, 1, 2];
 
 type EditType = 'name' | 'description';
 
@@ -166,8 +147,7 @@ const CardModal: FC = () => {
                         )}
                     </div>
                     <Hr colorText={colorText} />
-                    <h3>Checklists</h3>
-                    {/* CHECKLISTS*/}
+                    <Checklists colorText={colorText} />
                 </Modal.Body>
             </Modal>
         </Fragment>

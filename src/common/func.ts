@@ -122,11 +122,13 @@ export const getUpdatedCardOrder = (
             return {
                 src: {
                     idx: srcListIdx,
+                    id: srcId,
                     cards: newSrcCards,
                     cardOrder: newSrcCardOrder
                 },
                 des: {
                     idx: desListIdx,
+                    id: desId,
                     cards: newDesCards,
                     cardOrder: newDesCardOrder
                 },
