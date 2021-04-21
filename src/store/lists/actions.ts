@@ -37,9 +37,11 @@ export const updateListCardOrderError = createAction<ResponseError>('UPDATE_LIST
 
 export const clearAnyListError = createAction('CLEAR_ANY_LIST_ERROR');
 
-export const updateListCardOrder = (payload: ListCardOrderPayload | null) => async (
-    dispatch: AppDispatch
-): Promise<void> => {
+export const updateListCardOrder = (
+    srcIdx: number,
+    desIdx: number,
+    payload: ListCardOrderPayload | null
+) => async (dispatch: AppDispatch): Promise<void> => {
     if (payload !== null) {
         dispatch(updateListCardOrderStart(payload));
         try {
@@ -47,9 +49,9 @@ export const updateListCardOrder = (payload: ListCardOrderPayload | null) => asy
                 '/api/lists/update/card/order',
                 {
                     srcId: payload.src.id,
-                    srcOrder: payload.src.cardOrder,
+                    srcIdx,
                     desId: payload.des.id,
-                    desOrder: payload.des.cardOrder,
+                    desIdx,
                     targetId: payload.targetId
                 },
                 getAuthHeader()

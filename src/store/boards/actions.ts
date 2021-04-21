@@ -88,14 +88,17 @@ export const createBoard = (payload: BoardPayload<'name' | 'color'>) => async (
     }
 };
 
-export const updateBoardListOrder = (boardId: string, order: string[]) => async (
-    dispatch: AppDispatch
-): Promise<void> => {
+export const updateBoardListOrder = (
+    boardId: string,
+    srcIdx: number,
+    desIdx: number,
+    order: string[]
+) => async (dispatch: AppDispatch): Promise<void> => {
     dispatch(updateBoardListOrderStart({ listOrder: order }));
     try {
         await axios.patch<Board<List>>(
-            '/api/boards/' + boardId,
-            { listOrder: order },
+            `/api/boards/${boardId}/update/list/order`,
+            { srcIdx, desIdx },
             getAuthHeader()
         );
         dispatch(updateBoardListOrderSuccess());

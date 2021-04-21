@@ -2,8 +2,9 @@ import React, { FC, Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import ListGroup from 'react-bootstrap/ListGroup';
+import { Check } from 'react-bootstrap-icons';
 
-import { CreationInput } from '../../common/components';
+import { CreationInput, Hr } from '../../common/components';
 import { Card } from '../../store/cards/types';
 import { initCard, createCard } from '../../store/actions';
 import {
@@ -63,20 +64,21 @@ const Cards: FC<CardsProps> = (props) => {
                                             )}
                                         >
                                             {card.name}
-                                            {card.checklists.length > 0 && (
-                                                <Fragment>
-                                                    <span className="float-right">
-                                                        {(
-                                                            (countCompletedChecklistEntries(
-                                                                card.checklists
-                                                            ) /
-                                                                card.checklists.length) *
-                                                            100
-                                                        ).toFixed(1) + '%'}
-                                                    </span>
-                                                    <span className="float-right mr-1">|</span>
-                                                </Fragment>
-                                            )}
+                                            <Hr
+                                                colorText={getColorText(card.color as ColorOption)}
+                                            />
+                                            <div className="d-flex align-items-center">
+                                                {(card.checklists.length > 0
+                                                    ? (
+                                                          (countCompletedChecklistEntries(
+                                                              card.checklists
+                                                          ) /
+                                                              card.checklists.length) *
+                                                          100
+                                                      ).toFixed(1)
+                                                    : '0.0') + '%'}
+                                                <Check size="25" />
+                                            </div>
                                         </ListGroup.Item>
                                     </div>
                                 )}

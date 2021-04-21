@@ -70,6 +70,7 @@ const List: FC<ListProps> = (props) => {
                                                 {editing ? (
                                                     <CreationInput
                                                         type="list"
+                                                        iconSize="25"
                                                         inputMaxLength={16}
                                                         customColor={props.colorText}
                                                         placeholder="List name"

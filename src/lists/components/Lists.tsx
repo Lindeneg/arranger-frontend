@@ -52,6 +52,8 @@ const Lists: FC<ListsProps> = (props) => {
                         dispatch(
                             updateBoardListOrder(
                                 props.owner,
+                                result.source.index,
+                                result.destination.index,
                                 getUpdatedListOrder(
                                     [...board.listOrder],
                                     result.source.index,
@@ -72,6 +74,8 @@ const Lists: FC<ListsProps> = (props) => {
                     }
                     dispatch(
                         updateListCardOrder(
+                            result.source.index,
+                            result.destination.index,
                             getUpdatedCardOrder(
                                 [...lists],
                                 result.draggableId,
