@@ -1,12 +1,11 @@
 import React, { FC, Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-import { CreationInput, ErrorModal } from '../../common/components';
-import { RootState } from '../../store';
+import { CreationInput } from '../../common/components';
 import { Card } from '../../store/cards/types';
-import { initCard, createCard, clearAnyCardError } from '../../store/actions';
+import { initCard, createCard } from '../../store/actions';
 import {
     ColorOption,
     ThemeOption,
@@ -27,7 +26,6 @@ interface CardsProps {
 
 const Cards: FC<CardsProps> = (props) => {
     const dispatch = useDispatch();
-    const { error } = useSelector((state: RootState) => state.card);
 
     const onCreateCard = (name: string, color?: ColorOption): void => {
         dispatch(createCard({ name, owner: props.owner, color: color || defaultTheme }));
@@ -40,13 +38,8 @@ const Cards: FC<CardsProps> = (props) => {
         }
     };
 
-    const clearError = (): void => {
-        dispatch(clearAnyCardError());
-    };
-
     return (
         <Fragment>
-            <ErrorModal show={!!error} errorMessage={error} onClose={clearError} />
             <ListGroup>
                 {props.cardOrder.map((cardId, index) => {
                     const card = props.cards.find((c) => c._id === cardId);
@@ -71,14 +64,18 @@ const Cards: FC<CardsProps> = (props) => {
                                         >
                                             {card.name}
                                             {card.checklists.length > 0 && (
-                                                <span className="float-right">
-                                                    {(countCompletedChecklistEntries(
-                                                        card.checklists
-                                                    ) /
-                                                        card.checklists.length) *
-                                                        100 +
-                                                        '%'}
-                                                </span>
+                                                <Fragment>
+                                                    <span className="float-right">
+                                                        {(
+                                                            (countCompletedChecklistEntries(
+                                                                card.checklists
+                                                            ) /
+                                                                card.checklists.length) *
+                                                            100
+                                                        ).toFixed(1) + '%'}
+                                                    </span>
+                                                    <span className="float-right mr-1">|</span>
+                                                </Fragment>
                                             )}
                                         </ListGroup.Item>
                                     </div>
@@ -94,7 +91,6 @@ const Cards: FC<CardsProps> = (props) => {
                     customColor={props.colorText}
                     inputMaxLength={22}
                     placeholder="Card name"
-                    colorSelectionDropDirection="up"
                     onCreate={onCreateCard}
                     color
                 />

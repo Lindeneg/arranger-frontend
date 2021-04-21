@@ -31,3 +31,9 @@ export {
     updateCard,
     clearAnyCardError
 } from './cards/actions';
+export {
+    createChecklist,
+    updateChecklist,
+    deleteChecklist,
+    clearAnyChecklistError
+} from './checklists/actions';

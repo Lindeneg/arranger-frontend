@@ -86,7 +86,7 @@ const BoardHeader: FC<BoardHeaderProps> = (props) => {
                                 float: 'right',
                                 marginRight: '1rem'
                             }}
-                        ></div>
+                        />
                     </>
                 )}
                 {(editing || creating) && (

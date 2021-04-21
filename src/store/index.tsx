@@ -5,12 +5,14 @@ import boardReducer from './boards/reducer';
 import userReducer from './user/reducer';
 import listReducer from './lists/reducer';
 import cardReducer from './cards/reducer';
+import checklistReducer from './checklists/reducer';
 
 export const rootReducer = combineReducers({
     board: boardReducer,
     user: userReducer,
     list: listReducer,
-    card: cardReducer
+    card: cardReducer,
+    checklist: checklistReducer
 });
 
 const store = configureStore({

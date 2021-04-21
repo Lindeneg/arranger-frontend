@@ -13,6 +13,9 @@ import {
     deleteCardStart,
     deleteCardSuccess,
     deleteCardError,
+    addChecklistToCard,
+    updateChecklistInCard,
+    removeChecklistFromCard,
     clearAnyCardError
 } from './actions';
 import { ResponseError } from '../../common/types';
@@ -35,6 +38,55 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Car
         return {
             ...state,
             card: null
+        };
+    });
+    builder.addCase(addChecklistToCard, (state, action) => {
+        let card = state.card;
+        if (card) {
+            card = {
+                ...card,
+                checklists: [...card.checklists, action.payload],
+                checklistOrder: [...card.checklistOrder, action.payload._id]
+            };
+        }
+        return {
+            ...state,
+            card
+        };
+    });
+    builder.addCase(updateChecklistInCard, (state, action) => {
+        let card = state.card;
+        if (card) {
+            const idx = card.checklists.findIndex((cl) => cl._id === action.payload._id);
+            if (idx > -1) {
+                const newChecklists = [...card.checklists];
+                newChecklists[idx] = {
+                    ...newChecklists[idx],
+                    ...action.payload
+                };
+                card = {
+                    ...card,
+                    checklists: newChecklists
+                };
+            }
+        }
+        return {
+            ...state,
+            card
+        };
+    });
+    builder.addCase(removeChecklistFromCard, (state, action) => {
+        let card = state.card;
+        if (card) {
+            card = {
+                ...card,
+                checklists: card.checklists.filter((cl) => cl._id !== action.payload._id),
+                checklistOrder: card.checklistOrder.filter((id) => id !== action.payload._id)
+            };
+        }
+        return {
+            ...state,
+            card
         };
     });
     builder.addCase(updateCardStart, (state, action) => {

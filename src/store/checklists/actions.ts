@@ -24,12 +24,16 @@ export const deleteChecklistError = createAction<ResponseError>('DELETE_CHECKLIS
 
 export const clearAnyChecklistError = createAction('CLEAR_ANY_CHECKLIST_ERROR');
 
-export const createChecklist = (payload: ChecklistPayload<'objective'>) => async (
+export const createChecklist = (payload: ChecklistPayload<'objective' | 'owner'>) => async (
     dispatch: AppDispatch
 ): Promise<void> => {
     dispatch(createChecklistStart());
     try {
-        const { data } = await axios.post<Checklist>('/api/checklists', payload, getAuthHeader());
+        const { data } = await axios.post<Checklist>(
+            '/api/checklists',
+            { ...payload, isCompleted: false },
+            getAuthHeader()
+        );
         dispatch(createChecklistSuccess());
         dispatch(addChecklistToCard(data));
     } catch (err) {

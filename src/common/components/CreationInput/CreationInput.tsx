@@ -18,6 +18,7 @@ interface CreationInputProps {
     onCreate: (name: string, color?: ColorOption) => void;
     onClose?: () => void;
     as?: 'input' | 'textarea';
+    iconSize?: string;
     asProps?: { rows?: number };
     color?: boolean;
     alwaysShowInput?: boolean;
@@ -103,6 +104,23 @@ const CreationInput: FC<CreationInputProps> = (props) => {
                                 direction={props.colorSelectionDropDirection || 'down'}
                             />
                         )}
+                        <InputGroup.Append className="ml-2 align-items-center">
+                            <CheckCircle
+                                onClick={formState.isValid ? onCreate : () => null}
+                                role={formState.isValid ? 'button' : 'none'}
+                                size={props.iconSize || '30'}
+                                className={getCls(
+                                    'mr-1',
+                                    formState.isValid ? 'text-' + customColor : 'text-muted'
+                                )}
+                            />
+                            <XCircle
+                                onClick={props.onClose ? props.onClose : onCreateDeny}
+                                role="button"
+                                size={props.iconSize || '30'}
+                                className={'ml-1 text-' + customColor}
+                            />
+                        </InputGroup.Append>
                         <FormControl.Feedback type="invalid" className={'text-' + customColor}>
                             {props.type[0].toUpperCase() + props.type.substr(1)}s are limited to{' '}
                             {props.inputMaxLength}{' '}
@@ -111,21 +129,6 @@ const CreationInput: FC<CreationInputProps> = (props) => {
                             characters.
                         </FormControl.Feedback>
                     </InputGroup>
-                    <CheckCircle
-                        onClick={formState.isValid ? onCreate : () => null}
-                        role={formState.isValid ? 'button' : 'none'}
-                        size="30"
-                        className={getCls(
-                            'mr-1',
-                            formState.isValid ? 'text-' + customColor : 'text-muted'
-                        )}
-                    />
-                    <XCircle
-                        onClick={props.onClose ? props.onClose : onCreateDeny}
-                        role="button"
-                        size="30"
-                        className={'ml-1 text-' + customColor}
-                    />
                 </div>
             )}
             {!props.alwaysShowInput && !creating && (

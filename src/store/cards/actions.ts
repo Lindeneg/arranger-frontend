@@ -24,12 +24,11 @@ export const deleteCardStart = createAction('DELETE_CARD_START');
 export const deleteCardSuccess = createAction('DELETE_CARD_SUCCESS');
 export const deleteCardError = createAction<ResponseError>('DELETE_CARD_ERROR');
 
-export const addChecklistToCard = createAction<Checklist>('ADD_CHECKLIST_TO_CARD'); // TODO
+export const addChecklistToCard = createAction<Checklist>('ADD_CHECKLIST_TO_CARD');
 export const updateChecklistInCard = createAction<
-    // TODO
     Partial<ChecklistPayload<'_id' | 'objective' | 'isCompleted'>>
 >('UPDATE_CHECKLIST_IN_CARD');
-export const removeChecklistFromCard = createAction<ChecklistPayload<'_id'>>( // TODO
+export const removeChecklistFromCard = createAction<ChecklistPayload<'_id'>>(
     'REMOVE_CHECKLIST_FROM_CARD'
 );
 
@@ -39,8 +38,9 @@ export const initCard = (card: Card) => async (dispatch: AppDispatch): Promise<v
     dispatch(initCardStart(card));
 };
 
-export const deselectCard = () => async (dispatch: AppDispatch): Promise<void> => {
+export const deselectCard = (card: Card) => async (dispatch: AppDispatch): Promise<void> => {
     dispatch(deselectCardStart());
+    dispatch(updateCardInList({ ...card }));
 };
 
 export const createCard = (payload: CardPayload<'name' | 'color' | 'owner'>) => async (

@@ -1,13 +1,11 @@
 import React, { FC, Fragment, useCallback } from 'react';
 import Container from 'react-bootstrap/Container';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import BoardHeader from './BoardHeader';
 import Lists from '../../lists/components/Lists';
 import CardModal from '../../cards/components/CardModal';
-import { ErrorModal } from '../../common/components';
-import { RootState } from '../../store';
-import { createList, clearAnyListError } from '../../store/actions';
+import { createList } from '../../store/actions';
 import { Board as BoardType, BoardPayload } from '../../store/boards/types';
 import { List } from '../../store/lists/types';
 import { getCls, colorClassMap, getColorText, ColorOption } from '../../common';
@@ -20,7 +18,6 @@ interface BoardProps {
 
 const Board: FC<BoardProps> = (props) => {
     const dispatch = useDispatch();
-    const { error } = useSelector((state: RootState) => state.list);
     const colorText = getColorText(props.board.color);
 
     const { board, onUpdate } = props;
@@ -41,13 +38,8 @@ const Board: FC<BoardProps> = (props) => {
         [dispatch, board]
     );
 
-    const clearError = (): void => {
-        dispatch(clearAnyListError());
-    };
-
     return (
         <Fragment>
-            <ErrorModal show={!!error} errorMessage={error} onClose={clearError} />
             <CardModal />
             <Container
                 fluid={true}

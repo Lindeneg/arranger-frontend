@@ -7,7 +7,8 @@ import { Trash, PencilSquare } from 'react-bootstrap-icons';
 
 import Checklists from '../../checklists/components/Checklists';
 import { RootState } from '../../store';
-import { deselectCard, updateCard, deleteCard } from '../../store/actions';
+import { deselectCard, updateCard, deleteCard, clearAnyCardError } from '../../store/actions';
+import { clearAnyChecklistError } from '../../store/actions';
 import {
     ColorOption,
     getCls,
@@ -16,14 +17,15 @@ import {
     defaultTheme,
     emptyDescription
 } from '../../common';
-import { Hr, CreationInput, ConfirmModal } from '../../common/components';
+import { Hr, CreationInput, ConfirmModal, ErrorModal } from '../../common/components';
 import classes from './Cards.module.css';
 
 type EditType = 'name' | 'description';
 
 const CardModal: FC = () => {
     const dispatch = useDispatch();
-    const { card } = useSelector((state: RootState) => state.card);
+    const { card, error } = useSelector((state: RootState) => state.card);
+    const checklistError = useSelector((state: RootState) => state.checklist.error);
     const [deleting, setDeleting] = useState<boolean>(false);
     const [deleteInProgress, setDeleteInProgress] = useState<boolean>(false);
     const [editing, setEditing] = useState<EditType | null>(null);
@@ -50,12 +52,26 @@ const CardModal: FC = () => {
     };
 
     const onDeselectCard = (): void => {
-        dispatch(deselectCard());
+        card && dispatch(deselectCard(card));
         setEditing(null);
+    };
+
+    const onClearCardError = (): void => {
+        dispatch(clearAnyCardError());
+    };
+
+    const onClearChecklistError = (): void => {
+        dispatch(clearAnyChecklistError());
     };
 
     return (
         <Fragment>
+            <ErrorModal
+                show={!!error || !!checklistError}
+                errorMessage={error || checklistError}
+                onClose={error ? onClearCardError : onClearChecklistError}
+                headerTxt={(error ? 'Card' : 'Checklist') + ' error'}
+            />
             <ConfirmModal
                 show={deleting}
                 onClose={() => setDeleting(false)}
@@ -64,7 +80,7 @@ const CardModal: FC = () => {
                 notCenter
             />
             <Modal
-                show={card !== null && !deleting && !deleteInProgress}
+                show={card !== null && !deleting && !deleteInProgress && !error && !checklistError}
                 onHide={onDeselectCard}
                 dialogClassName={classes.cardModal}
                 contentClassName={getCls(
@@ -78,7 +94,8 @@ const CardModal: FC = () => {
                         {editing === 'name' ? (
                             <CreationInput
                                 type="card"
-                                inputMaxLength={22}
+                                style={{ width: '60%' }}
+                                inputMaxLength={19}
                                 customColor={colorText}
                                 chosenColor={card?.color}
                                 placeholder="Card name"
@@ -89,7 +106,7 @@ const CardModal: FC = () => {
                                 color
                             />
                         ) : (
-                            <h1 onClick={() => setEditing('name')} className={classes.cardName}>
+                            <h1 onClick={() => setEditing('name')} className={classes.name}>
                                 {card?.name}
                             </h1>
                         )}
