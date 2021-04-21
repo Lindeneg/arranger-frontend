@@ -1,5 +1,6 @@
 import React, { FC, Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import ListGroup from 'react-bootstrap/ListGroup';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -9,9 +10,14 @@ import { PlusCircle } from 'react-bootstrap-icons';
 import Checklist from './Checklist';
 import ChecklistInput from './ChecklistInput';
 import { RootState } from '../../store';
-import { createChecklist, updateChecklist, deleteChecklist } from '../../store/actions';
+import {
+    createChecklist,
+    updateChecklist,
+    updateCardChecklistOrder,
+    deleteChecklist
+} from '../../store/actions';
 import { ChecklistPayload } from '../../store/checklists/types';
-import { ThemeOption } from '../../common';
+import { ThemeOption, DropType, getUpdatedListOrder } from '../../common';
 import { Hr } from '../../common/components';
 
 const Checklists: FC<{ colorText: ThemeOption }> = (props) => {
@@ -69,8 +75,30 @@ const Checklists: FC<{ colorText: ThemeOption }> = (props) => {
         setEditingId(null);
     };
 
+    const onDragEnd = (result: DropResult): void => {
+        if (
+            card &&
+            result.type === DropType.Checklist &&
+            result.destination &&
+            result.destination.index !== result.source.index
+        ) {
+            dispatch(
+                updateCardChecklistOrder(
+                    card._id,
+                    result.source.index,
+                    result.destination.index,
+                    getUpdatedListOrder(
+                        [...card.checklistOrder],
+                        result.source.index,
+                        result.destination.index
+                    )
+                )
+            );
+        }
+    };
+
     return (
-        <Fragment>
+        <DragDropContext onDragEnd={onDragEnd}>
             {card && (
                 <Fragment>
                     <div className="d-flex align-items-baseline justify-content-between">
@@ -83,43 +111,49 @@ const Checklists: FC<{ colorText: ThemeOption }> = (props) => {
                         </OverlayTrigger>
                     </div>
                     <Hr colorText={props.colorText} />
-                    <ListGroup>
-                        {card.checklistOrder.map((id, index) => {
-                            const checklist = card.checklists.find((cl) => cl._id === id);
-                            if (checklist) {
-                                if (editingId && editingId === checklist._id) {
-                                    return (
-                                        <ChecklistInput
-                                            key={index}
-                                            colorText={props.colorText}
-                                            objective={checklist.objective}
-                                            onCreate={onUpdateObjective.bind(
-                                                null,
-                                                null,
-                                                checklist.objective
-                                            )}
-                                            onClose={onActionDeny}
-                                        />
-                                    );
-                                }
-                                return (
-                                    <Checklist
-                                        key={index}
-                                        onClick={onEditAccept.bind(null, checklist._id)}
-                                        colorText={props.colorText}
-                                        onToggle={onToggleChecklistState.bind(
-                                            null,
-                                            checklist._id,
-                                            checklist.isCompleted
-                                        )}
-                                        onDelete={onDelete.bind(null, checklist._id)}
-                                        {...checklist}
-                                    />
-                                );
-                            }
-                            return null;
-                        })}
-                    </ListGroup>
+                    <Droppable droppableId={card._id} type={DropType.Checklist}>
+                        {(provided) => (
+                            <ListGroup {...provided.droppableProps} ref={provided.innerRef}>
+                                {card.checklistOrder.map((id, index) => {
+                                    const checklist = card.checklists.find((cl) => cl._id === id);
+                                    if (checklist) {
+                                        if (editingId && editingId === checklist._id) {
+                                            return (
+                                                <ChecklistInput
+                                                    key={index}
+                                                    colorText={props.colorText}
+                                                    objective={checklist.objective}
+                                                    onCreate={onUpdateObjective.bind(
+                                                        null,
+                                                        null,
+                                                        checklist.objective
+                                                    )}
+                                                    onClose={onActionDeny}
+                                                />
+                                            );
+                                        }
+                                        return (
+                                            <Checklist
+                                                key={checklist._id}
+                                                id={checklist._id}
+                                                index={index}
+                                                onClick={onEditAccept.bind(null, checklist._id)}
+                                                colorText={props.colorText}
+                                                onToggle={onToggleChecklistState.bind(
+                                                    null,
+                                                    checklist._id,
+                                                    checklist.isCompleted
+                                                )}
+                                                onDelete={onDelete.bind(null, checklist._id)}
+                                                {...checklist}
+                                            />
+                                        );
+                                    }
+                                    return null;
+                                })}
+                            </ListGroup>
+                        )}
+                    </Droppable>
                     {!creating && card.checklistOrder.length <= 0 && (
                         <Alert variant="info">No checklists found. Go ahead and create one.</Alert>
                     )}
@@ -132,7 +166,7 @@ const Checklists: FC<{ colorText: ThemeOption }> = (props) => {
                     )}
                 </Fragment>
             )}
-        </Fragment>
+        </DragDropContext>
     );
 };
 

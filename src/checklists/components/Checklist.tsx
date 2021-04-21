@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { Draggable } from 'react-beautiful-dnd';
 import ListGroup from 'react-bootstrap/ListGroup';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -9,6 +10,8 @@ import { ThemeOption, getCls } from '../../common';
 import classes from '../../cards/components/Cards.module.css';
 
 interface ChecklistProps extends ChecklistType {
+    id: string;
+    index: number;
     colorText: ThemeOption;
     onClick: () => void;
     onToggle: () => void;
@@ -17,43 +20,42 @@ interface ChecklistProps extends ChecklistType {
 
 const Checklist: FC<ChecklistProps> = (props) => {
     return (
-        <div className="d-flex align-items-baseline justify-content-between">
-            <ListGroup.Item
-                role="button"
-                onClick={props.onClick}
-                className={getCls('mb-3', classes.name)}
-                style={{
-                    backgroundColor: 'transparent',
-                    width: '90%',
-                    wordBreak: 'break-all',
-                    fontStyle: props.isCompleted ? 'italic' : '',
-                    textDecoration: props.isCompleted ? 'line-through' : ''
-                }}
-            >
-                {props.objective}
-            </ListGroup.Item>
-            {props.isCompleted ? (
-                <OverlayTrigger
-                    placement="bottom"
-                    overlay={<Tooltip id="tooltip-bottom">uncheck</Tooltip>}
+        <Draggable draggableId={props.id} index={props.index}>
+            {(provided) => (
+                <div
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    ref={provided.innerRef}
+                    className="d-flex align-items-baseline justify-content-between"
                 >
-                    <CheckCircle onClick={props.onToggle} role="button" size="25" />
-                </OverlayTrigger>
-            ) : (
-                <OverlayTrigger
-                    placement="bottom"
-                    overlay={<Tooltip id="tooltip-bottom">check</Tooltip>}
-                >
-                    <Circle onClick={props.onToggle} role="button" size="25" />
-                </OverlayTrigger>
+                    <ListGroup.Item
+                        role="button"
+                        onClick={props.onClick}
+                        className={getCls('mb-3', classes.name)}
+                        style={{
+                            backgroundColor: 'transparent',
+                            width: '90%',
+                            wordBreak: 'break-all',
+                            fontStyle: props.isCompleted ? 'italic' : '',
+                            textDecoration: props.isCompleted ? 'line-through' : ''
+                        }}
+                    >
+                        {props.objective}
+                    </ListGroup.Item>
+                    {props.isCompleted ? (
+                        <CheckCircle onClick={props.onToggle} role="button" size="25" />
+                    ) : (
+                        <Circle onClick={props.onToggle} role="button" size="25" />
+                    )}
+                    <OverlayTrigger
+                        placement="bottom"
+                        overlay={<Tooltip id="tooltip-bottom">delete checklist</Tooltip>}
+                    >
+                        <Trash onClick={props.onDelete} role="button" size="25" />
+                    </OverlayTrigger>
+                </div>
             )}
-            <OverlayTrigger
-                placement="bottom"
-                overlay={<Tooltip id="tooltip-bottom">delete checklist</Tooltip>}
-            >
-                <Trash onClick={props.onDelete} role="button" size="25" />
-            </OverlayTrigger>
-        </div>
+        </Draggable>
     );
 };
 

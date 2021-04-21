@@ -16,6 +16,9 @@ import {
     addChecklistToCard,
     updateChecklistInCard,
     removeChecklistFromCard,
+    updateCardChecklistOrderStart,
+    updateCardChecklistOrderSuccess,
+    updateCardChecklistOrderError,
     clearAnyCardError
 } from './actions';
 import { ResponseError } from '../../common/types';
@@ -53,6 +56,23 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Car
             ...state,
             card
         };
+    });
+    builder.addCase(updateCardChecklistOrderStart, (state, action) => {
+        let card = state.card;
+        if (!!card && !!action.payload.checklistOrder) {
+            card = {
+                ...card,
+                ...action.payload
+            };
+        }
+        return {
+            ...state,
+            card,
+            error: null
+        };
+    });
+    builder.addCase(updateCardChecklistOrderSuccess, (state) => {
+        return state;
     });
     builder.addCase(updateChecklistInCard, (state, action) => {
         let card = state.card;
@@ -141,7 +161,12 @@ export default createReducer(initialState, (builder: ActionReducerMapBuilder<Car
     );
     builder.addMatcher<PayloadAction<ResponseError>>(
         (ac) =>
-            [createCardError.type, updateCardError.type, deleteCardError.type].includes(ac.type),
+            [
+                createCardError.type,
+                updateCardError.type,
+                deleteCardError.type,
+                updateCardChecklistOrderError.type
+            ].includes(ac.type),
         (state, action) => {
             return {
                 ...state,

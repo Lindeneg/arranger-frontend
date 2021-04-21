@@ -33,6 +33,7 @@
 .cardModal {
     max-width: unset !important;
     width: 90vw !important;
+    height: 90vh !important;
     margin: 1.75rem auto !important;
 }
 

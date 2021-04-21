@@ -32,6 +32,14 @@ export const removeChecklistFromCard = createAction<ChecklistPayload<'_id'>>(
     'REMOVE_CHECKLIST_FROM_CARD'
 );
 
+export const updateCardChecklistOrderStart = createAction<CardPayload<'checklistOrder'>>(
+    'UPDATE_CARD_CHECKLIST_ORDER_START'
+);
+export const updateCardChecklistOrderSuccess = createAction('UPDATE_CARD_CHECKLIST_ORDER_SUCCESS');
+export const updateCardChecklistOrderError = createAction<ResponseError>(
+    'UPDATE_CARD_CHECKLIST_ORDER_ERROR'
+);
+
 export const clearAnyCardError = createAction('CLEAR_ANY_CARD_ERROR');
 
 export const initCard = (card: Card) => async (dispatch: AppDispatch): Promise<void> => {
@@ -72,6 +80,25 @@ export const updateCard = (
         dispatch(updateCardSuccess());
     } catch (err) {
         dispatch(updateCardError(getError(err)));
+    }
+};
+
+export const updateCardChecklistOrder = (
+    cardId: string,
+    srcIdx: number,
+    desIdx: number,
+    order: string[]
+) => async (dispatch: AppDispatch): Promise<void> => {
+    dispatch(updateCardChecklistOrderStart({ checklistOrder: order }));
+    try {
+        await axios.patch<Card>(
+            `/api/cards/${cardId}/update/checklist/order`,
+            { srcIdx, desIdx },
+            getAuthHeader()
+        );
+        dispatch(updateCardChecklistOrderSuccess());
+    } catch (err) {
+        dispatch(updateCardChecklistOrderError(getError(err)));
     }
 };
 

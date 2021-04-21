@@ -5,4 +5,5 @@ export { default as ConfirmModal } from './Modal/ConfirmModal';
 export { default as Navigation } from './Navigation/Navigation';
 export { default as ColorSelection } from './ColorSelection/ColorSelection';
 export { default as CreationInput } from './CreationInput/CreationInput';
+export { default as Footer } from './Footer/Footer';
 export { default as Hr } from './Hr/Hr';

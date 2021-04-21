@@ -29,6 +29,7 @@ export {
     createCard,
     deleteCard,
     updateCard,
+    updateCardChecklistOrder,
     clearAnyCardError
 } from './cards/actions';
 export {

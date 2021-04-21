@@ -85,7 +85,8 @@ const CardModal: FC = () => {
                 dialogClassName={classes.cardModal}
                 contentClassName={getCls(
                     'bg-' + colorClassMap[card?.color || defaultTheme],
-                    'text-' + colorText
+                    'text-' + colorText,
+                    'h-100'
                 )}
                 aria-labelledby="card-modal-control-options"
             >

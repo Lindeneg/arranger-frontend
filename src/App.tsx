@@ -6,7 +6,7 @@ import Auth from './user/pages/Auth';
 import UserBoards from './boards/pages/UserBoards';
 import UserBoard from './boards/pages/UserBoard';
 import NoLocalStorage from './user/components/NoLocalStorage';
-import { Navigation } from './common/components';
+import { Navigation, Footer } from './common/components';
 import { RootState } from './store';
 import { loginUser, logoutUser } from './store/actions';
 import { getLocalV, themeToHex } from './common';
@@ -70,6 +70,7 @@ const App: FC = () => {
                     )}
                 </Switch>
             </main>
+            <Footer />
         </Fragment>
     );
 };
