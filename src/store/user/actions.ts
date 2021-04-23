@@ -59,7 +59,7 @@ export const createUser = (user: Omit<User, '_id'>) => async (
     }
 };
 
-export const updateUser = (payload: UserPayload<'password'>) => async (
+export const updateUser = (payload: UserPayload<'password' | 'username'>) => async (
     dispatch: AppDispatch
 ): Promise<void> => {
     dispatch(updateUserStart());

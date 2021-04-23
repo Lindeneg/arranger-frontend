@@ -2,7 +2,8 @@ import React, { FC, useEffect, Fragment } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Auth from './user/pages/Auth';
+import UserAuth from './user/pages/UserAuth';
+import UserProfile from './user/pages/UserProfile';
 import UserBoards from './boards/pages/UserBoards';
 import UserBoard from './boards/pages/UserBoard';
 import NoLocalStorage from './user/components/NoLocalStorage';
@@ -44,7 +45,7 @@ const App: FC = () => {
                     {getLocalV()?._token ? (
                         <Switch>
                             <Route path="/" exact>
-                                <Auth />
+                                <UserAuth />
                             </Route>
                             <Route path="/boards" exact>
                                 <UserBoards />
@@ -53,14 +54,14 @@ const App: FC = () => {
                                 <UserBoard />
                             </Route>
                             <Route path="/profile" exact>
-                                {/* <UpdateUser /> */}
+                                <UserProfile />
                             </Route>
                             <Redirect to="/boards" />
                         </Switch>
                     ) : (
                         <Switch>
                             <Route path="/" exact>
-                                <Auth />
+                                <UserAuth />
                             </Route>
                             <Route path="/no-local-storage" exact>
                                 <NoLocalStorage />
