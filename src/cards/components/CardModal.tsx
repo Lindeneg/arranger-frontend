@@ -1,296 +1,172 @@
-import { Fragment, useCallback, useContext, useEffect, useState } from 'react';
+import React, { FC, Fragment, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Modal from 'react-bootstrap/Modal';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
+import { Trash, PencilSquare } from 'react-bootstrap-icons';
 
-import { onListCardUpdate } from '../util/onListCardUpdate';
-import Checklists from '../../checklists/components';
-import Modal from '../../common/components/Interface/Modal';
-import Button from '../../common/components/Interactable/Button';
-import Input from '../../common/components/Interactable/Input';
-import Card from '../../common/components/Interface/Card';
-import ErrorModal from '../../common/components/Interface/Modal/ErrorModal';
-import Spinner from '../../common/components/Interface/Spinner';
-import { useForm, useHttp } from '../../common/hooks';
-import { AuthContext, ThemeContext, IAuthContext, IThemeContext } from '../../common/context';
+import Checklists from '../../checklists/components/Checklists';
+import { RootState } from '../../store';
+import { deselectCard, updateCard, deleteCard, clearAnyCardError } from '../../store/actions';
+import { clearAnyChecklistError } from '../../store/actions';
 import {
-    BaseProps,
-    CardResponse,
-    ChecklistResponse,
-    Clickable,
-    devLog,
-    UpdateStateAction,
-    Functional,
-    getURL,
-    getValidator,
-    ListUpdatable,
-    OnSubmitFunc,
-    RULE,
-    ValidationType,
-    Visibility
-} from '../../common/util';
-import classes from './CardModal.module.css';
+    ColorOption,
+    getCls,
+    getColorText,
+    colorClassMap,
+    defaultTheme,
+    emptyDescription
+} from '../../common';
+import { Hr, CreationInput, ConfirmModal, ErrorModal } from '../../common/components';
+import classes from './Cards.module.css';
 
-interface CardModalProps extends BaseProps, Visibility, Clickable, ListUpdatable {
-    listOwnerId: string;
-    cardId: string | null;
-}
+type EditType = 'name' | 'description';
 
-type FetchedCard = CardResponse<ChecklistResponse[]>;
+const CardModal: FC = () => {
+    const dispatch = useDispatch();
+    const { card, error } = useSelector((state: RootState) => state.card);
+    const checklistError = useSelector((state: RootState) => state.checklist.error);
+    const [deleting, setDeleting] = useState<boolean>(false);
+    const [deleteInProgress, setDeleteInProgress] = useState<boolean>(false);
+    const [editing, setEditing] = useState<EditType | null>(null);
+    const colorText = card ? getColorText(card.color) : defaultTheme;
 
-const CardModal: Functional<CardModalProps> = (props) => {
-    const authContext = useContext<IAuthContext>(AuthContext);
-    const themeContext = useContext<IThemeContext>(ThemeContext);
-    const [currentCard, setCurrentCard] = useState<FetchedCard | null>(null);
-    const [isDeleting, setIsDeleting] = useState<boolean>(false);
-    const [isEditing, setIsEditing] = useState<boolean>(false);
-    const { isLoading, error, clearError, sendRequest } = useHttp<FetchedCard>();
-    const [inputState, inputHandler, setInputState] = useForm({
-        inputs: {
-            name: { value: '', isValid: false },
-            description: { value: '', isValid: false }
-        },
-        isValid: false
-    });
-
-    const setCard = useCallback(
-        (card: FetchedCard) => {
-            setCurrentCard(card);
-            setInputState({
-                inputs: {
-                    name: { value: card.name, isValid: true },
-                    description: { value: card.description, isValid: true }
-                },
-                isValid: true
-            });
-        },
-        [setInputState]
-    );
-
-    useEffect(() => {
-        (async () => {
-            if (!!props.cardId) {
-                try {
-                    const res: FetchedCard | void = await sendRequest(getURL('cards/' + props.cardId), 'GET', null, {
-                        Authorization: 'Bearer ' + authContext.token
-                    });
-                    res && setCard(res);
-                } catch (err) {
-                    devLog(err);
-                }
-            }
-        })();
-    }, [props.cardId, authContext.token, sendRequest, setInputState, setCard]);
-
-    const onClose = () => {
-        setCurrentCard(null);
-        setIsDeleting(false);
-        setIsEditing(false);
-        setInputState({
-            inputs: {
-                name: { value: '', isValid: false },
-                description: { value: '', isValid: false }
-            },
-            isValid: false
-        });
-        props.onClick();
-    };
-
-    const onDeleteAccept = () => {
-        setIsDeleting(true);
-    };
-
-    const onDeleteDeny = () => {
-        setIsDeleting(false);
-    };
-
-    const onEditAccept = () => {
-        setIsEditing(true);
-        if (!!currentCard) {
-            setInputState({
-                inputs: {
-                    name: { value: currentCard.name, isValid: true },
-                    description: { value: currentCard.description, isValid: true }
-                },
-                isValid: true
-            });
+    const onUpdateCard = (type: EditType, value: string, color?: ColorOption): void => {
+        if (
+            card &&
+            ((type === 'name' && value !== card.name) ||
+                (type === 'description' && value !== card.description) ||
+                (typeof color !== 'undefined' && color !== card.color))
+        ) {
+            dispatch(updateCard(card._id, card.owner, { [type]: value, color }));
         }
+        setEditing(null);
     };
 
-    const onEditDeny = () => {
-        setInputState({
-            inputs: {
-                name: { value: currentCard?.name || '', isValid: !!currentCard },
-                description: { value: currentCard?.description || '', isValid: !!currentCard }
-            },
-            isValid: !!currentCard
-        });
-        setIsEditing(false);
-    };
-
-    const onDeleteHandler = async () => {
-        if (!!currentCard) {
-            try {
-                const res: FetchedCard | void = await sendRequest(getURL(`cards/${currentCard._id}`), 'DELETE', null, {
-                    Authorization: 'Bearer ' + authContext.token
-                });
-                if (res) {
-                    props.updateLists(onListCardUpdate.bind(null, UpdateStateAction.Delete, currentCard));
-                    onClose();
-                }
-            } catch (err) {
-                devLog(err);
-            }
+    const onDeleteCard = async (): Promise<void> => {
+        setDeleteInProgress(true);
+        if (card) {
+            await dispatch(deleteCard(card._id, card.owner));
         }
+        setDeleteInProgress(false);
     };
 
-    const onSubmitHandler: OnSubmitFunc = async (e) => {
-        e.preventDefault();
-        try {
-            const res: FetchedCard | void = await sendRequest(
-                getURL('cards' + (!!currentCard ? `/${currentCard?._id}` : '')),
-                !!currentCard ? 'PATCH' : 'POST',
-                JSON.stringify({
-                    name: inputState.inputs.name.value,
-                    description: inputState.inputs.description.value,
-                    owner: props.listOwnerId,
-                    color: 'none' // currently not used
-                }),
-                {
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer ' + authContext.token
-                }
-            );
-            if (res) {
-                setCard(res);
-                props.updateLists(
-                    onListCardUpdate.bind(
-                        null,
-                        !!currentCard ? UpdateStateAction.Update : UpdateStateAction.Create,
-                        res
-                    )
-                );
-                onEditDeny();
-            }
-        } catch (err) {
-            devLog(err);
-        }
+    const onDeselectCard = (): void => {
+        card && dispatch(deselectCard(card));
+        setEditing(null);
+    };
+
+    const onClearCardError = (): void => {
+        dispatch(clearAnyCardError());
+    };
+
+    const onClearChecklistError = (): void => {
+        dispatch(clearAnyChecklistError());
     };
 
     return (
         <Fragment>
-            <ErrorModal show={!!error} error={error} onClear={clearError} />
+            <ErrorModal
+                show={!!error || !!checklistError}
+                errorMessage={error || checklistError}
+                onClose={error ? onClearCardError : onClearChecklistError}
+                headerTxt={(error ? 'Card' : 'Checklist') + ' error'}
+            />
+            <ConfirmModal
+                show={deleting}
+                onClose={() => setDeleting(false)}
+                onConfirm={onDeleteCard}
+                headerTxt="Confirm Card Deletion"
+                notCenter
+            />
             <Modal
-                show={props.show && !error}
-                onClose={onClose}
-                onSubmit={
-                    !currentCard || isEditing
-                        ? onSubmitHandler
-                        : (e) => {
-                              e.preventDefault();
-                          }
-                }
-                headerText={isLoading ? 'Loading...' : !currentCard ? 'Create Card' : currentCard.name}
-                className={classes.Modal}
-                style={{ backgroundColor: themeContext.color }}
-                formStyles={{ height: '78%' }}
-                contentCls={!!currentCard ? classes.ContentDefault : classes.ContentInitial}
-                footerCls={classes.Footer}
-                footerNodes={
-                    isLoading ? null : isDeleting ? (
-                        <div className={classes.FooterDelete}>
-                            <Button inverse onClick={onDeleteHandler} type="button">
-                                CONFIRM DELETE
-                            </Button>
-                            <Button onClick={onDeleteDeny} type="button">
-                                CANCEL DELETE
-                            </Button>
-                        </div>
-                    ) : (
-                        <Fragment>
-                            {!currentCard && (
-                                <Button disabled={!inputState.isValid} type={!!currentCard ? 'button' : 'submit'}>
-                                    CREATE CARD
-                                </Button>
-                            )}
-                            <Button onClick={onClose} type="button" inverse>
-                                CLOSE CARD
-                            </Button>
-                            {!!currentCard && (
-                                <Button onClick={onDeleteAccept} type="button" inverse>
-                                    DELETE CARD
-                                </Button>
-                            )}
-                        </Fragment>
-                    )
-                }
+                show={card !== null && !deleting && !deleteInProgress && !error && !checklistError}
+                onHide={onDeselectCard}
+                dialogClassName={classes.cardModal}
+                contentClassName={getCls(
+                    'bg-' + colorClassMap[card?.color || defaultTheme],
+                    'text-' + colorText,
+                    'h-100'
+                )}
+                aria-labelledby="card-modal-control-options"
             >
-                {isLoading && <Spinner asOverlay style={{ backgroundColor: themeContext.color }} />}
-                {!isLoading && (
-                    <Card className={classes.Card} style={{ backgroundColor: themeContext.color }}>
-                        {!currentCard || isEditing ? (
-                            <Fragment>
-                                <Input
-                                    placeHolder="Enter Name..."
-                                    errorText={`Name is required but limited to ${RULE.USR_MAX_LEN} characters`}
-                                    id="name"
-                                    label="Name"
-                                    type="text"
-                                    element="input"
-                                    onInput={inputHandler}
-                                    className={classes.Name}
-                                    value={inputState.inputs.name.value?.toString() || ''}
-                                    valid={inputState.inputs.name.isValid || false}
-                                    validators={[
-                                        getValidator(ValidationType.Require),
-                                        getValidator(ValidationType.MaxLength, RULE.USR_MAX_LEN)
-                                    ]}
-                                />
-                                <Input
-                                    placeHolder="Enter Description..."
-                                    errorText={`Description is required but limited to ${RULE.DES_MAX_LEN} characters`}
-                                    id="description"
-                                    label="Description"
-                                    resize="none"
-                                    type="text"
-                                    element="text-area"
-                                    onInput={inputHandler}
-                                    className={classes.Description}
-                                    value={inputState.inputs.description.value?.toString() || ''}
-                                    valid={inputState.inputs.description.isValid || false}
-                                    validators={[
-                                        getValidator(ValidationType.Require),
-                                        getValidator(ValidationType.MaxLength, RULE.DES_MAX_LEN)
-                                    ]}
-                                />
-                                {isEditing && (
-                                    <Fragment>
-                                        <Button
-                                            disabled={!inputState.isValid}
-                                            type="submit"
-                                            style={{ width: '100%', marginBottom: '0.5rem' }}
-                                        >
-                                            SAVE
-                                        </Button>
-                                        <Button
-                                            onClick={onEditDeny}
-                                            type="button"
-                                            style={{ width: '100%', marginBottom: '1rem' }}
-                                            inverse
-                                        >
-                                            CANCEL
-                                        </Button>
-                                    </Fragment>
-                                )}
-                            </Fragment>
+                <Modal.Body>
+                    <div className="d-flex align-items-baseline justify-content-between">
+                        {editing === 'name' ? (
+                            <CreationInput
+                                type="card"
+                                style={{ width: '60%' }}
+                                inputMaxLength={19}
+                                customColor={colorText}
+                                chosenColor={card?.color}
+                                placeholder="Card name"
+                                inputValue={card?.name}
+                                onClose={() => setEditing(null)}
+                                onCreate={onUpdateCard.bind(null, 'name')}
+                                alwaysShowInput
+                                color
+                            />
                         ) : (
-                            <div onClick={onEditAccept} className={classes.DescriptionAlt}>
-                                <p>{currentCard.description}</p>
+                            <h1 onClick={() => setEditing('name')} className={classes.name}>
+                                {card?.name}
+                            </h1>
+                        )}
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={<Tooltip id="tooltip-bottom">delete card</Tooltip>}
+                        >
+                            <Trash role="button" size="25" onClick={() => setDeleting(true)} />
+                        </OverlayTrigger>
+                    </div>
+                    <Hr colorText={colorText} />
+                    <div className="mt-4 mb-4">
+                        {editing === 'description' ? (
+                            <CreationInput
+                                style={{ width: '100%' }}
+                                type="card"
+                                as="textarea"
+                                asProps={{ rows: 5 }}
+                                inputMaxLength={512}
+                                customColor={colorText}
+                                chosenColor={card?.color}
+                                placeholder="Card description"
+                                inputValue={
+                                    card?.description === emptyDescription ? '' : card?.description
+                                }
+                                onClose={() => setEditing(null)}
+                                onCreate={onUpdateCard.bind(null, 'description')}
+                                alwaysShowInput
+                            />
+                        ) : (
+                            <div className="d-flex align-items-baseline justify-content-between">
+                                <pre
+                                    className={getCls(
+                                        'text-' + colorText,
+                                        card?.description === emptyDescription ? 'font-italic' : '',
+                                        classes.cardDescription
+                                    )}
+                                >
+                                    {card?.description +
+                                        (card?.description === emptyDescription ? '...' : '')}
+                                </pre>
+                                <OverlayTrigger
+                                    placement="bottom"
+                                    overlay={
+                                        <Tooltip id="tooltip-bottom">edit description</Tooltip>
+                                    }
+                                >
+                                    <PencilSquare
+                                        role="button"
+                                        size="25"
+                                        onClick={() => setEditing('description')}
+                                    />
+                                </OverlayTrigger>
                             </div>
                         )}
-                        <hr />
-                        {!!currentCard && !isEditing && (
-                            <Checklists owner={currentCard._id} checklists={currentCard.checklists} />
-                        )}
-                    </Card>
-                )}
+                    </div>
+                    <Hr colorText={colorText} />
+                    <Checklists colorText={colorText} />
+                </Modal.Body>
             </Modal>
         </Fragment>
     );

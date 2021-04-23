@@ -1,122 +1,140 @@
-import { Fragment, useState, useContext } from 'react';
+import React, { FC, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
+import Alert from 'react-bootstrap/Alert';
 
-import { DragEndCallbackResult, onDragEndCallback } from '../util/onDragEndCallback';
-import { useHttp } from '../../common/hooks';
-import { AuthContext, ThemeContext } from '../../common/context';
-import ListItem from './ListItem';
-import ListModal from './ListModal';
-import Card from '../../common/components/Interface/Card';
-import Button from '../../common/components/Interactable/Button';
-import ErrorModal from '../../common/components/Interface/Modal/ErrorModal';
-import { BaseProps, ChecklistResponse, DropType, Functional, IList, ListUpdatable, Orderable } from '../../common/util';
-import { BoardResponse, CardResponse, ListResponse, devLog } from '../../common/util';
+import List from './List';
+import { RootState } from '../../store';
+import {
+    updateBoardListOrder,
+    updateListCardOrder,
+    updateList,
+    deleteList,
+    clearAnyListError
+} from '../../store/actions';
+import { ThemeOption, DropType, getUpdatedListOrder, getUpdatedCardOrder } from '../../common';
+import { ErrorModal, Hr } from '../../common/components';
 import classes from './Lists.module.css';
 
-interface ListsProps extends BaseProps, Orderable, ListUpdatable {
-    lists: IList[];
-    boardName: string;
-    boardId: string;
-    setOrder: (order: string[]) => void;
+interface ListsProps {
+    owner: string;
+    colorText: ThemeOption;
 }
 
-type Responses =
-    | BoardResponse<string[]>
-    | ListResponse<CardResponse<string[]>[]>
-    | CardResponse<ChecklistResponse[]>
-    | ChecklistResponse;
+const Lists: FC<ListsProps> = (props) => {
+    const dispatch = useDispatch();
+    const { lists, error } = useSelector((state: RootState) => state.list);
+    const { board } = useSelector((state: RootState) => state.board);
 
-/**
- * List component. Acts as a wrapper for child Cards and as a drop-target for a draggable List.
- */
+    const onUpdateList = useCallback(
+        (id: string, name: string): void => {
+            dispatch(updateList(id, { name }));
+        },
+        [dispatch]
+    );
 
-const Lists: Functional<ListsProps> = (props) => {
-    const authContext = useContext(AuthContext);
-    const theme = useContext(ThemeContext);
-    const { error, clearError, sendRequest } = useHttp<Responses>();
-    const [creating, setCreating] = useState<boolean>(false);
-    const boardColor = theme.color;
+    const onDeleteList = useCallback(
+        (id: string): void => {
+            dispatch(deleteList(id));
+        },
+        [dispatch]
+    );
 
-    const updateOrderHandler = async (url: string, body: string) => {
-        try {
-            await sendRequest(url, 'PATCH', body, {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + authContext.token
-            });
-        } catch (err) {
-            devLog(err);
-        }
+    const clearError = (): void => {
+        dispatch(clearAnyListError());
     };
 
     const onDragEnd = (result: DropResult): void => {
-        const dragResult: DragEndCallbackResult = onDragEndCallback(result, props.order, props.lists, {
-            id: props.boardId,
-            name: props.boardName,
-            color: boardColor
-        });
-        if (dragResult.http.url !== null && dragResult.http.body !== null) {
-            props.setOrder(dragResult.newOrder);
-            props.updateLists(() => dragResult.newLists);
-            updateOrderHandler(dragResult.http.url, dragResult.http.body);
+        if (board) {
+            switch (result.type) {
+                case DropType.List:
+                    if (result.destination && result.destination.index !== result.source.index) {
+                        dispatch(
+                            updateBoardListOrder(
+                                props.owner,
+                                result.source.index,
+                                result.destination.index,
+                                getUpdatedListOrder(
+                                    [...board.listOrder],
+                                    result.source.index,
+                                    result.destination.index
+                                )
+                            )
+                        );
+                    }
+                    break;
+                case DropType.Card:
+                    if (
+                        (result.source.droppableId === result.destination?.droppableId &&
+                            result.source.index === result.destination.index) ||
+                        typeof result.destination === 'undefined' ||
+                        result.destination === null
+                    ) {
+                        break;
+                    }
+                    dispatch(
+                        updateListCardOrder(
+                            result.source.index,
+                            result.destination.index,
+                            getUpdatedCardOrder(
+                                [...lists],
+                                result.draggableId,
+                                result.source.droppableId,
+                                result.source.index,
+                                result.destination.droppableId,
+                                result.destination.index
+                            )
+                        )
+                    );
+                    break;
+                default:
+                    break;
+            }
         }
-    };
-
-    const onCreateHandler = (): void => {
-        setCreating(true);
-    };
-
-    const onCancelCreateHandler = (): void => {
-        setCreating(false);
     };
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
-            <ErrorModal show={!!error} error={error} onClear={clearError} />
-            <ListModal
-                order={props.order}
-                setOrder={props.setOrder}
-                updateLists={props.updateLists}
-                show={creating}
-                onClick={onCancelCreateHandler}
-                owningBoardId={props.boardId}
-            />
-            {props.lists.length <= 0 ? (
-                <div className="center">
-                    {!creating && (
-                        <Card style={{ marginTop: '2rem', backgroundColor: boardColor }}>
-                            <h2>No lists found. Go ahead and create one!</h2>
-                            <Button onClick={onCreateHandler}>Create List</Button>
-                        </Card>
-                    )}
-                </div>
-            ) : (
-                <Droppable direction="horizontal" droppableId={props.boardId} type={DropType.List}>
+            <ErrorModal show={!!error} errorMessage={error} onClose={clearError} />
+            <Hr colorText={props.colorText} />
+            {lists.length > 0 && board ? (
+                <Droppable direction="horizontal" droppableId={props.owner} type={DropType.List}>
                     {(provided) => (
-                        <Fragment>
-                            <ul {...provided.droppableProps} ref={provided.innerRef} className={classes.List}>
-                                {props.order.map((orderId, index) => {
-                                    const list = props.lists.find((e) => e._id === orderId);
+                        <>
+                            <ul
+                                {...provided.droppableProps}
+                                ref={provided.innerRef}
+                                className={classes.List}
+                            >
+                                {board.listOrder.map((id, index) => {
+                                    const list = lists.find((l) => l._id === id);
                                     if (list) {
                                         return (
-                                            <ListItem
-                                                {...list}
-                                                listOrder={props.order}
-                                                setOrder={props.setOrder}
-                                                updateLists={props.updateLists}
-                                                index={index}
+                                            <List
                                                 key={list._id}
-                                                boardId={props.boardId}
+                                                index={index}
+                                                id={list._id}
+                                                name={list.name}
+                                                colorText={props.colorText}
+                                                cards={list.cards}
+                                                cardOrder={list.cardOrder}
+                                                onUpdate={onUpdateList}
+                                                onDelete={onDeleteList}
                                             />
                                         );
-                                    } else {
-                                        return null;
                                     }
+                                    return null;
                                 })}
                             </ul>
                             {provided.placeholder}
-                        </Fragment>
+                        </>
                     )}
                 </Droppable>
+            ) : (
+                <Alert variant="info">
+                    No lists found. Go ahead and create one by clicking the plus icon in the
+                    right-corner.
+                </Alert>
             )}
         </DragDropContext>
     );

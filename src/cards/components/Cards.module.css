@@ -1,7 +1,48 @@
-.Container {
-    margin-top: 1rem;
+.light:hover {
+    background-color: #ebedf0 !important;
 }
 
-.Cards, .Container button {
-    margin-bottom: 1rem;
+.dark:hover {
+    background-color: #434a52 !important;
+}
+
+.blue:hover {
+    background-color: #2b84e3 !important;
+}
+
+.gray:hover {
+    background-color: #818a91 !important;
+}
+
+.green:hover {
+    background-color: #29ba4a !important;
+}
+
+.red:hover {
+    background-color: #e04856 !important;
+}
+
+.yellow:hover {
+    background-color: #ffca2e !important;
+}
+
+.teal:hover {
+    background-color: #28b1c7 !important;
+}
+
+.cardModal {
+    max-width: unset !important;
+    width: 90vw !important;
+    height: 90vh !important;
+    margin: 1.75rem auto !important;
+}
+
+.cardDescription {
+    font-family: unset;
+    font-size: 1rem;
+}
+
+.name:hover {
+    cursor: pointer;
+    color: #c76e3d !important;
 }

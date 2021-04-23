@@ -1,54 +1,78 @@
 {
-  "name": "arranger-frontend",
-  "author": {
-    "name": "Christian Lindeneg",
-    "email": "hi@lindeneg.org",
-    "url": "https://github.com/lindeneg/arranger-frontend"
-  },
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "@types/jest": "^26.0.15",
-    "@types/node": "^12.0.0",
-    "@types/react": "^17.0.0",
-    "@types/react-beautiful-dnd": "^13.0.0",
-    "@types/react-dom": "^17.0.0",
-    "@types/react-router-dom": "^5.1.7",
-    "@types/react-transition-group": "^4.4.1",
-    "react": "^17.0.1",
-    "react-beautiful-dnd": "^13.1.0",
-    "react-dom": "^17.0.1",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.3",
-    "react-transition-group": "^4.4.1",
-    "typescript": "^4.1.2",
-    "web-vitals": "^1.0.1"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+    "name": "arranger-frontend",
+    "author": {
+        "name": "Christian Lindeneg",
+        "email": "hi@lindeneg.org",
+        "url": "https://github.com/lindeneg/arranger-frontend"
+    },
+    "version": "2.0.0",
+    "private": true,
+    "dependencies": {
+        "@reduxjs/toolkit": "^1.5.1",
+        "@testing-library/jest-dom": "^5.11.4",
+        "@testing-library/react": "^11.1.0",
+        "@testing-library/user-event": "^12.1.10",
+        "@types/axios": "^0.14.0",
+        "@types/bootstrap": "^5.0.12",
+        "@types/jest": "^26.0.15",
+        "@types/node": "^12.0.0",
+        "@types/react": "^17.0.0",
+        "@types/react-beautiful-dnd": "^13.0.0",
+        "@types/react-bootstrap": "^0.32.25",
+        "@types/react-dom": "^17.0.0",
+        "@types/react-redux": "^7.1.16",
+        "@types/react-router-dom": "^5.1.7",
+        "@types/redux": "^3.6.0",
+        "axios": "^0.21.1",
+        "bootstrap": "^4.6.0",
+        "react": "^17.0.1",
+        "react-beautiful-dnd": "^13.1.0",
+        "react-bootstrap": "^1.5.2",
+        "react-bootstrap-icons": "^1.4.0",
+        "react-dom": "^17.0.1",
+        "react-redux": "^7.2.3",
+        "react-router-dom": "^5.2.0",
+        "react-scripts": "4.0.3",
+        "redux": "^4.0.5",
+        "typescript": "^4.1.2",
+        "use-form-state": "https://github.com/Lindeneg/use-form-state",
+        "web-vitals": "^1.0.1"
+    },
+    "scripts": {
+        "fix": "yarn run style:fix",
+        "style": "yarn run style:format && yarn run style:lint",
+        "style:lint": "yarn eslint ./src --cache --config ./.eslintrc.json",
+        "style:format": "yarn prettier ./src --check --config ./.prettierrc",
+        "style:fix": "yarn prettier ./src --write --config ./.prettierrc",
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^4.22.0",
+        "@typescript-eslint/parser": "^4.22.0",
+        "eslint": "^7.24.0",
+        "eslint-plugin-react": "^7.23.2",
+        "eslint-plugin-react-hooks": "^4.2.0",
+        "prettier": "^2.2.1"
+    }
 }

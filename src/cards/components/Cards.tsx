@@ -1,66 +1,102 @@
-import { Fragment, useState } from 'react';
+import React, { FC, Fragment } from 'react';
+import { useDispatch } from 'react-redux';
+import { Draggable } from 'react-beautiful-dnd';
+import ListGroup from 'react-bootstrap/ListGroup';
+import { Check } from 'react-bootstrap-icons';
 
-import CardModal from './CardModal';
-import CardItem from './CardItem';
-import Button from '../../common/components/Interactable/Button';
-import { BaseProps, CardResponse, Functional, ListUpdatable, Orderable } from '../../common/util';
+import { CreationInput, Hr } from '../../common/components';
+import { Card } from '../../store/cards/types';
+import { initCard, createCard } from '../../store/actions';
+import {
+    ColorOption,
+    ThemeOption,
+    getCls,
+    getColorText,
+    countCompletedChecklistEntries,
+    colorClassMap,
+    defaultTheme
+} from '../../common';
 import classes from './Cards.module.css';
 
-interface CardsProps extends BaseProps, Orderable, ListUpdatable {
-    listOwnerId: string;
-    cards: CardResponse<string[]>[];
+interface CardsProps {
+    owner: string;
+    cards: Card[];
+    cardOrder: string[];
+    colorText: ThemeOption;
 }
 
-const Cards: Functional<CardsProps> = (props) => {
-    const [isViewingCardId, setIsViewingCardId] = useState<string | null>(null);
-    const [isCreatingCard, setIsCreatingCard] = useState<boolean>(false);
+const Cards: FC<CardsProps> = (props) => {
+    const dispatch = useDispatch();
 
-    const onCreateCardAccept = () => {
-        setIsCreatingCard(true);
-        setIsViewingCardId(null);
+    const onCreateCard = (name: string, color?: ColorOption): void => {
+        dispatch(createCard({ name, owner: props.owner, color: color || defaultTheme }));
     };
 
-    const onViewCardAccept = (id: string) => {
-        setIsViewingCardId(id);
-        setIsCreatingCard(false);
-    };
-
-    const onViewCardDeny = () => {
-        setIsCreatingCard(false);
-        setIsViewingCardId(null);
+    const onSelectCard = (id: string): void => {
+        const card = props.cards.find((card) => card._id === id);
+        if (card) {
+            dispatch(initCard(card));
+        }
     };
 
     return (
         <Fragment>
-            <CardModal
-                updateLists={props.updateLists}
-                listOwnerId={props.listOwnerId}
-                cardId={isViewingCardId}
-                show={!!isViewingCardId || isCreatingCard}
-                onClick={onViewCardDeny}
-            />
-            <div className={classes.Container}>
-                <div className={classes.Cards}>
-                    {props.order.map((id, index) => {
-                        const card = props.cards.find((e) => e._id === id);
-                        if (card) {
-                            return (
-                                <CardItem
-                                    {...card}
-                                    key={card._id}
-                                    index={index}
-                                    onClick={onViewCardAccept.bind(null, card._id)}
-                                />
-                            );
-                        } else {
-                            return null;
-                        }
-                    })}
-                </div>
-                <Button inverse type="button" onClick={onCreateCardAccept}>
-                    ADD CARD
-                </Button>
-            </div>
+            <ListGroup>
+                {props.cardOrder.map((cardId, index) => {
+                    const card = props.cards.find((c) => c._id === cardId);
+                    if (card) {
+                        return (
+                            <Draggable draggableId={cardId} index={index} key={cardId}>
+                                {(provided) => (
+                                    <div
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        ref={provided.innerRef}
+                                    >
+                                        <ListGroup.Item
+                                            role="button"
+                                            onClick={onSelectCard.bind(null, card._id)}
+                                            className={getCls(
+                                                'bg-' + colorClassMap[card.color as ColorOption],
+                                                'text-' + getColorText(card.color as ColorOption),
+                                                'mb-1 border',
+                                                classes[card.color]
+                                            )}
+                                        >
+                                            {card.name}
+                                            <Hr
+                                                colorText={getColorText(card.color as ColorOption)}
+                                            />
+                                            <div className="d-flex align-items-center">
+                                                {(card.checklists.length > 0
+                                                    ? (
+                                                          (countCompletedChecklistEntries(
+                                                              card.checklists
+                                                          ) /
+                                                              card.checklists.length) *
+                                                          100
+                                                      ).toFixed(1)
+                                                    : '0.0') + '%'}
+                                                <Check size="25" />
+                                            </div>
+                                        </ListGroup.Item>
+                                    </div>
+                                )}
+                            </Draggable>
+                        );
+                    }
+                    return null;
+                })}
+                <CreationInput
+                    style={{ marginTop: '1rem', width: '16.5rem' }}
+                    type="card"
+                    customColor={props.colorText}
+                    inputMaxLength={22}
+                    placeholder="Card name"
+                    onCreate={onCreateCard}
+                    color
+                />
+            </ListGroup>
         </Fragment>
     );
 };

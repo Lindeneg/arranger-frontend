@@ -1,165 +1,68 @@
-import { Fragment, useState, useContext, useCallback, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { FC, Fragment, useCallback } from 'react';
+import Container from 'react-bootstrap/Container';
+import { useDispatch } from 'react-redux';
 
-import { useHttp } from '../../common/hooks';
-import { AuthContext } from '../../common/context';
-import BoardModal from './BoardModal';
-import ListModal from '../../lists/components/ListModal';
+import BoardHeader from './BoardHeader';
 import Lists from '../../lists/components/Lists';
-import ErrorModal from '../../common/components/Interface/Modal/ErrorModal';
-import Spinner from '../../common/components/Interface/Spinner';
-import Card from '../../common/components/Interface/Card';
-import Button from '../../common/components/Interactable/Button';
-import { BoardResponse } from '../pages/UserBoard';
-import { BaseProps, devLog, Functional, DeleteResponse, getURL, IList, UpdateLists } from '../../common/util';
-import classes from './Board.module.css';
+import CardModal from '../../cards/components/CardModal';
+import { createList } from '../../store/actions';
+import { Board as BoardType, BoardPayload } from '../../store/boards/types';
+import { List } from '../../store/lists/types';
+import { getCls, colorClassMap, getColorText, ColorOption } from '../../common';
 
-interface BoardProps extends BaseProps {
-    board: BoardResponse;
+interface BoardProps {
+    board: BoardType<List>;
+    onUpdate: (payload: BoardPayload<'name' | 'color' | 'listOrder'>) => void;
+    onDelete: () => void;
 }
 
-/**
- * Board component. Includes a header with Board name and controls for creation, updating or removal of Board.
- * Wraps all Board child elements, such as lists, cards and checklists.
- */
+const Board: FC<BoardProps> = (props) => {
+    const dispatch = useDispatch();
+    const colorText = getColorText(props.board.color);
 
-const Board: Functional<BoardProps> = (props) => {
-    const history = useHistory();
-    const authContext = useContext(AuthContext);
-    const { isLoading, error, clearError, sendRequest } = useHttp<DeleteResponse>();
-    const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
-    const [showModal, setShowModal] = useState<boolean>(false);
-    const [creatingList, setCreatingList] = useState<boolean>(false);
-    const [lists, setLists] = useState<IList[]>(props.board.lists);
-    const [listOrder, setListOrder] = useState<string[]>(props.board.order);
+    const { board, onUpdate } = props;
 
-    useEffect(() => {
-        
-    })
-
-    const updateLists = useCallback<UpdateLists>((callback: (lists: IList[]) => IList[]): void => {
-        setLists((e) => callback(e));
-    }, []);
-
-    const updateOrder = useCallback((order: string[]) => {
-        setListOrder(order);
-    }, []);
-
-    const onDeleteHandler = async () => {
-        if (confirmDelete) {
-            try {
-                const res: DeleteResponse | void = await sendRequest(
-                    getURL('boards/' + props.board._id),
-                    'DELETE',
-                    null,
-                    { Authorization: 'Bearer ' + authContext.token }
-                );
-                res && history.push('/boards');
-            } catch (err) {
-                devLog(err);
+    const updateBoard = useCallback(
+        (name: string, color: ColorOption): void => {
+            if (name !== board.name || color !== board.color) {
+                onUpdate({ name, color });
             }
-        } else {
-            devLog('warning: trying to delete board without user confirmation');
-        }
-    };
+        },
+        [board, onUpdate]
+    );
 
-    const onConfirmAccept = (): void => {
-        setConfirmDelete(true);
-    };
-
-    const onConfirmDeny = (): void => {
-        setConfirmDelete(false);
-    };
-
-    const onCreateListAccept = (): void => {
-        setCreatingList(true);
-    };
-
-    const onCreateListCancel = (): void => {
-        setCreatingList(false);
-    };
-
-    const onModelOpen = (): void => {
-        setShowModal(true);
-    };
-
-    const onModelClose = (): void => {
-        setShowModal(false);
-    };
+    const onCreateList = useCallback(
+        (name: string): void => {
+            dispatch(createList({ name, owner: board._id }));
+        },
+        [dispatch, board]
+    );
 
     return (
         <Fragment>
-            <ListModal
-                order={listOrder}
-                setOrder={updateOrder}
-                updateLists={updateLists}
-                show={creatingList}
-                onClick={onCreateListCancel}
-                owningBoardId={props.board._id}
-            />
-            <BoardModal
-                show={showModal}
-                onClose={onModelClose}
-                update={{
-                    id: props.board._id,
-                    name: props.board.name,
-                    color: props.board.color,
-                    order: listOrder
+            <CardModal />
+            <Container
+                fluid={true}
+                className={getCls('bg-' + colorClassMap[props.board.color], 'text-' + colorText)}
+                style={{
+                    width: '96vw',
+                    height: '85vh',
+                    marginLeft: '2vw',
+                    borderRadius: '1rem',
+                    overflowX: 'scroll'
                 }}
-            />
-            <ErrorModal show={!!error} error={error} onClear={clearError} />
-            {isLoading && (
-                <div className="center">
-                    <Spinner asOverlay />
-                </div>
-            )}
-            {!isLoading && (
-                <Card
-                    style={{
-                        backgroundColor: props.board.color
-                    }}
-                    className={classes.Card}
-                >
-                    <div className={classes.Board}>
-                        <h2>{confirmDelete ? 'ARE YOU SURE?' : props.board.name.toUpperCase()}</h2>
-                        <div className={classes.BtnCon}>
-                            {confirmDelete ? (
-                                <Fragment>
-                                    <Button type="button" onClick={onDeleteHandler} inverse>
-                                        YES
-                                    </Button>
-                                    <Button type="button" onClick={onConfirmDeny}>
-                                        NO
-                                    </Button>
-                                </Fragment>
-                            ) : (
-                                <Fragment>
-                                    {lists.length > 0 && (
-                                        <Button onClick={onCreateListAccept} inverse type="button">
-                                            NEW LIST
-                                        </Button>
-                                    )}
-                                    <Button type="button" onClick={onModelOpen} inverse>
-                                        UPDATE BOARD
-                                    </Button>
-                                    <Button type="button" onClick={onConfirmAccept} inverse>
-                                        DELETE BOARD
-                                    </Button>
-                                </Fragment>
-                            )}
-                        </div>
-                        <hr />
-                        <Lists
-                            lists={lists}
-                            boardName={props.board.name}
-                            boardId={props.board._id}
-                            order={listOrder}
-                            setOrder={updateOrder}
-                            updateLists={updateLists}
-                        />
-                    </div>
-                </Card>
-            )}
+            >
+                <BoardHeader
+                    onDelete={props.onDelete}
+                    onUpdate={updateBoard}
+                    onCreateList={onCreateList}
+                    colorText={colorText}
+                    name={props.board.name}
+                    color={props.board.color}
+                />
+
+                <Lists owner={props.board._id} colorText={colorText} />
+            </Container>
         </Fragment>
     );
 };

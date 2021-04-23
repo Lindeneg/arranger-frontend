@@ -1,0 +1,10 @@
+.absoluteCenter {
+    position: absolute;
+    bottom: 50vh;
+    right: 50vw;
+}
+
+.relativelyCenter {
+    width: 100%;
+    text-align: center;
+}
