@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
-import useForm, { getInput } from 'use-form-state';
+import useForm, { getInput } from 'cl-use-form-state';
 
 import { RootState } from '../../store';
 import { getCls, negateTheme, themeToHex } from '../../common';

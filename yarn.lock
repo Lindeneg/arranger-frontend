@@ -3429,6 +3429,11 @@ cjs-module-lexer@^0.6.0:
   resolved "https://registry.yarnpkg.com/cjs-module-lexer/-/cjs-module-lexer-0.6.0.tgz#4186fcca0eae175970aee870b9fe2d6cf8d5655f"
   integrity sha512-uc2Vix1frTfnuzxxu1Hp4ktSvM3QaI4oXl4ZUqL1wjTu/BGki9TrCWoqLTg/drR1KwAEarXuRFCG2Svr1GxPFw==
 
+cl-use-form-state@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/cl-use-form-state/-/cl-use-form-state-1.0.0.tgz#1b7f0a7eac827f6af0dcddabcdc3aecbbf5a2f3c"
+  integrity sha512-QKgqisckwlT+j841x3PM+w3IxVCKRqSrHGvB8RgXP03nc9Yrb63hsyIS0wKr2U9CF/ou+Ob9kSSSs5rHGbCRNA==
+
 class-utils@^0.3.5:
   version "0.3.6"
   resolved "https://registry.yarnpkg.com/class-utils/-/class-utils-0.3.6.tgz#f93369ae8b9a7ce02fd41faad0ca83033190c463"
@@ -11314,10 +11319,6 @@ url@^0.11.0:
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
-
-"use-form-state@https://github.com/Lindeneg/use-form-state":
-  version "1.0.0"
-  resolved "https://github.com/Lindeneg/use-form-state#3b279ff27c95673c549e87f778c221589cef73e6"
 
 use-memo-one@^1.1.1:
   version "1.1.2"
