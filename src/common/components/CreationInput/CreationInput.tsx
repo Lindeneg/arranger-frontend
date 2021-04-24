@@ -5,7 +5,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import { CheckCircle, XCircle } from 'react-bootstrap-icons';
 
-import useForm, { getInput } from 'use-form-state';
+import useForm, { getInput } from 'cl-use-form-state';
 
 import ColorSelection from '../ColorSelection/ColorSelection';
 import { RootState } from '../../../store';

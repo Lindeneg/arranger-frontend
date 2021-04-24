@@ -14,7 +14,7 @@ const Intro: FC<IntroProps> = (props) => {
                 {' '}
                 Kanban-style, list-making application for managing workflows
             </p>
-            <hr />
+            <hr style={{ width: '95vw' }} />
             <p>
                 This application was mainly inspired by a{' '}
                 <a
