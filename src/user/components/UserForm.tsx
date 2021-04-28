@@ -101,9 +101,7 @@ const UserForm: FC<UserFormProps> = (props) => {
             <h4 className="pt-3">
                 {isUpdate
                     ? 'Update ' + (isInLoginMode ? 'Username' : 'Password')
-                    : 'Please ' + isInLoginMode
-                    ? 'Login'
-                    : 'Signup'}
+                    : 'Please ' + (isInLoginMode ? 'Login' : 'Signup')}
             </h4>
             <hr style={{ borderTop: `1px solid ${themeToHex(negatedTheme)}` }} />
             <Form className="pb-3" onSubmit={onSubmitHandler}>
