@@ -90,7 +90,7 @@ const CardModal: FC = () => {
                 )}
                 aria-labelledby="card-modal-control-options"
             >
-                <Modal.Body>
+                <Modal.Body style={{ overflowY: 'scroll' }}>
                     <div className="d-flex align-items-baseline justify-content-between">
                         {editing === 'name' ? (
                             <CreationInput
